@@ -34,9 +34,9 @@ class Services_AMEE_Profile
 {
 
     /**
-     * The UID of the AMEE Profile.
+     * @var string $uid The UID of the AMEE Profile.
      */
-    var uid;
+    protected $uid;
 
     /**
      * A method to get an AMEE Profile Category description and contents for
@@ -48,7 +48,7 @@ class Services_AMEE_Profile
      * @param array $aOptions ...
      * @return
      */
-    public getCategory($sCategoryPath = null, $aOptions = null)
+    public function getCategory($sCategoryPath = null, $aOptions = null)
     {
         return null;
     }
@@ -72,7 +72,7 @@ class Services_AMEE_Profile
      * @return object A Service_AMEE_ProfileItem object represeting the AMEE
      *      Profile Item created, or an exception if an error occurred.
      */
-    public createItem($oDataItem, $aOptions = null)
+    public function createItem($oDataItem, $aOptions = null)
     {
         return null;
     }
@@ -85,7 +85,7 @@ class Services_AMEE_Profile
      *      Service_AMEE_ProfileItem object, or an exception if an error
      *      occurred.
      */
-    public getItem($sProfileItemUID)
+    public function getItem($sProfileItemUID)
     {
         return null;
     }

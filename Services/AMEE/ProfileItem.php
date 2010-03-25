@@ -34,9 +34,9 @@ class Services_AMEE_ProfileItem
 {
 
     /**
-     * The UID of the AMEE Profile Item.
+     * @var string $uid The UID of the AMEE Profile Item.
      */
-    var uid;
+    protected $uid;
 
     // update method
 
