@@ -14,6 +14,8 @@
  * @link http://pear.php.net/package/Services_AMEE
  */
 
+require_once 'Services/AMEE/BaseObject.php';
+
 /**
  * The Services_AMEE_Profile class is used to represent an AMEE Profile,
  * and provides all of the methods required to create and delete AMEE Profiles,

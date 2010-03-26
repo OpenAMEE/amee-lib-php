@@ -33,7 +33,7 @@ class Services_AMEE
 {
 
     /**
-     * A method to list all of the AMEE Profiles that exist in the current
+     * A method to get all of the AMEE Profiles that exist in the current
      * account.
      *
      * @return <mixed> An array of all of the AMEE Profiles that exist, as

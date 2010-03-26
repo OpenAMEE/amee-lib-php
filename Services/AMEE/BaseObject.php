@@ -14,6 +14,8 @@
  * @link http://pear.php.net/package/Services_AMEE
  */
 
+require_once 'Services/AMEE/Exception.php';
+
 /**
  * The Services_AMEE_BaseObject class is an abstract class that defines all of
  * the common class variables and methods of the AMEE REST API objects.
@@ -31,7 +33,7 @@ abstract class Services_AMEE_BaseObject
     /**
      * @var <string> $sUID The UID of the object.
      */
-    private $sUID = '';
+    private $sUID;
 
     /**
      * @var <string> $sCreated The created date of the object.
@@ -55,9 +57,8 @@ abstract class Services_AMEE_BaseObject
             return $this->sUID;
         }
         // Error, object is not itialized
-        return new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getUID() on an un-initialized object.',
-             0
+        throw new Services_AMEE_Exception(
+            'Cannot call Service_AMEE_BaseObject::getUID() on an un-initialized object.'
         );
     }
 
