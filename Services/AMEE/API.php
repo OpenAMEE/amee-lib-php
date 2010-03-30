@@ -12,8 +12,6 @@
  * @copyright 2010 AMEE UK Limited
  * @license http://www.opensource.org/licenses/mit-license.html MIT License
  * @link http://pear.php.net/package/Services_AMEE
- *
- * @TODO Restore cookie based auth!
  */
 
 require_once 'Services/AMEE/Exception.php';
