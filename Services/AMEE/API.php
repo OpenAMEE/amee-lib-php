@@ -57,7 +57,8 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     protected $aPostPathOpenings = array(
-        '/auth'
+        '/auth$',
+        '/profiles$'
     );
 
     /**
@@ -66,7 +67,7 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     protected $aPutPathOpenings = array(
-        '/profiles/[A-F0-9]{12}/'
+        '/profiles/[A-F0-9]{12}$'
     );
 
     /**
@@ -75,7 +76,8 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     protected $aGetPathOpenings = array(
-        '/profiles',
+        '/profiles$',
+        '/profiles/[A-F0-9]{12}',
         '/data'
     );
 
@@ -85,7 +87,7 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     protected $aDeletePathOpenings = array(
-        '/profiles/[A-F0-9]{12}/'
+        '/profiles/[A-F0-9]{12}'
     );
 
     /**
@@ -104,9 +106,9 @@ class Services_AMEE_API
     {
         try {
             // Test to ensure that the path at least as a valid opening
-            $this->_validPath($sPath, 'post');
+            $this->validPath($sPath, 'post');
             // Send the AMEE REST API post request
-            $aResult =  $this->_sendRequest("POST $sPath", http_build_query($aParams, NULL, '&'));
+            $aResult =  $this->sendRequest("POST $sPath", http_build_query($aParams, NULL, '&'));
             // Return the JSON data string
             return $aResult[0];
         } catch (Exception $oException) {
@@ -130,9 +132,9 @@ class Services_AMEE_API
     {
         try {
             // Test to ensure that the path at least as a valid opening
-            $this->_validPath($sPath, 'put');
+            $this->validPath($sPath, 'put');
             // Send the AMEE REST API put request
-            $aResult = $this->_sendRequest("PUT $sPath", http_build_query($aParams, NULL, '&'));
+            $aResult = $this->sendRequest("PUT $sPath", http_build_query($aParams, NULL, '&'));
             // Return the JSON data string
             return $aResult[0];
         } catch (Exception $oException) {
@@ -156,12 +158,12 @@ class Services_AMEE_API
     {
         try {
             // Test to ensure that the path at least as a valid opening
-            $this->_validPath($sPath, 'get');
+            $this->validPath($sPath, 'get');
             // Send the AMEE REST API get request
             if (count($aParams) > 0) {
-                $aResult = $this->_sendRequest("GET $sPath?" . http_build_query($aParams, NULL, '&'));
+                $aResult = $this->sendRequest("GET $sPath?" . http_build_query($aParams, NULL, '&'));
             } else {
-                $aResult = $this->_sendRequest("GET $sPath");
+                $aResult = $this->sendRequest("GET $sPath");
             }
             // Return the JSON data string
             return $aResult[0];
@@ -182,9 +184,9 @@ class Services_AMEE_API
     {
         try {
             // Test to ensure that the path at least as a valid opening
-            $this->_validPath($sPath, 'delete');
+            $this->validPath($sPath, 'delete');
             // Send the AMEE REST API delete request
-            $aResult = $this->_sendRequest("DELETE $sPath");
+            $aResult = $this->sendRequest("DELETE $sPath");
             // Return the JSON data string
             return $aResult[0];
         } catch (Exception $oException) {
@@ -193,16 +195,15 @@ class Services_AMEE_API
     }
 
     /**
-     * A protected method to determine if a supplied AMEE REST API path at least
-     * as an opening path that is valid, according to the type of method being
-     * called.
+     * A method to determine if a supplied AMEE REST API path at least has an
+     * opening path that is valid, according to the type of method being called.
      *
      * @param <string> $sPath The path being called.
      * @param <string> $sType The type of method call being made. One of "post",
      *      "put", "get" or "delete".
      * @return <mixed> True if the path is valid; an Exception object otherwise.
      */
-    protected function _validPath($sPath, $sType)
+    public function validPath($sPath, $sType)
     {
         // Ensure the type has the correct formatting
         $sFormattedType = ucfirst(strtolower($sType));
@@ -221,8 +222,7 @@ class Services_AMEE_API
     }
 
     /**
-     * A protected method to take care of sending AMEE REST API method call
-     * requests.
+     * A method to take care of sending AMEE REST API method call requests.
      *
      * @param <string> $sPath The full AMEE REST API method request path.
      * @param <string> $sBody The option body of the AMEE REST API method call
@@ -240,7 +240,7 @@ class Services_AMEE_API
      *      response headers and the final row containing the JSON data
      *      (if $bReturnHeaders was true); an Exception object otherwise.
      */
-    protected function _sendRequest($sPath, $sBody = null, $bReturnHeaders = false, $bRepeat = true)
+    public function sendRequest($sPath, $sBody = null, $bReturnHeaders = false, $bRepeat = true)
     {
         // Ensure that the request is a valid type
         if (!preg_match('/^(GET|POST|PUT|DELETE)/', $sPath)) {
@@ -255,9 +255,9 @@ class Services_AMEE_API
         }
         // Ensure that there is a connection to the AMEE REST API open, so long
         // as this is NOT a "POST /auth" request!
-        if (!$this->_connected() && !$bAuthRequest) {
+        if (!$this->connected() && !$bAuthRequest) {
             try {
-                $this->_connect();
+                $this->connect();
             } catch (Exception $oException) {
                 throw $oException;
             }
@@ -325,8 +325,8 @@ class Services_AMEE_API
             // Authorisation failed
 			if ($bRepeat){
                 // Try once more
-                $this->_reconnect();
-				return $this->_sendRequest($sPath, $sBody, $bReturnHeaders, false);
+                $this->reconnect();
+				return $this->sendRequest($sPath, $sBody, $bReturnHeaders, false);
 			} else {
                 // Not going to try once more, raise an Exception
                 throw new Services_AMEE_Exception(
@@ -364,12 +364,12 @@ class Services_AMEE_API
     }
 
     /**
-     * A protected method to create a new connection to the AMEE REST API.
+     * A method to create a new connection to the AMEE REST API.
      *
      * @return <mixed> True if a connection to the AMEE REST API was
      *      successfully created; an Exception object otherwise.
      */
-    protected function _connect()
+    public function connect()
     {
         // Ensure that the required definitions to make a connection are present
         if (!defined('AMEE_API_PROJECT_KEY')) {
@@ -403,7 +403,7 @@ class Services_AMEE_API
         );
         // Call the AMEE REST API post method
         try {
-            $aResult =  $this->_sendRequest("POST $sPath", http_build_query($aOptions, NULL, '&'), true, false);
+            $aResult =  $this->sendRequest("POST $sPath", http_build_query($aOptions, NULL, '&'), true, false);
         } catch (Exception $oException) {
             throw $oException;
         }
@@ -427,10 +427,10 @@ class Services_AMEE_API
     }
 
     /**
-     * A protected method to close the current AMEE REST API connection (if one
-     * exists) by dropping all current session authentication tokens.
+     * A method to close the current AMEE REST API connection (if one exists)
+     * by dropping all current session authentication tokens.
      */
-    protected function _disconnect()
+    public function disconnect()
     {
         // Unset this object's connection
         unset($this->sAuthToken);
@@ -438,17 +438,17 @@ class Services_AMEE_API
     }
 
     /**
-     * A protected method to close the current AMEE REST API connection (if one
-     * exists) and then to reconnect to the AMEE REST API.
+     * A method to close the current AMEE REST API connection (if one exists)
+     * and then to reconnect to the AMEE REST API.
      *
      * @return <mixed> True if a connection to the AMEE REST API was
      *      successfully created; an Exception object otherwise.
      */
-    protected function _reconnect()
+    public function reconnect()
     {
         try {
-            $this->_disconnect();
-            $this->_connect();
+            $this->disconnect();
+            $this->connect();
         } catch (Exception $oException) {
             throw $oException;
         }

@@ -47,7 +47,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test the public post(), put(), get() and delete() methods, using a mocked
-     * version of the _validPath() method which returns an Exception.
+     * version of the validPath() method which returns an Exception.
      */
     public function testPostPutGetDeleteInvalidPath()
     {
@@ -55,43 +55,43 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $oPathException = new Exception('Valid Path Test Exception');
 
         // Create the mocked versions of the Services_AMEE_API class, with the
-        // protected _validPath() method mocked
+        // protected validPath() method mocked
         $aMockMethods = array(
-            '_validPath'
+            'validPath'
         );
         $oMockAPIPost   = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIPut    = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIGet    = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIDelete = $this->getMock('Services_AMEE_API', $aMockMethods);
 
-        // Set the expectation for the mocked objects that the _validPath()
+        // Set the expectation for the mocked objects that the validPath()
         // method will be called exactly once, with the path paramter
         // "/invalidpath" and type parameters "post", "put", "get" and "delete"
         // respectively for the mocked objects. Set the Exception that will be
         // thrown by the method call in all four cases.
         $oMockAPIPost->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('post')
                 )
                 ->will($this->throwException($oPathException));
         $oMockAPIPut->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('put')
                 )
                 ->will($this->throwException($oPathException));
         $oMockAPIGet->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('get')
                 )
                 ->will($this->throwException($oPathException));
         $oMockAPIDelete->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('delete')
@@ -133,8 +133,8 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test the public post(), put(), get() and delete() methods, using a mocked
-     * version of the _validPath() method which returns true, and a mocked
-     * version of the _sendRequest() method which returns an Exception.
+     * version of the validPath() method which returns true, and a mocked
+     * version of the sendRequest() method which returns an Exception.
      */
     public function testPostPutGetDeleteAPIError()
     {
@@ -142,17 +142,17 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $oRequestException = new Exception('Send Request Test Exception');
 
         // Create the mocked versions of the Services_AMEE_API class, with the
-        // protected _validPath() and _sendRequest() methods mocked
+        // protected validPath() and sendRequest() methods mocked
         $aMockMethods = array(
-            '_validPath',
-            '_sendRequest'
+            'validPath',
+            'sendRequest'
         );
         $oMockAPIPost   = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIPut    = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIGet    = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIDelete = $this->getMock('Services_AMEE_API', $aMockMethods);
         
-        // Set the expectation for the mocked objects that the _validPath()
+        // Set the expectation for the mocked objects that the validPath()
         // method will be called exactly once, with the path paramters
         // "/auth",
         // "/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08",
@@ -162,60 +162,60 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         // respectively for the mocked objects. Set the return respose of
         // "true".
         $oMockAPIPost->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/auth'),
                     $this->equalTo('post')
                 )
                 ->will($this->returnValue(true));
         $oMockAPIPut->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
                     $this->equalTo('put')
                 )
                 ->will($this->returnValue(true));
         $oMockAPIGet->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/profiles'),
                     $this->equalTo('get')
                 )
                 ->will($this->returnValue(true));
         $oMockAPIDelete->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/profiles/228A21573085/home/energy/quantity/B56410A978B6'),
                     $this->equalTo('delete')
                 )
                 ->will($this->returnValue(true));
         
-        // Set the expectation that the _sendRequest() method will be called
+        // Set the expectation that the sendRequest() method will be called
         // once, with the paramters as suggested by the expectations above. Set
         // the Exception that will be thrown by the method call. Note the
         // null body parameter expections for GET and DELETE.
         $oMockAPIPost->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('POST /auth'),
                     $this->equalTo('')
                 )
                 ->will($this->throwException($oRequestException));
         $oMockAPIPut->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('PUT /profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
                     $this->equalTo('')
                 )
                 ->will($this->throwException($oRequestException));
         $oMockAPIGet->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('GET /profiles')
                 )
                 ->will($this->throwException($oRequestException));
         $oMockAPIDelete->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('DELETE /profiles/228A21573085/home/energy/quantity/B56410A978B6')
                 )
@@ -256,24 +256,24 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test the public post(), put(), get() and delete() methods, using a mocked
-     * version of the _validPath() method which returns true, and a mocked
-     * version of the _sendRequest() method which returns a fake JSON response
+     * version of the validPath() method which returns true, and a mocked
+     * version of the sendRequest() method which returns a fake JSON response
      * in an array.
      */
     public function testPostPutGetDelete()
     {
         // Create the mocked versions of the Services_AMEE_API class, with the
-        // protected _validPath() and _sendRequest() methods mocked
+        // protected validPath() and sendRequest() methods mocked
         $aMockMethods = array(
-            '_validPath',
-            '_sendRequest'
+            'validPath',
+            'sendRequest'
         );
         $oMockAPIPost   = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIPut    = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIGet    = $this->getMock('Services_AMEE_API', $aMockMethods);
         $oMockAPIDelete = $this->getMock('Services_AMEE_API', $aMockMethods);
 
-        // Set the expectation for the mocked objects that the _validPath()
+        // Set the expectation for the mocked objects that the validPath()
         // method will be called exactly once, with the path paramters
         // "/auth",
         // "/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08",
@@ -283,35 +283,35 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         // respectively for the mocked objects. Set the return respose of
         // "true".
         $oMockAPIPost->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/auth'),
                     $this->equalTo('post')
                 )
                 ->will($this->returnValue(true));
         $oMockAPIPut->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
                     $this->equalTo('put')
                 )
                 ->will($this->returnValue(true));
         $oMockAPIGet->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/data/transport/car/generic/drill'),
                     $this->equalTo('get')
                 )
                 ->will($this->returnValue(true));
         $oMockAPIDelete->expects($this->once())
-                ->method('_validPath')
+                ->method('validPath')
                 ->with(
                     $this->equalTo('/profiles/228A21573085/home/energy/quantity/B56410A978B6'),
                     $this->equalTo('delete')
                 )
                 ->will($this->returnValue(true));
 
-        // Set the expectation that the _sendRequest() method will be called
+        // Set the expectation that the sendRequest() method will be called
         // once, with the paramters as suggested by the expectations above and
         // with optional parameter values, when supported. Set the fake JSON
         // data return arrays. Note the null body parameter expections for GET
@@ -329,27 +329,27 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
             0 => '{DELETE JSON DATA}'
         );
         $oMockAPIPost->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('POST /auth'),
                     $this->equalTo('username=user&password=pass')
                 )
                 ->will($this->returnValue($aReturnPost));
         $oMockAPIPut->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('PUT /profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
                     $this->equalTo('distance=200&representation=full')
                 )
                 ->will($this->returnValue($aReturnPut));
         $oMockAPIGet->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('GET /data/transport/car/generic/drill?fuel=diesel&size=large')
                 )
                 ->will($this->returnValue($aReturnGet));
         $oMockAPIDelete->expects($this->once())
-                ->method('_sendRequest')
+                ->method('sendRequest')
                 ->with(
                     $this->equalTo('DELETE /profiles/228A21573085/home/energy/quantity/B56410A978B6')
                 )
@@ -386,6 +386,135 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $sResult = $oMockAPIDelete->delete('/profiles/228A21573085/home/energy/quantity/B56410A978B6');
         // Test the result is valid
         $this->assertEquals($sResult, '{DELETE JSON DATA}');
+    }
+
+    /**
+     * Test all possible valid methods & paths, and some obvious invalid
+     * variations.
+     */
+    public function testValidPath()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test POST /auth methods
+        unset($bResult);
+        $bResult = $oAPI->validPath('/auth', 'post');
+        $this->assertTrue($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/aut', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /aut'
+            );
+        }
+        $this->assertNull($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/authh', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /authh'
+            );
+        }
+        $this->assertNull($bResult);
+
+        // Test POST /profiles methods
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles', 'post');
+        $this->assertTrue($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/profile', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profile'
+            );
+        }
+        $this->assertNull($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/profiless', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiless'
+            );
+        }
+        $this->assertNull($bResult);
+
+        // Test PUT /profiles methods
+        try {
+            $bResult = $oAPI->validPath('/profile', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profile'
+            );
+        }
+        $this->assertNull($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/profiles', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles'
+            );
+        }
+        $this->assertNull($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/profiles/ACDF76287', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles/ACDF76287'
+            );
+        }
+        $this->assertNull($bResult);
+        $this->assertNull($bResult);
+        unset($bResult);
+        try {
+            $bResult = $oAPI->validPath('/profiles/ACDF7628DF577', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles/ACDF7628DF577'
+            );
+        }
+        $this->assertNull($bResult);
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/ACDF7628D527', 'put');
+        $this->assertTrue($bResult);
+    }
+
+    public function testSendRequest()
+    {
+
+    }
+
+    public function testConnected()
+    {
+
+    }
+
+    public function testConnect()
+    {
+
+    }
+
+    public function testDisconnect()
+    {
+
+    }
+
+    public function testReconnect()
+    {
+
     }
 
 }
