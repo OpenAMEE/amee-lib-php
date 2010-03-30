@@ -15,7 +15,7 @@
  */
 
 require_once 'PHPUnit/Framework.php';
-require_once 'tests/integration/AMEE/APITest.php';
+//require_once 'tests/integration/AMEETest.php';
 
 /**
  * The Services_AMEE_AllIntegrationTests class provides a convenient way of
@@ -38,9 +38,9 @@ class Services_AMEE_AllIntegrationTests extends PHPUnit_Framework_TestSuite
         );
 
         // Add all of the individual integration test classes
-        $oIntegrationTestSuite->addTestSuite(
-            'Services_AMEE_API_IntegrationTest'
-        );
+        //$oIntegrationTestSuite->addTestSuite(
+        //    'Services_AMEE_IntegrationTest'
+        //);
 
         return $oIntegrationTestSuite;
     }
