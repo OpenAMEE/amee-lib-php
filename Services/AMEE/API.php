@@ -244,10 +244,6 @@ class Services_AMEE_API
      */
     protected function _sendRequest($sPath, $sBody = null, $bReturnHeaders = false, $bRepeat = true)
     {
-
-        // Debug
-        echo "<pre>";
-
         // Ensure that the request is a valid type
         if (!preg_match('/^(GET|POST|PUT|DELETE)/', $sPath)) {
             throw new Services_AMEE_Exception(
@@ -292,10 +288,6 @@ class Services_AMEE_API
                 $sRequest .=
                 "\n\n";
             }
-
-        // Debug
-        echo "$sRequest\n\n";
-
         // Connect to the AMEE REST API and send the request
         $iError;
         $sError;
@@ -323,10 +315,6 @@ class Services_AMEE_API
         $aJSON = array();
         while (!feof($rSocket)) {
             $sLine = fgets($rSocket);
-
-            // Debug
-            echo $sLine;
-
             $aResponseLines[] = $sLine;
             if (preg_match('/^{/', $sLine)) {
                 // The line is a JSON response line, store it separately
@@ -334,10 +322,6 @@ class Services_AMEE_API
             }
         }
         fclose($rSocket);
-
-        // Debug
-        echo "</pre>";
-        
         // Check that the request was authorised
         if (strpos($aResponseLines[0], '401 UNAUTH') !== false){
             // Authorisation failed
