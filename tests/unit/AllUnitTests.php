@@ -15,6 +15,7 @@
  */
 
 require_once 'PHPUnit/Framework.php';
+require_once 'tests/testConfig.php';
 require_once 'tests/unit/AMEE/APITest.php';
 //require_once 'tests/unit/AMEE/BaseObjectTest.php';
 //require_once 'tests/unit/AMEE/ProfileTest.php';

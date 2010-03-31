@@ -15,6 +15,7 @@
  */
 
 require_once 'PHPUnit/Framework.php';
+require_once 'tests/testConfig.php';
 require_once 'tests/unit/AllUnitTests.php';
 //require_once 'tests/integration/AllIntegrationTests.php';
 

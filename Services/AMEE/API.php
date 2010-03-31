@@ -255,7 +255,7 @@ class Services_AMEE_API
         }
         // Ensure that there is a connection to the AMEE REST API open, so long
         // as this is NOT a "POST /auth" request!
-        if (!$this->connected() && !$bAuthRequest) {
+        if (!$bAuthRequest && !$this->connected()) {
             try {
                 $this->connect();
             } catch (Exception $oException) {
@@ -284,23 +284,23 @@ class Services_AMEE_API
                 $sBody;
             } else {
                 $sRequest .=
-                "\n\n";
+                "\n";
             }
         // Connect to the AMEE REST API and send the request
-        $iError;
-        $sError;
+        $iError = '';
+        $sError = '';
         if ($bAuthRequest && extension_loaded('openssl')) {
             // Connect over SSL to protect the AMEE REST API username/password
-            $rSocket = fsockopen('ssl://' . AMEE_API_URL, AMEE_API_PORT_SSL, $iError, $sError);
+            $rSocket = $this->_socketOpen('ssl://' . AMEE_API_URL, AMEE_API_PORT_SSL, $iError, $sError);
         } else {
-            $rSocket = fsockopen(AMEE_API_URL, AMEE_API_PORT, $iError, $sError);
+            $rSocket = $this->_socketOpen(AMEE_API_URL, AMEE_API_PORT, $iError, $sError);
         }
         if ($rSocket === false) {
             throw new Services_AMEE_Exception(
                 'Unable to connect to the AMEE REST API: ' . $sError
             );
         }
-        $iResult = fwrite($rSocket, $sRequest, strlen($sRequest));
+        $iResult = $this->_socketWrite($rSocket, $sRequest);
 		if ($iResult === false || $iResult != strlen($sRequest)) {
             throw new Services_AMEE_Exception(
                 'Error sending the AMEE REST API request'
@@ -308,29 +308,31 @@ class Services_AMEE_API
         }
         // Obtain the AMEE REST API response
         $aResponseLines = array();
-        $iCounter = 0;
-        $aResponseLines[$iCounter] = '';
         $aJSON = array();
-        while (!feof($rSocket)) {
-            $sLine = fgets($rSocket);
+        while (!$this->_socketEOF($rSocket)) {
+            $sLine = $this->_socketGetLine($rSocket);
             $aResponseLines[] = $sLine;
             if (preg_match('/^{/', $sLine)) {
                 // The line is a JSON response line, store it separately
                 $aJSON[] = $sLine;
             }
         }
-        fclose($rSocket);
+        $this->_socketClose($rSocket);
         // Check that the request was authorised
         if (strpos($aResponseLines[0], '401 UNAUTH') !== false){
             // Authorisation failed
 			if ($bRepeat){
                 // Try once more
                 $this->reconnect();
-				return $this->sendRequest($sPath, $sBody, $bReturnHeaders, false);
+                try {
+                    return $this->sendRequest($sPath, $sBody, $bReturnHeaders, false);
+                } catch (Exception $oException) {
+                    throw $oException;
+                }
 			} else {
                 // Not going to try once more, raise an Exception
                 throw new Services_AMEE_Exception(
-                    'The AMEE REST API returned an authorisation failure result.'
+                    'The AMEE REST API returned an authorisation failure result'
                 );
             }
 		}
@@ -345,13 +347,87 @@ class Services_AMEE_API
     }
 
     /**
-     * A protected method to determine if a connection to the AMEE REST API
-     * already exists or not.
+     * A protected method that simply wraps the PHP function fsockopen, to help
+     * with unit testing of the sendRequest() method.
+     *
+     * @param <string> $sHost The fsockopen() function host name.
+     * @param <string> $sPort The fsockopen() function port.
+     * @param <integer> $iError The fsockopen() function error code param.
+     * @param <string> $sError The fsockopen() function error string param.
+     * @return <mixed> As for the PHP fsockopen() function.
+     *
+     * See http://php.net/manual/en/function.fsockopen.php.
+     */
+    protected function _socketOpen($sHost, $sPort, $iError, $sError)
+    {
+        return fsockopen($sHost, $sPort, $iError, $sError);
+    }
+
+    /**
+     * A protechted method that simply wraps the PHP function fwrite, to help
+     * with unit testing of the sendRequest() method.
+     *
+     * @param <resource> $rSocket The fwrite() function socket resource.
+     * @param <string> $sWrite The fwrite() function write string.
+     * @return <mixed> As for the PHP fwrite() function.
+     *
+     * See http://php.net/manual/en/function.fwrite.php.
+     */
+    protected function _socketWrite($rSocket, $sWrite)
+    {
+        return fwrite($rSocket, $sWrite, strlen($sWrite));
+    }
+
+    /**
+     * A protected method that simply wraps the PHP function feof, to help with
+     * unit testing of the sendRequest() method.
+     *
+     * @param <resource> $rSocket The feof() function socket resource.
+     * @return <boolean> As for the PHP fwrite() function.
+     *
+     * See http://php.net/manual/en/function.feof.php.
+     */
+    protected function _socketEOF($rSocket)
+    {
+        return feof($rSocket);
+    }
+
+    /**
+     * A protected method that simply wraps the PHP function fgets, to help with
+     * unit testing of the sendRequest() method.
+     *
+     * @param <type> $rSocket The fgets() function socket resource.
+     * @return <mixed> As for the PHP fgets() function.
+     *
+     * See http://php.net/manual/en/function.fgets.php
+     */
+    protected function _socketGetLine($rSocket)
+    {
+        return fgets($rSocket);
+    }
+
+    /**
+     * A protected method that simply wraps the PHP function fclose, to help
+     * with unit testing of the sendRequest() method.
+     *
+     * @param <type> $rSocket The fclose() function socket resource.
+     * @return <boolean> As for the PHP close() function.
+     *
+     * See http://php.net/manual/en/function.fclose.php
+     */
+    protected function _socketClose($rSocket)
+    {
+        return fclose($rSocket);
+    }
+
+    /**
+     * A method to determine if a connection to the AMEE REST API already
+     * existsor not.
      *
      * @return <boolean> True if a connection to the AMEE REST API exists; false
      *      otherwise.
      */
-    protected function _connected()
+    public function connected()
     {
         // Are we already connected via this object?
 		if (!empty($this->sAuthToken)
@@ -374,17 +450,17 @@ class Services_AMEE_API
         // Ensure that the required definitions to make a connection are present
         if (!defined('AMEE_API_PROJECT_KEY')) {
             throw new Services_AMEE_Exception(
-                'Cannot connect to the AMEE REST API: No project key defined.'
+                'Cannot connect to the AMEE REST API: No project key defined'
             );
         }
         if (!defined('AMEE_API_PROJECT_PASSWORD')) {
             throw new Services_AMEE_Exception(
-                'Cannot connect to the AMEE REST API: No project password defined.'
+                'Cannot connect to the AMEE REST API: No project password defined'
             );
         }
         if (!defined('AMEE_API_URL')) {
             throw new Services_AMEE_Exception(
-                'Cannot connect to the AMEE REST API: No API URL defined.'
+                'Cannot connect to the AMEE REST API: No API URL defined'
             );
         }
         if (!defined('AMEE_API_PORT')) {
@@ -412,6 +488,7 @@ class Services_AMEE_API
         foreach ($aResult as $sLine) {
             if (preg_match('/^authToken: (.+)/', $sLine, $aMatches)) {
                 $this->sAuthToken = $aMatches[1];
+                $this->iAuthExpires = time() + AMEE_API_AUTH_TIMEOUT;
                 $bFoundAuth = true;
                 break;
             }
@@ -420,7 +497,7 @@ class Services_AMEE_API
             // Oh dear, no authorisation token found, connection wasn't
             // really made!
             throw new Services_AMEE_Exception(
-                'Authentication error: No authToken returned by the AMEE REST API.'
+                'Authentication error: No authToken returned by the AMEE REST API'
             );
         }
         return true;
@@ -429,12 +506,15 @@ class Services_AMEE_API
     /**
      * A method to close the current AMEE REST API connection (if one exists)
      * by dropping all current session authentication tokens.
+     *
+     * @return <boolean> Returns true.
      */
     public function disconnect()
     {
         // Unset this object's connection
         unset($this->sAuthToken);
         unset($this->iAuthExpires);
+        return true;
     }
 
     /**
@@ -446,12 +526,13 @@ class Services_AMEE_API
      */
     public function reconnect()
     {
+        $this->disconnect();
         try {
-            $this->disconnect();
             $this->connect();
         } catch (Exception $oException) {
             throw $oException;
         }
+        return true;
     }
 
 }
