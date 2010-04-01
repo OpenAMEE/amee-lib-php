@@ -408,7 +408,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API POST path specified: /aut'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
         unset($bResult);
         try {
             $bResult = $oAPI->validPath('/authh', 'post');
@@ -418,7 +418,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API POST path specified: /authh'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
 
         // Test POST /profiles methods
         unset($bResult);
@@ -433,7 +433,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API POST path specified: /profile'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
         unset($bResult);
         try {
             $bResult = $oAPI->validPath('/profiless', 'post');
@@ -443,7 +443,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API POST path specified: /profiless'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
     }
 
     /**
@@ -462,7 +462,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API PUT path specified: /profile'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
         unset($bResult);
         try {
             $bResult = $oAPI->validPath('/profiles', 'put');
@@ -472,7 +472,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API PUT path specified: /profiles'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
         unset($bResult);
         try {
             $bResult = $oAPI->validPath('/profiles/ACDF76287', 'put');
@@ -482,8 +482,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API PUT path specified: /profiles/ACDF76287'
             );
         }
-        $this->assertNull($bResult);
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
         unset($bResult);
         try {
             $bResult = $oAPI->validPath('/profiles/ACDF7628DF577', 'put');
@@ -493,7 +492,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 'Invalid AMEE REST API PUT path specified: /profiles/ACDF7628DF577'
             );
         }
-        $this->assertNull($bResult);
+        $this->assertFalse(isset($bResult));
         unset($bResult);
         $bResult = $oAPI->validPath('/profiles/ACDF7628D527', 'put');
         $this->assertTrue($bResult);

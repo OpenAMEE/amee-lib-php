@@ -17,7 +17,7 @@
 require_once 'PHPUnit/Framework.php';
 require_once 'tests/testConfig.php';
 require_once 'tests/unit/AllUnitTests.php';
-//require_once 'tests/integration/AllIntegrationTests.php';
+require_once 'tests/integration/AllIntegrationTests.php';
 
 /**
  * The Services_AMEE_AllTests class provides a convenient way of running all of
@@ -35,7 +35,7 @@ class Services_AMEE_AllTests extends PHPUnit_Framework_TestSuite
 
     public static function suite()
     {
-        $oTestSuite = new Services_AMEE_AllTests('Services_AMEE');
+        $oTestSuite = new Services_AMEE_AllTests();
 
         // Add all of the unit tests
         $oTestSuite->addTestSuite(
@@ -43,9 +43,9 @@ class Services_AMEE_AllTests extends PHPUnit_Framework_TestSuite
         );
 
         // Add all of the integration tests
-        //$oTestSuite->addTestSuite(
-        //    Services_AMEE_AllIntegrationTests::suite()
-        //);
+        $oTestSuite->addTestSuite(
+            Services_AMEE_AllIntegrationTests::suite()
+        );
 
         return $oTestSuite;
     }

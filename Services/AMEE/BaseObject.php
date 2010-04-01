@@ -31,35 +31,67 @@ abstract class Services_AMEE_BaseObject
 {
 
     /**
-     * @var <string> $sUID The UID of the object.
+     * @var <Services_AMEE_API> $oAPI The local instance of the API
+     *      communications class.
      */
-    private $sUID;
+    protected $oAPI;
 
     /**
-     * @var <string> $sCreated The created date of the object.
+     * @var <string> $sLastJSON The last JSON data string obtained.
      */
-    private $sCreated;
+    protected $sLastJSON;
 
     /**
-     * @var <string> $sModified The last modified date of the object.
+     * @var <array> $aLastJSON The last JSON data string obtained in decoded
+     *      format.
      */
-    private $sModified;
+    protected $aLastJSON;
 
     /**
-     * A method to retun this object's UID
-     *
-     * @return <mixed> This object's UID as a string; an Exception object
-     *      if this object hasn't been initialized.
+     * The constructor method for the Services_AMEE_BaseObject class, which
+     * can be used by implementing class constructors to set up the API
+     * communications class.
      */
-    public function getUID()
+    function __construct()
     {
-        if (!empty($this->sUID)) {
-            return $this->sUID;
+        try {
+            // Ensure JSON package exists
+            $this->_hasJSONDecode();
+            // Create the local instance of the API communications class
+            $this->oAPI = Services_AMEE_API::singleton();
+        } catch (Exception $oException) {
+            throw $oException;
         }
-        // Error, object is not itialized
+    }
+
+    /**
+     * A protected method that detects if the PHP environment has the required
+     * PHP json_decode() function available.
+     *
+     * @return <mixed> Returns the boolean true if json_decode() is available,
+     *      throws an Exception otherwise.
+     */
+    protected function _hasJSONDecode()
+    {
+        if (extension_loaded('json'))
+        {
+            return true;
+        }
         throw new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getUID() on an un-initialized object.'
+            'The PHP function json_decode() does not exist - the JSON package is required'
         );
+    }
+
+    /**
+     * A protected method that correctly formats date strings into ISO 8601
+     * format.
+     *
+     * @param <string> $sDate The date string to format.
+     * @return <string> The same date as an ISO 8601 formatted string.
+     */
+    protected function _formatDate($sDate)
+    {
+        return date('c', strtotime($sDate));
     }
 
 }

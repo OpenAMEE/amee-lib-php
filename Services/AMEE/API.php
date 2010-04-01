@@ -91,6 +91,19 @@ class Services_AMEE_API
     );
 
     /**
+     * A static singleton method to obtain an instance of this class, while
+     * ensuring that only ONE instance of the class ever exists for a single
+     * PHP script execution.
+     */
+    static function singleton()
+    {
+        if (!isset($_GLOBALS['Services_AMEE_API'])) {
+            $_GLOBALS['Services_AMEE_API'] = new Services_AMEE_API();
+        }
+        return $_GLOBALS['Services_AMEE_API'];
+    }
+
+    /**
      * A wrapper method to simplify the process of sending POST requests to the
      * AMEE REST API.
      *
@@ -177,8 +190,8 @@ class Services_AMEE_API
      * the AMEE REST API.
      *
      * @param <string> $sPath The AMEE REST API query path.
-     * @return <mixed> The AMEE REST API JSON response string on success; an
-     *      Exception object otherwise.
+     * @return <mixed> The boolean true on success; an Exception object
+     *      otherwise.
      */
     public function delete($sPath)
     {
@@ -187,8 +200,8 @@ class Services_AMEE_API
             $this->validPath($sPath, 'delete');
             // Send the AMEE REST API delete request
             $aResult = $this->sendRequest("DELETE $sPath");
-            // Return the JSON data string
-            return $aResult[0];
+            // Return success
+            return true;
         } catch (Exception $oException) {
             throw $oException;
         }

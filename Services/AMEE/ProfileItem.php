@@ -14,7 +14,7 @@
  * @link http://pear.php.net/package/Services_AMEE
  */
 
-require_once 'Services/AMEE/BaseObject.php';
+require_once 'Services/AMEE/BaseItemObject.php';
 
 /**
  * The Services_AMEE_ProfileItem class is used to represent an AMEE Profile
@@ -45,7 +45,7 @@ require_once 'Services/AMEE/BaseObject.php';
  * @license http://www.opensource.org/licenses/mit-license.html MIT License
  * @link http://pear.php.net/package/Services_AMEE
  */
-class Services_AMEE_ProfileItem extends Services_AMEE_BaseObject
+class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
 {
 
     /**
@@ -77,6 +77,17 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseObject
      *      until.
      */
     private $sEndDate;
+
+    /**
+     * The constructor for the Services_AMEE_ProfileItem class.
+     */
+    function  __construct() {
+        try {
+            parent::__construct();
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
     /**
      * A method to update the AMEE Profile Item.

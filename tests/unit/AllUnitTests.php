@@ -37,9 +37,7 @@ class Services_AMEE_AllUnitTests extends PHPUnit_Framework_TestSuite
 
     public static function suite()
     {
-        $oUnitTestSuite = new Services_AMEE_AllUnitTests(
-            'Services_AMEE Unit Tests'
-        );
+        $oUnitTestSuite = new Services_AMEE_AllUnitTests();
 
         // Add all of the individual unit test classes
         $oUnitTestSuite->addTestSuite('Services_AMEE_API_UnitTest');
