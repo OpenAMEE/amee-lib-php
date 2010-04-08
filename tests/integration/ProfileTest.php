@@ -36,15 +36,7 @@ class Services_AMEE_Profile_IntegrationTest extends PHPUnit_Framework_TestCase
      */
     function testCreateProfile()
     {
-
-        $oProfileList = new Services_AMEE_ProfileList();
-        echo "\nProfileList class currently has profile count: " . count($oProfileList->getProfileInfo()) . "\n";
-        $oProfile = new Services_AMEE_Profile($oProfileList);
-        echo "\nCREATED NEW PROFILE\n";
-        echo "\nProfileList class currently has profile count: " . count($oProfileList->getProfileInfo()) . "\n";
-        $oProfile->delete();
-        echo "\nDELETED THE NEW PROFILE\n";
-        echo "\nProfileList class currently has profile count: " . count($oProfileList->getProfileInfo()) . "\n";
+        
     }
 
 }

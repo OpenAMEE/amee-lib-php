@@ -16,6 +16,8 @@
 
 require_once 'Services/AMEE/BaseItemObject.php';
 require_once 'Services/AMEE/Observer.php';
+require_once 'Services/AMEE/API.php';
+require_once 'Services/AMEE/ProfileItem.php';
 
 /**
  * The Services_AMEE_Profile class is used to represent an AMEE Profile,
@@ -46,12 +48,26 @@ require_once 'Services/AMEE/Observer.php';
  * @link http://pear.php.net/package/Services_AMEE
  */
 class Services_AMEE_Profile extends Services_AMEE_BaseItemObject
+    implements Services_AMEE_Observer
 {
 
     /**
+     * @var <array> $aProfileItems An array of the Services_AMEE_ProfileItem
+     *      objects, indexed by AMEE Profile Item UID.
+     */
+    private $aProfileItems = array();
+
+    /**
+     * @var <boolean> $bCompleteList Is the list of AMME Profile Items stored in
+     *      this object complete, or are there more AMEE Profile Items not yet
+     *      loaded?
+     */
+    private $bCompleteList = false;
+
+    /**
      * @var <array> $aObservingProfileLists An array of observing
-     * Services_AMEE_Profile objects. Normally, only expect there to be one of
-     * these, but you can have more if you really want.
+     * Services_AMEE_ProfileList objects. Normally, only expect there to be one
+     * of these, but you can have more if you really want.
      */
     private $aObservingProfileLists;
 
@@ -59,37 +75,70 @@ class Services_AMEE_Profile extends Services_AMEE_BaseItemObject
      * The constructor for the Services_AMEE_Profile class.
      *
      * @param <Services_AMEE_ProfileList> $oProfileList The instance of the
-     *      Services_AMEE_Profile class in use in the script.
-     * @param <array> $aProfileData An optional array of AMEE Profile
-     *      information, the intention is to create a Services_AMEE_Profile
-     *      object for an AMEE Profile that already exists. Must contiain keys
-     *      'uid', 'created' and 'modified' to supply the already existing AMEE
-     *      Profile UID, created date and modified date. If no array is
-     *      supplied, or the array does not contain the complete required
-     *      information, a new AMEE Profile will be attempted to be created.
+     *      Services_AMEE_ProfileList class that is the observer of the new
+     *      Services_AMEE_Profile object to be created.
+     * @param <array> $aProfileData An optional array of existing AMEE Profile
+     *      information. If passed in, will create a Services_AMEE_Profile
+     *      object for an AMEE Profile that already exists in AMEE. Must
+     *      contiain keys 'uid', 'created' and 'modified' to supply the already
+     *      existing AMEE Profile UID, created date and modified date.
+     * @param <boolean> $bSetAllProfileItems An optional parameter, when true,
+     *      causes all AMEE Profile Items to be obtained and set; by default, only
+     *      up to the first 10 AMEE Profiles will be set, for faster object
+     *      creation time.
      * @return <object> The created Services_AMEE_Profile object (either for the
      *      specified AMEE Profile that already existed, or for the newly
      *      created AMEE Profile); an Exception object otherwise.
      */
-    public function __construct($oProfileList, $aProfileData = array())
+    public function __construct($oProfileList, $aProfileData = null, $bSetAllProfileItems = false)
     {
         try {
             parent::__construct();
             $this->register($oProfileList);
-            if (isset($aProfileData['uid'])
-                    && isset($aProfileData['created'])
-                    && isset($aProfileData['modified'])) {
+            if (is_array($aProfileData)) {
+                // Ensure that all required information to create an existing
+                // AMEE Profile object is present
+                if (!isset($aProfileData['uid'])) {
+                    throw new Services_AMME_Exception(
+                        'Missing UID parameter, which is required to create ' .
+                        'an AMEE Profile object for an existing AMEE Profile'
+                    );
+                }
+                if (!isset($aProfileData['created'])) {
+                    throw new Services_AMME_Exception(
+                        'Missing created date parameter, which is required ' .
+                        'to create an AMEE Profile object for an existing ' .
+                        'AMEE Profile'
+                    );
+                }
+                if (!isset($aProfileData['modified'])) {
+                    throw new Services_AMME_Exception(
+                        'Missing modified date parameter, which is required ' .
+                        'to create an AMEE Profile object for an existing ' .
+                        'AMEE Profile'
+                    );
+                }
                 // Create the AMEE Profile on the basis of the information passed
                 // into the constructor
                 $this->sUID      = $aProfileData['uid'];
                 $this->sCreated  = $this->_formatDate($aProfileData['created']);
                 $this->sModified = $this->_formatDate($aProfileData['modified']);
+                // As this is NOT a new AMEE API Profile, there may be existing
+                // AMEE API Profile Items present - fet up to the first 10 AMEE
+                // Profiles Items now
+                $this->setProfileItemss();
+                // Do more AMEE Profile Items need to be set?
+                if (!$this->allProfileItemsSet() && $bSetAllProfileItems) {
+                    // Get them ALL
+                    $this->setProfileItems(1, $this->aLastJSON['pager']['items']);
+                }
                 // Notify any observing classes of this AMEE Profile object's
                 // creation
                 $this->_notifyObserversNewChild();
                 return;
             }
-            // Prepare the AMEE REST API call path & options
+            // Create a new AMEE Profile - prepare the AMEE REST API call path &
+            // options
             $sPath = '/profiles';
             $aOptions = array(
                 'profile' => 'true'
@@ -128,8 +177,8 @@ class Services_AMEE_Profile extends Services_AMEE_BaseItemObject
      */
     private function _notifyObserversNewChild()
     {
-        foreach ($this->aObservingProfileLists as $oObservers) {
-            $oObservers->newChild($this->sUID, $this);
+        foreach ($this->aObservingProfileLists as $oObserver) {
+            $oObserver->newChild($this->sUID, $this);
         }
     }
 
@@ -139,9 +188,102 @@ class Services_AMEE_Profile extends Services_AMEE_BaseItemObject
      */
     private function _notifyObserversDeletedChild()
     {
-        foreach ($this->aObservingProfileLists as $oObservers) {
-            $oObservers->deletedChild($this->sUID);
+        foreach ($this->aObservingProfileLists as $oObserver) {
+            $oObserver->deletedChild($this->sUID);
         }
+    }
+
+    /**
+     * An interface-required method to allow the this class to be notified
+     * when a new AMEE Profile Item object has been created.
+     *
+     * @param <string> $sUID The UID of the AMEE Profile Item object that has
+     *      been created.
+     * @param <object> $oChild The AMEE Profile Item object that has been
+     *      created.
+     */
+    public function newChild($sUID, $oChild)
+    {
+        if (!isset($this->aProfileItems[$sUID])) {
+            $this->aProfileItems[$sUID] = $oChild;
+        }
+    }
+
+    /**
+     * An interface-required method to allow this class to be notified
+     * when an AMEE Profile Item object is deleted.
+     *
+     * @param <string> $sUID The UID of the AMEE Profile Item that has been
+     *      deleted.
+     */
+    public function deletedChild($sUID)
+    {
+        if (isset($this->aProfileItems[$sUID])) {
+            unset($this->aProfileItems[$sUID]);
+        }
+
+    }
+
+    /**
+     * A method to get the required AMEE Profile Item data that exists in the
+     * defined AMEE REST API Profile and create and the associated
+     * Service_AMEE_ProfileItem objects in this object.
+     *
+     * @param <integer> $iPage Optional page number of the AMEE Profile Item
+     *      items to return. Default is the first page.
+     * @param <integer> $iItemsPerPage Optional number of AMEE Profile Item
+     *      items to return per page. Default is 10.
+     */
+    public function setProfileItems($iPage = 1, $iItemsPerPage = 10)
+    {
+        // Prepare the AMEE REST API call path & options
+        $sPath = '/profiles';
+        $aOptions = array(
+            'page'         => $iPage,
+            'itemsPerPage' => $iItemsPerPage
+        );
+        // Call the AMEE REST API
+        try {
+            $this->sLastJSON = $this->oAPI->get($sPath, $aOptions);
+
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+        // Process the result data
+        $this->aLastJSON = json_decode($this->sLastJSON, true);
+        // Create and set the AMEE Profiles found
+        foreach ($this->aLastJSON['profiles'] as $aProfile) {
+            // Don't create and set for already existing AMEE Profiles
+            if (isset($this->aProfiles[$aProfile['uid']])) {
+                continue;
+            }
+            $aProfileData = array(
+                'uid'      => $aProfile['uid'],
+                'created'  => $this->_formatDate($aProfile['created']),
+                'modified' => $this->_formatDate($aProfile['modified'])
+            );
+            $oProfile = new Services_AMEE_Profile($this, $aProfileData);
+            $this->aProfiles[$aProfile['uid']] = $oProfile;
+        }
+        // Are all AMEE Profiles (now) set?
+        if (count($this->aProfiles) == $this->aLastJSON['pager']['items']) {
+            $this->bCompleteList = true;
+        } else {
+            $this->bCompleteList = false;
+        }
+    }
+
+    /**
+     * A method to determine if all AMEE Profile Items in the defined AMEE REST
+     * API Profile have been set in the current Services_AMEE_Profile object or
+     * not.
+     *
+     * @return <boolean> True if all AMEE Profile Items are set in the object,
+     *      false otherwise.
+     */
+    public function allProfileItemsSet()
+    {
+        return $this->bCompleteList;
     }
 
     /**
@@ -162,60 +304,6 @@ class Services_AMEE_Profile extends Services_AMEE_BaseItemObject
         // Notify any observing classes of this AMEE Profile object's deletion
         $this->_notifyObserversDeletedChild();
     }
-
-//    /**
-//     * A method to get an AMEE Profile Category description and the contents
-//     * of that AMEE Profile Category, for the specificed AMEE Profile Category
-//     * path.
-//     *
-//     * The contents includes ...
-//     *
-//     * @param <string> $sCategoryPath An optional string of the path of the
-//     *      desired AMEE Profile Category. For example, "/home" or
-//     *      "/home/energy/quantity". If no AMEE Profile Category path is
-//     *      supplied, then the entire AMEE Profile Category tree will be
-//     *      returned.
-//     * @param <array> $aOptions An optional associative array of parameters that
-//     *      can be used to restrict ...
-//     *          - startDate
-//     *          - endDate
-//     *          - duration
-//     *          - selectby
-//     *          - mode
-//     *          - returnUnit
-//     *          - returnPerUnit
-//     * @return ... ???
-//     */
-//    public function getCategory($sCategoryPath = null, array $aOptions = null)
-//    {
-//
-//    }
-//
-//    /**
-//     * A method to create a new AMEE Profile Item in this AMEE Profile.
-//     *
-//     * @param <Service_AMEE_DataItem> $oDataItem The AMEE Data Item that
-//     *      corresponds to the AMEE Profile Item that should be created.
-//     * @param <array> $aOptions
-//     * @return <object> A Service_AMEE_ProfileItem object represeting the AMEE
-//     *      Profile Item created; an Exception object otherwise.
-//     */
-//    public function createItem(Service_AMEE_DataItem $oDataItem, array $aOptions = null)
-//    {
-//
-//    }
-//
-//    /**
-//     * A method to retrieve an AMEE Profile Item from this AMEE Profile.
-//     *
-//     * @param <string> $sProfileItemUID The AMEE Profile Item UID.
-//     * @return <object> The requested AMEE Profile Item as a
-//     *      Service_AMEE_ProfileItem object; an Exception object otherwise.
-//     */
-//    public function getItem($sProfileItemUID)
-//    {
-//
-//    }
 
 }
 

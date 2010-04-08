@@ -9,3 +9,8 @@ Core PHP packages that are required for the library:
 Can use openssl for POST /auth connections, if the package is installed, to
 protect username/password info; if not present, will send username/password
 information to the API "in the clear".
+
+Caching TODO List:
+
+1. Caching of Data Item Drill Down UIDs
+2. 

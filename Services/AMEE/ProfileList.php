@@ -45,7 +45,7 @@ class Services_AMEE_ProfileList extends Services_AMEE_BaseObject
 
     /**
      * @var <boolean> $bCompleteList Is the list of AMME Profiles stored in
-     *      the instance complete, or are there more AMEE Profiles not yet
+     *      this object complete, or are there more AMEE Profiles not yet
      *      loaded?
      */
     private $bCompleteList = false;
@@ -142,7 +142,6 @@ class Services_AMEE_ProfileList extends Services_AMEE_BaseObject
                 'modified' => $this->_formatDate($aProfile['modified'])
             );
             $oProfile = new Services_AMEE_Profile($this, $aProfileData);
-            $this->aProfiles[$aProfile['uid']] = $oProfile;
         }
         // Are all AMEE Profiles (now) set?
         if (count($this->aProfiles) == $this->aLastJSON['pager']['items']) {
@@ -198,7 +197,8 @@ class Services_AMEE_ProfileList extends Services_AMEE_BaseObject
             return $this->aProfiles[$sUID];
         }
         throw new Services_AMEE_Exception(
-            'Requested AMEE Profile with UID ' . $sUID . ' is not currently set or does not exist'
+            'Requested AMEE Profile with UID ' . $sUID . ' is not currently ' .
+            'set or does not exist'
         );
     }
 

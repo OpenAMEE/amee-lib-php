@@ -121,7 +121,10 @@ class Services_AMEE_API
             // Test to ensure that the path at least as a valid opening
             $this->validPath($sPath, 'post');
             // Send the AMEE REST API post request
-            $aResult =  $this->sendRequest("POST $sPath", http_build_query($aParams, NULL, '&'));
+            $aResult =  $this->sendRequest(
+                "POST $sPath",
+                http_build_query($aParams, NULL, '&')
+            );
             // Return the JSON data string
             return $aResult[0];
         } catch (Exception $oException) {
@@ -147,7 +150,10 @@ class Services_AMEE_API
             // Test to ensure that the path at least as a valid opening
             $this->validPath($sPath, 'put');
             // Send the AMEE REST API put request
-            $aResult = $this->sendRequest("PUT $sPath", http_build_query($aParams, NULL, '&'));
+            $aResult = $this->sendRequest(
+                "PUT $sPath",
+                http_build_query($aParams, NULL, '&')
+            );
             // Return the JSON data string
             return $aResult[0];
         } catch (Exception $oException) {
@@ -174,7 +180,9 @@ class Services_AMEE_API
             $this->validPath($sPath, 'get');
             // Send the AMEE REST API get request
             if (count($aParams) > 0) {
-                $aResult = $this->sendRequest("GET $sPath?" . http_build_query($aParams, NULL, '&'));
+                $aResult = $this->sendRequest(
+                    "GET $sPath?" . http_build_query($aParams, NULL, '&')
+                );
             } else {
                 $aResult = $this->sendRequest("GET $sPath");
             }
@@ -228,7 +236,8 @@ class Services_AMEE_API
         // for the method type
         if (!preg_match($sPathPattern, $sPath)) {
             throw new Services_AMEE_Exception(
-                'Invalid AMEE REST API ' . strtoupper($sType) . ' path specified: ' . $sPath
+                'Invalid AMEE REST API ' . strtoupper($sType) . ' ' .
+                'path specified: ' . $sPath
             );
         }
         return true;
@@ -304,9 +313,18 @@ class Services_AMEE_API
         $sError = '';
         if ($bAuthRequest && extension_loaded('openssl')) {
             // Connect over SSL to protect the AMEE REST API username/password
-            $rSocket = $this->_socketOpen('ssl://' . AMEE_API_URL, AMEE_API_PORT_SSL, $iError, $sError);
+            $rSocket = $this->_socketOpen(
+                'ssl://' . AMEE_API_URL, AMEE_API_PORT_SSL,
+                $iError,
+                $sError
+            );
         } else {
-            $rSocket = $this->_socketOpen(AMEE_API_URL, AMEE_API_PORT, $iError, $sError);
+            $rSocket = $this->_socketOpen(
+                AMEE_API_URL,
+                AMEE_API_PORT,
+                $iError,
+                $sError
+            );
         }
         if ($rSocket === false) {
             throw new Services_AMEE_Exception(
@@ -338,7 +356,12 @@ class Services_AMEE_API
                 // Try once more
                 $this->reconnect();
                 try {
-                    return $this->sendRequest($sPath, $sBody, $bReturnHeaders, false);
+                    return $this->sendRequest(
+                        $sPath,
+                        $sBody,
+                        $bReturnHeaders,
+                        false
+                    );
                 } catch (Exception $oException) {
                     throw $oException;
                 }
@@ -468,7 +491,8 @@ class Services_AMEE_API
         }
         if (!defined('AMEE_API_PROJECT_PASSWORD')) {
             throw new Services_AMEE_Exception(
-                'Cannot connect to the AMEE REST API: No project password defined'
+                'Cannot connect to the AMEE REST API: No project password ' .
+                'defined'
             );
         }
         if (!defined('AMEE_API_URL')) {
@@ -492,7 +516,12 @@ class Services_AMEE_API
         );
         // Call the AMEE REST API post method
         try {
-            $aResult =  $this->sendRequest("POST $sPath", http_build_query($aOptions, NULL, '&'), true, false);
+            $aResult =  $this->sendRequest(
+                "POST $sPath",
+                http_build_query($aOptions, NULL, '&'),
+                true,
+                false
+            );
         } catch (Exception $oException) {
             throw $oException;
         }
@@ -510,7 +539,8 @@ class Services_AMEE_API
             // Oh dear, no authorisation token found, connection wasn't
             // really made!
             throw new Services_AMEE_Exception(
-                'Authentication error: No authToken returned by the AMEE REST API'
+                'Authentication error: No authToken returned by the ' .
+                'AMEE REST API'
             );
         }
         return true;
