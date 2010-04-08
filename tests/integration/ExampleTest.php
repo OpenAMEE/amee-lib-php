@@ -50,44 +50,50 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
     {
         try {
 
-            // Step 1: Initialise the Services_AMEE_ProfileList class, which is
-            //      used to manage AMEE API Profiles.
-            $oProfileList = new Services_AMEE_ProfileList();
+            // Step 1: A new user (let's call them "User A" has created an
+            //      account in your application, ready to start inputting their
+            //      data. Their data needs to go into an AMEE API Profile, so in
+            //      this case, we're assuming that an AMEE API Profile
+            //      represents a user. So, we create a new AMEE API Profile for
+            //      the "User A".
+            $oProfile = new Services_AMEE_Profile();
 
-            // Step 2: The user has created a new account - we therefore need to
-            //      create a new AMEE API Profile to store their CO2 generation
-            //      items.
-            $oProfile = new Services_AMEE_Profile($oProfileList);
-
-            // Step 3: The user's new AMEE API Profile has been created - get
-            //      the UID of this new Profile, so that it can be stored in
-            //      your application next to the user's account details, for
-            //      later use.
+            // Step 2: The user's new AMEE API Profile has been created - get
+            //      the UID of their new AMEE API Profile, so that the UID can
+            //      be stored in your application as part of the user's account
+            //      details, for later use. You NEED to store the AMEE API
+            //      Profile UID somewhere, if you intend to remember that this
+            //      AMEE API Profile "belongs" to "User A"!
             $this->sUserAProfileUID = $oProfile->getUID();
 
-            // Step 4: Now that the user has an AMEE API Profile, the Profile's
-            //      metadata should be added, to configure the Profile ready
-            //      for use. Details on metadata can be found at
-            //      http://explorer.amee.com/categories/Metadata.
-            //
-            // Setp 4.1: To set up an AMEE API Profile with metadata, firstly
+            // Step 3: Now that "User A" has an AMEE API Profile, the AMEE API
+            //      Profile's metadata should be added, to configure the AMEE
+            //      API Profile ready for use. Details on metadata can be found
+            //      at http://explorer.amee.com/categories/Metadata.
+
+            // Setp 3.1: To set up an AMEE API Profile with metadata, firstly
             //      create the AMEE API Data Item for the metadata path.
             $sPath = '/metadata';
             $oDataItemMetadata = new Services_AMEE_DataItem($sPath);
 
-            // Step 4.2: Now create an AMEE API Profile Item with the required
-            //      metadata items for the AMEE API Profile. Assuming your
-            //      application allows users to store household CO2 emissions,
-            //      we will set both the country and the number of people per
-            //      household in the metadata.
+            // Step 3.2: Now create an AMEE API Profile Item with the required
+            //      metadata AMEE API Profile Item Values in "User A's" AMEE API
+            //      Profile.
+            //      
+            //      Assuming your application allows users to store household
+            //      Greenhouse Gas (GHG) emissions, we will set both the country
+            //      and the number of people per household in the metadata, as
+            //      described in the above link on metadata.
             $aProfileItemValues = array(
-                'country'           => '',
+                'country'           => 'GB',
                 'peopleInHousehold' => 3
             );
             $oProfileItemMetadata = new Services_AMEE_ProfileItem(
-                $oProfile,
-                $oDataItemMetadata,
-                $aProfileItemValues
+                array(
+                    $oProfile,
+                    $oDataItemMetadata,
+                    $aProfileItemValues
+                )
             );
 
 

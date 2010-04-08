@@ -14,6 +14,7 @@
  * @link http://pear.php.net/package/Services_AMEE
  */
 
+require_once 'Services/AMEE/API.php';
 require_once 'Services/AMEE/Exception.php';
 
 /**
@@ -48,6 +49,11 @@ abstract class Services_AMEE_BaseObject
     protected $aLastJSON;
 
     /**
+     * @var <string> $sUID The UID of the object.
+     */
+    protected $sUID;
+
+    /**
      * The constructor method for the Services_AMEE_BaseObject class, which
      * can be used by implementing class constructors to set up the API
      * communications class.
@@ -78,20 +84,27 @@ abstract class Services_AMEE_BaseObject
             return true;
         }
         throw new Services_AMEE_Exception(
-            'The PHP function json_decode() does not exist - the JSON package is required'
+            'The PHP function json_decode() does not exist - the JSON ' .
+            'package is required'
         );
     }
 
     /**
-     * A protected method that correctly formats date strings into ISO 8601
-     * format.
+     * A method to retun this object's UID
      *
-     * @param <string> $sDate The date string to format.
-     * @return <string> The same date as an ISO 8601 formatted string.
+     * @return <mixed> This object's UID as a string; an Exception object
+     *      if this object hasn't been initialized.
      */
-    protected function _formatDate($sDate)
+    public function getUID()
     {
-        return date('c', strtotime($sDate));
+        if (!empty($this->sUID)) {
+            return $this->sUID;
+        }
+        // Error, object is not itialized
+        throw new Services_AMEE_Exception(
+            'Cannot call Service_AMEE_BaseObject::getUID() on an ' .
+            'un-initialized object'
+        );
     }
 
 }

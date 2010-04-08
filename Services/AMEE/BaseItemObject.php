@@ -15,7 +15,6 @@
  */
 
 require_once 'Services/AMEE/BaseObject.php';
-require_once 'Services/AMEE/Exception.php';
 
 /**
  * The Services_AMEE_BaseItemObject class is an abstract class that defines all
@@ -33,11 +32,6 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
 {
 
     /**
-     * @var <string> $sUID The UID of the object.
-     */
-    protected $sUID;
-
-    /**
      * @var <string> $sCreated The created date of the object.
      */
     protected $sCreated;
@@ -46,23 +40,6 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
      * @var <string> $sModified The last modified date of the object.
      */
     protected $sModified;
-
-    /**
-     * A method to retun this object's UID
-     *
-     * @return <mixed> This object's UID as a string; an Exception object
-     *      if this object hasn't been initialized.
-     */
-    public function getUID()
-    {
-        if (!empty($this->sUID)) {
-            return $this->sUID;
-        }
-        // Error, object is not itialized
-        throw new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getUID() on an un-initialized object'
-        );
-    }
 
     /**
      * A method to retun this object's created date
@@ -77,7 +54,8 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
         }
         // Error, object is not itialized
         throw new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getCreated() on an un-initialized object'
+            'Cannot call Service_AMEE_BaseObject::getCreated() on an ' .
+            'un-initialized object'
         );
     }
 
@@ -94,30 +72,21 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
         }
         // Error, object is not itialized
         throw new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getModified() on an un-initialized object'
+            'Cannot call Service_AMEE_BaseObject::getModified() on an ' .
+            'un-initialized object'
         );
     }
 
-
     /**
-     * A method to retun this object's UID, created date and modified date in
-     * an array, indexed by 'uid', 'created' and 'modified'.
+     * A protected method that correctly formats date strings into ISO 8601
+     * format.
      *
-     * @return <mixed> This object's information array; an Exception object if
-     *      this object hasn't been initialized.
+     * @param <string> $sDate The date string to format.
+     * @return <string> The same date as an ISO 8601 formatted string.
      */
-    public function getInfo()
+    protected function _formatDate($sDate)
     {
-        try {
-            $aReturn = array(
-                'uid'      => $this->getUID(),
-                'created'  => $this->getCreated(),
-                'modified' => $this->getModified()
-            );
-        } catch (Exception $oException) {
-            throw $oException;
-        }
-        return $aReturn;
+        return date('c', strtotime($sDate));
     }
 
 }
