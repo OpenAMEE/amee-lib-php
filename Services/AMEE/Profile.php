@@ -93,11 +93,11 @@ class Services_AMEE_Profile extends Services_AMEE_BaseObject
      */
     public function delete()
     {
-       // Prepare the AMEE REST API call path
-        $sPath = '/profiles/' . $this->sUID;
-        // Call the AMEE REST API
         try {
-            echo $this->oAPI->delete($sPath);
+            // Prepare the AMEE REST API call path
+            $sPath = '/profiles/' . $this->sUID;
+            // Call the AMEE REST API
+            $this->oAPI->delete($sPath);
         } catch (Exception $oException) {
             throw $oException;
         }

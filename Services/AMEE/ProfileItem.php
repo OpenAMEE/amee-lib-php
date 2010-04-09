@@ -45,18 +45,11 @@ require_once 'Services/AMEE/DataItem.php';
  */
 class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
 {
-
+    
     /**
-     * @var <Services_AMEE_Profile> $oProfile The AMEE API Profile that the
-     *      AMEE API Profile Item belongs to.
+     * @var <string> $sName Optional name for the AMEE API Profile Item.
      */
-    private $oProfile;
-
-    /**
-     * @var <Services_AMEE_DataItem> $oDataItem The AMEE API Data Item that is
-     *      associated with the AMEE API Profile Item.
-     */
-    private $oDataItem;
+    protected $sName;
     
     /**
      * @var <double> $dAmount The amount of CO2e produced by this AMEE API
@@ -91,6 +84,24 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
     private $sEndDate;
 
     /**
+     * @var <Services_AMEE_Profile> $oProfile The AMEE API Profile that the
+     *      AMEE API Profile Item belongs to.
+     */
+    private $oProfile;
+
+    /**
+     * @var <Services_AMEE_DataItem> $oDataItem The AMEE API Data Item that is
+     *      associated with the AMEE API Profile Item.
+     */
+    private $oDataItem;
+
+    /**
+     * @var <array> $aReturnUnitOptions An array to store the return unit
+     *      options set, if present.
+     */
+    private $aReturnUnitOptions = array();
+
+    /**
      * @var <array> $aValidProfileItemOptions An array defining the valid keys
      *      that can be passed in as AMEE API Profile Item options (i.e. as
      *      keys in the fourth parameter) when creating a new AMEE API Profile
@@ -100,8 +111,18 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
         'name',
         'startDate',
         'endDate',
-        'duration',
-        'representation'
+        'duration'
+    );
+
+    /**
+     * @var <array> $aValidReturnUnitOptions An array defining the valid keys
+     *      that can be passed in as AMEE API Profile Item return unit options
+     *      (i.e. as keys in the fourth or fifth parameter, depending on the
+     *      type of construction).
+     */
+    private $aValidReturnUnitOptions = array(
+        'returnUnit',
+        'returnPerUnit'
     );
 
     /**
@@ -174,9 +195,18 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
      *
      *      $aParams[3] => <array> An optional array of name/value pairs that
      *          represent AMEE API Profile Items options. Valid key values are
-     *          "name", "startDate", "endDate", "duration" and "representation",
-     *          as defined at
-     *          http://my.amee.com/developers/wiki/ProfileItem#CreateanewProfileItem
+     *          "name", "startDate", "endDate", and "duration" as defined at
+     *          http://my.amee.com/developers/wiki/ProfileItem#CreateanewProfileItem.
+     *
+     *          Use null for this parameter if no AMEE API Profile Item options
+     *          need to be set, but you do want to set the fifth option array
+     *          below.
+     *
+     *      $aParams[4] => <array> An optional array of name/value pairs that
+     *          represent the desired "unit" and "per unit" values that should
+     *          be used for the AMEE API Profile Item. Must be specified using
+     *          the key values "returnUnit" and "returnPerUnit" as defined at
+     *          http://my.amee.com/developers/wiki/ProfileCategory#GetCategory.
      *
      ***************************************************************************
      *
@@ -195,6 +225,12 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
      *      $aParams[2] => <string> The AMEE API Profile Item UID for the
      *          existing AMEE API Profile Item.
      *
+     *      $aParams[3] => <array> An optional array of name/value pairs that
+     *          represent the desired "unit" and "per unit" values that should
+     *          be used for the AMEE API Profile Item. Must be specified using
+     *          the key values "returnUnit" and "returnPerUnit" as defined at
+     *          http://my.amee.com/developers/wiki/ProfileCategory#GetCategory.
+     *
      ***************************************************************************
      *
      * 3. Create an object for an existing AMEE API Profile Item by AMEE API
@@ -209,6 +245,12 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
      *      $aParams[1] => <Services_AMEE_DataItem> The instance of the
      *          Services_AMEE_DataItem class representing the AMEE API Data Item
      *          on which the existing AMEE API Profile Item is based.
+     *
+     *      $aParams[2] => <array> An optional array of name/value pairs that
+     *          represent the desired "unit" and "per unit" values that should
+     *          be used for the AMEE API Profile Item. Must be specified using
+     *          the key values "returnUnit" and "returnPerUnit" as defined at
+     *          http://my.amee.com/developers/wiki/ProfileCategory#GetCategory.
      *
      ***************************************************************************
      *
@@ -228,7 +270,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                     'with a parameter that is not an array'
                 );
             }
-            if (count($aParams) == 1 || count($aParams) > 4) {
+            if (count($aParams) == 1 || count($aParams) > 5) {
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method called ' .
                     'with the parameter array containing an invalid number ' .
@@ -245,6 +287,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                     'the required Services_AMEE_Profile object'
                 );
             }
+            $this->oProfile = $aParams[0];
             if (!is_a($aParams[1], 'Services_AMEE_DataItem')) {
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method called ' .
@@ -252,14 +295,19 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                     'the required Services_AMEE_DataItem object'
                 );
             }
+            $this->oDataItem = $aParams[1];
             // Validate the optional third parameter and set the construction
             // method type based on the existence (or otherwise) of this
             // parameter and its type
-            $sConstructType = $this->_validateThirdParam($aParam[2]);            
+            if (array_key_exists(2, $aParams)) {
+                $sConstructType = $this->_validateThirdParam($aParams[2]);
+            } else {
+                $sConstructType = $this->_validateThirdParam();
+            }
             // Validate the optional fourth parameter
-            if ($sConstructType != 'new' && exists($aParam[3])) {
-                // The fourth parameter is only valid with construction type
-                // 'new', for when a new AMEE API Profile Item is being created
+            if ($sConstructType == 'search' && array_key_exists(3, $aParams)) {
+                // The fourth parameter is only valid with construction types
+                // 'new' and 'uid'
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method called ' .
                     'with the parameter array\'s fourth parameter being set,' .
@@ -267,22 +315,36 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                     'is not expected to be set'
                 );
             }
-            if ($sConstructType == 'new') {
-                $this->_validateFourthParam($aParam[3]);
+            if (array_key_exists(3, $aParams)) {
+                $this->_validateFourthParam($sConstructType, $aParams[3]);
+            }
+            // Validate the optional fifth parameter
+            if ($sConstructType != 'new' && array_key_exists(4, $aParams)) {
+                // The fifth parameter is only valid with construction type
+                // 'new'
+                throw new Services_AMEE_Exception(
+                    'Services_AMEE_ProfileItem constructor method called ' .
+                    'with the parameter array\'s fifth parameter being set,' .
+                    'but with other parameters such that a fifth parameter ' .
+                    'is not expected to be set'
+                );
+            }
+            if (array_key_exists(4, $aParams)) {
+                $this->_validateReturnUnitParamArray($aParams[4]);
             }
             // All validation has passed
             if ($sConstructType == 'new') {
                 // Create a new AMEE API Profile Item in the AMEE REST API, and
                 // obtain the details of the created AMEE API Profile Item
-                /** @TODO */
+                $this->_constructNew($aParams);
             } else if ($sConstructType == 'uid') {
                 // Obtain the details of the already existing AMEE API Profile
                 // Item
-                /** @TODO */
+                $this->_constructExistingByUID($aParams[2]);
             } else if ($sConstructType == 'search') {
                 // Obtain the details of the already existing AMEE API Profile
                 // Item
-                /** @TODO */
+                $this->_constructExistingBySearch();
             } else {
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method failed ' .
@@ -309,205 +371,437 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
      */
     private function _validateThirdParam($aParam = null)
     {
-        if (exists($aParam)) {
-            if (is_string($aParam)) {
-                return 'uid';
-            } else if (is_array($aParam)) {
-                if (count($aParam) == 0) {
-                    throw new Services_AMEE_Exception(
-                        'Services_AMEE_ProfileItem constructor method ' .
-                        'called with the parameter array\'s third ' .
-                        'parameter being an empty array'
-                    );
-                }
-                return 'new';
-            } else {
-                throw new Services_AMEE_Exception(
-                    'Services_AMEE_ProfileItem constructor method called ' .
-                    'with the parameter array\'s third parameter not ' .
-                    'being either an array or a string'
-                );
-            }
-        } else {
+        if (!isset($aParam)) {
+            // No third parameter, this must be a "search" type construction;
+            // return type "search" without any validation required
             return 'search';
         }
+        if (is_string($aParam)) {
+            // The third parameter is a string, this must be a "uid" type
+            // construction; return type "uid" without any validation required
+            return 'uid';
+        }
+        if (!is_array($aParam)) {
+            // If the parameter exists and it is not a string, then it can
+            // only be an array; as it is not, throw an Exception
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem constructor method called ' .
+                'with the parameter array\'s third parameter not ' .
+                'being either an array or a string'
+            );
+        }
+        // The array parameter can be either the optional return unit option
+        // array for a "search" type construction, or the required option array
+        // for a "new" type construction; which is it?
+        if (array_key_exists('returnUnit', $aParam)
+            || array_key_exists('returnPerUnit', $aParam)) {
+            // Assume a "search" type construction, as there are return unit
+            // keys in the array; validate the return unit option array, and
+            // return type "search"
+            $this->_validateReturnUnitParamArray($aParam);
+            return 'search';
+        }
+        // Assume a "new" type construction; validate that the array has at
+        // leaast one name/value pair, and return type "new"
+        if (count($aParam) == 0) {
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem constructor method called with' .
+                'the parameter array\'s third parameter being an empty AMEE ' .
+                'API Profile Item Value array'
+            );
+        }
+        return 'new';
     }
 
     /**
      *A private method to validate the optional third parameter of the
      * contstructor method.
-     * 
-     * @param <array> $aParam An optional "third parameter" from the constructor
-     *      method array.
-     * @return <mixed> The boolean true if the parameter passes validation, or
-     *      an Exception if there is an issue with validating the parameter.
+     *
+     * @param <string> $sConstructType A string representing the construction
+     *      type, either "new" or "uid".
+     * @param <array> $aParam The optional "fourth parameter" from the
+     *      constructor method array.
      */
-    private function _validateFourthParam($aParam)
+    private function _validateFourthParam($sConstructType, $aParam)
     {
-        if (exists($aParam)) {
-            if (!is_array($aParam)) {
+        if (is_null($aParam)) {
+            // No problems, no options set
+            return;
+        }
+        if (!is_array($aParam)) {
+            // This is a problem; if set, the fourth parameter must be an array
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem constructor method ' .
+                'called with the parameter array\'s fourth ' .
+                'parameter not being an array'
+            );
+        }
+        if ($sConstructType == 'uid') {
+            // The fourth parameter is an optional array of return unit options
+            $this->_validateReturnUnitParamArray($aParam);
+        }
+        if ($sConstructType == 'new') {
+            // The fourth parameter is an optional array of AMEE API Profile
+            // Item options
+            $this->_validateProfileOptionParamArray($aParam);
+        }
+    }
+
+    /**
+     * A private method that throws an Exception if the array parameter
+     * containing the AMEE API Profile Item options for a AMEE API Profile Item
+     * is invalid.
+     *
+     * @param <array> $aParam The array containing the AMEE API Profile Item
+     *      options.
+     */
+    private function _validateProfileOptionParamArray($aParam)
+    {
+        if (!is_array($aParam)) {
+            // This is a problem; if set, the parameter must be an array
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem method called with option ' .
+                'parameter array not actually being an array'
+            );
+        }
+        foreach ($aParam as $sKey => $sValue) {
+            if (!in_array($sKey, $this->aValidProfileItemOptions)) {
                 throw new Services_AMEE_Exception(
-                    'Services_AMEE_ProfileItem constructor method ' .
-                    'called with the parameter array\'s fourth ' .
-                    'parameter not being an array'
+                    'Services_AMEE_ProfileItem method called with option ' .
+                    'parameter array containing invalid key ' . $sKey
                 );
             }
-            foreach ($aParam as $sKey => $sValue) {
-                if (!in_array($sKey, $this->aValidProfileItemOptions)) {
-                    throw new Services_AMEE_Exception(
-                        'Services_AMEE_ProfileItem constructor method ' .
-                        'called with the parameter array\'s fourth ' .
-                        'parameter being an array containing invalid ' .
-                        'key ' . $sKey
-                    );
-                }
-            }
-            if (isset($aParam['endDate'])
-                && isset($aParam['duration'])) {
+        }
+        if (array_key_exists('endDate', $aParam)
+            && array_key_exists('duration', $aParam)) {
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem method called with the option ' .
+                'parameter array containing both an \'endDate\' and ' .
+                '\'duration\' - only one of these items may be set'
+            );
+        }
+        if (array_key_exists('endDate', $aParam)
+            || array_key_exists('duration', $aParam)) {
+            if (!array_key_exists('startDate', $aParam)) {
                 throw new Services_AMEE_Exception(
-                    'Services_AMEE_ProfileItem constructor method ' .
-                    'called with the parameter array\'s fourth ' .
-                    'parameter being an array containing both an ' .
-                    '\'endDate\' and \'duration\' - only one of ' .
-                    'these items may be set'
+                    'Services_AMEE_ProfileItem method called with the option ' .
+                    'parameter array containing one of \'endDate\' or ' .
+                    '\'duration\' set, but without the \'startDate\' set'
                 );
-            }
-            if (isset($aParam['endDate'])
-                || isset($aParam['duration'])) {
-                if (!isset($aParam['startDate'])) {
-                    throw new Services_AMEE_Exception(
-                        'Services_AMEE_ProfileItem constructor method ' .
-                        'called with the parameter array\'s fourth ' .
-                        'parameter being an array containing either ' .
-                        '\'endDate\' or \'duration\' set, but without ' .
-                        'the \'startDate\' set'
-                    );
-                }
             }
         }
     }
 
+    /**
+     * A private method that throws an Exception if the array parameter
+     * containing the return unit options for a AMEE API Profile Item is
+     * invalid.
+     *
+     * @param <array> $aParam The array containing the AMEE API Profile Item
+     *      return unit options.
+     */
+    private function _validateReturnUnitParamArray($aParam)
+    {
+        if (is_null($aParam)) {
+            // No problems, no options set
+            return;
+        }
+        if (!is_array($aParam)) {
+            // This is a problem; if set, the parameter must be an array
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem method called with return unit ' .
+                'parameter array not actually being an array'
+            );
+        }
+        foreach ($aParam as $sKey => $sValue) {
+            if (!in_array($sKey, $this->aValidReturnUnitOptions)) {
+                throw new Services_AMEE_Exception(
+                    'Services_AMEE_ProfileItem method called with the return ' .
+                    'unit parameter array containing invalid key ' . $sKey
+                );
+            }
+        }
+        // Valid, store
+        foreach ($this->aValidReturnUnitOptions as $sOption) {
+            if (array_key_exists($sOption, $aParam)) {
+                $this->aReturnUnitOptions[$sOption] = $aParam[$sOption];
+            }
+        }
+    }
 
+    /**
+     * A private method to perform the actual AMEE REST API call required to
+     * generate a new AMEE API Profile Item, based on the parameters passed
+     * into the constructor method, and set the local object variables based
+     * on the result.
+     *
+     * @param <array> $aParams The validated parameters from the object's
+     *      __construct() method.
+     * @return <mixed> An Exception object on error, void otherwise.
+     */
+    private function _constructNew($aParams)
+    {
+        try {
+            // Prepare the AMEE REST API call path & options
+            $sPath = '/profiles/' . $this->oProfile->getUID() .
+                $this->oDataItem->getPath();
+            $aOptions = array(
+                'dataItemUid'    => $this->oDataItem->getUID()
+            );
+            foreach ($aParams[2] as $sKey => $sValue) {
+                $aOptions[$sKey] = $sValue;
+            }
+            if (isset($aParams[3])) {
+                foreach ($aParams[3] as $sKey => $sValue) {
+                    $aOptions[$sKey] = $sValue;
+                }
+            }
+            // Call the AMEE REST API
+            $this->sLastJSON = $this->oAPI->post($sPath, $aOptions);
+            // Process the result data
+            $this->aLastJSON = json_decode($this->sLastJSON, true);
+            // Now that the AMEE API Profile Item is created, construct this
+            // object via the __constuctExistingByUID method
+            $this->_constructExistingByUID($this->aLastJSON['UID']);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
+    /**
+     * A private method to perform the actual AMEE REST API call required to
+     * obtain the details of an existing AMEE API Profile Item by UID, and set
+     * the local object variables based on the result.
+     *
+     * @param <string> $sUID The desired AMEE API Profile Item's UID.
+     * @return <mixed> An Exception object on error, void otherwise.
+     */
+    private function _constructExistingByUID($sUID)
+    {
+        try {
+            // Prepare the AMEE REST API call path & options
+            $sPath = '/profiles/' . $this->oProfile->getUID() .
+                $this->oDataItem->getPath() . '/' . $sUID;
+            // Call the AMEE REST API
+            $this->sLastJSON = $this->oAPI->get($sPath, $this->aReturnUnitOptions);
+            // Process the result data
+            $this->aLastJSON = json_decode($this->sLastJSON, true);
+            // Set the objcet variables
+            $this->_constructExistingByDataArray($this->aLastJSON['profileItem']);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
+    /**
+     * A private method to perform the actual AMEE REST API call required to
+     * obtain the details of an existing AMEE API Profile Item by searching the
+     * appropriate category path & filtering on the AMEE API Data Item UID, and
+     * set the local object variables based on the result.
+     *
+     * @return <mixed> An Exception object on error, void otherwise.
+     */
+    private function _constructExistingBySearch()
+    {
+        try {
+            // Prepare the AMEE REST API call path & options
+            $sPath = '/profiles/' . $this->oProfile->getUID() .
+                $this->oDataItem->getPath();
+            // Call the AMEE REST API
+            $this->sLastJSON = $this->oAPI->get($sPath, $this->aReturnUnitOptions);
+            // Process the result data
+            $this->aLastJSON = json_decode($this->sLastJSON, true);
+            // Locate the AMEE API Profile Item UID by the AMEE API Data Item
+            // UID
+            foreach ($this->aLastJSON['profileItems'] as $aProfileItem) {
+                if ($aProfileItem['dataItem']['uid'] == $this->oDataItem->getUID()) {
+                    // Found it!
+                    $this->_constructExistingByDataArray($aProfileItem);
+                    return;
+                }
+            }
+            // Could not find the AMEE API Profile Item requested
+            throw new Services_AMEE_Exception(
+                'Services_AMEE_ProfileItem constructor method requested an' .
+                'existing AMEE API Profile Item by AMEE API Data Item UID ' .
+                $this->oDataItem->getUID() . ', but no such AMEE API Profile ' .
+                'Item could be located'
+            );
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
+    /**
+     * A private method to set the AMEE API Profile Item object variables based
+     * on an array of AMEE API Profile Item data obtained from the AMEE REST
+     * API.
+     *
+     * @param <array> $aData The array of AMEE API Profile Item object data from
+     *      the AMEE REST API.
+     */
+    private function _constructExistingByDataArray($aData)
+    {
+        // Set the AMEE API Profile Item's properties
+        $this->sUID       = $aData['uid'];
+        $this->sCreated   = $this->_formatDate($aData['created']);
+        $this->sModified  = $this->_formatDate($aData['modified']);
+        $this->sName      = $aData['name'];
+        $this->dAmount    = $aData['amount']['value'];
+        $this->sUnit      = '';
+        $this->sPerUnit   = '';
+        if (!empty($aData['amount']['unit'])) {
+            if (preg_match('#(.+)/(.+)#', $aData['amount']['unit'], $aMatches)) {
+                $this->sUnit    = $aMatches[1];
+                $this->sPerUnit = $aMatches[2];
+            } else {
+                $this->sUnit = $aData['amount']['unit'];
+            }
+        }
+        if (!empty($aData['startDate'])) {
+            $this->sStartDate = $this->_formatDate($aData['startDate']);
+        }
+        if (!empty($aData['endDate'])) {
+            $this->sEndDate   = $this->_formatDate($aData['endDate']);
+        }
+    }
 
+    public function getInfo()
+    {
+        $aReturn = array(
+            'uid'         => $this->sUID,
+            'name'        => $this->sName,
+            'created'     => $this->sCreated,
+            'modified'    => $this->sModified,
+            'profileUid'  => $this->oProfile->getUID(),
+            'path'        => $this->oDataItem->getPath(),
+            'dataItemUid' => $this->oDataItem->getUID(),
+            'amount'      => $this->dAmount,
+            'unit'        => $this->sUnit,
+            'perUnit'     => $this->sPerUnit,
+            'startDate'   => $this->sStartDate,
+            'endDate'     => $this->sEndDate
+        );
+        return $aReturn;
+    }
 
+    /**
+     * A method to allow an AMEE API Profile Item object's AMEE API Profile
+     * Item Value(s) to be updated.
+     *
+     * @param <array> $aValues An array of name/value pairs, containing
+     *
+     *      These options can of course be set on AMEE API Profile Item object
+     *      creation -- this method exists to allw an object that has already
+     *      been created be updated, both locally an in the AMEE REST API,
+     *      should you need to change one or more of the associated AMEE API
+     *      Profile Item Values in the AMEE API Profile Item after creation.
+     */
+    public function updateValues($aValues)
+    {
+        try {
+            // Validate the array
+            if (!is_array($aValues)) {
+                throw new Services_AMEE_Exception(
+                    'Services_AMEE_ProfileItem::updateValues() called with ' .
+                    'non-array parameter'
+                );
+            }
+            if (count($aValues) == 0) {
+                throw new Services_AMEE_Exception(
+                    'Services_AMEE_ProfileItem::updateValues() called with ' .
+                    'empty array parameter'
+                );
+            }
+            // Prepare the AMEE REST API call path & options
+            $sPath = '/profiles/' . $this->oProfile->getUID() .
+                $this->oDataItem->getPath() . '/' . $this->sUID;
+            // Call the AMEE REST API
+            $this->sLastJSON = $this->oAPI->put($sPath, $aValues);
+            // Re-load this object from the API
+            $this->_constructExistingByUID($this->sUID);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
+    /**
+     * A method to allow an AMEE API Profile Item object's options to be
+     * updated.
+     *
+     * @param <array> $aOptions An array of name/value pairs, containing one or
+     *      more valid keys from the values "name", "startDate", "endDate", and
+     *      "duration" as defined at
+     *      http://my.amee.com/developers/wiki/ProfileItem#CreateanewProfileItem.
+     *
+     *      These options can of course be set on AMEE API Profile Item object
+     *      creation -- this method exists to allw an object that has already
+     *      been created be updated, both locally an in the AMEE REST API,
+     *      should you need to change the options after creation.
+     */
+    public function updateOptions($aOptions)
+    {
+        try {
+            // Validate the return options
+            $this->_validateProfileOptionParamArray($aOptions);
+            // Prepare the AMEE REST API call path & options
+            $sPath = '/profiles/' . $this->oProfile->getUID() .
+                $this->oDataItem->getPath() . '/' . $this->sUID;
+            // Call the AMEE REST API
+            $this->sLastJSON = $this->oAPI->put($sPath, $aOptions);
+            // Re-load this object from the API
+            $this->_constructExistingByUID($this->sUID);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
+    /**
+     * A method to allow an AMEE API Profile Item object's returnUnit and/or
+     * returnPerUnit options to be updated.
+     *
+     * @param <array> $aReturnOptions An array of name/value pairs, containing
+     *      either one of, or both, the indexes "returnUnit" and
+     *      "returnPerUnit", as defined at
+     *      http://my.amee.com/developers/wiki/ProfileCategory#GetCategory.
+     *
+     *      The returnUnit and returnPerUnit options can of course be set on
+     *      AMEE API Profile Item object creation -- this method exists to allow
+     *      an object that has already been created to be updated, both locally 
+     *      and in the AMEE REST API, should you need to change the return
+     *      options after creation.
+     *
+     * @return <mixed> An Exception object on error; void otherwise.
+     */
+    public function updateReturn($aReturnOptions)
+    {
+        try {
+            // Validate the return options
+            $this->_validateReturnUnitParamArray($aReturnOptions);
+            // Re-load this object from the API
+            $this->_constructExistingByUID($this->sUID);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-//    /**
-//     * @var <string> $sName Optional name for the AMEE Profile Item.
-//     */
-//    protected $sName;
-//
-//    /**
-//     * @var <string> $sDuration Optional duration that the AMEE Profile Item is
-//     *      valid until (given a start date).
-//     */
-//    protected $sDuration;
-
-//    /**
-//     * A method to update the AMEE Profile Item.
-//     *
-//     *
-//     */
-//    public function update()
-//    {
-//
-//    }
-//
-//    /**
-//     * A method to delete the AMEE Profile Item.
-//     *
-//     * @return <mixed> True on success; an Exception object otherwise.
-//     */
-//    public function delete()
-//    {
-//
-//    }
-
-//                // Create the AMEE Profile Item on the basis of the required
-//                // information passed into the constructor
-//                $this->sUID          = $aProfileItemData['uid'];
-//                $this->sCreated      = $this->_formatDate($aProfileItemData['created']);
-//                $this->sModified     = $this->_formatDate($aProfileItemData['modified']);
-//                $this->sCategoryPath = $aProfileItemData['categoryPath'];
-//                $this->sDataItemUid  = $aProfileItemData['dataItemUid'];
-//                // Create the AMEE Profile Item on the basis of the optional
-//                // information passed into the constructor
-//                if (isset($aProfileItemData['name'])) {
-//                    $this->sName = $aProfileItemData['name'];
-//                }
-//                if (isset($aProfileItemData['startDate'])) {
-//                    $this->sStartDate = $this->_formatDate($aProfileItemData['startDate']);
-//                }
-//                if (isset($aProfileItemData['endDate'])) {
-//                    $this->sEndDate = $this->_formatDate($aProfileItemData['endDate']);
-//                }
-//                if (isset($aProfileItemData['duration'])) {
-//                    $this->sDuration = $aProfileItemData['duration'];
-//                }
-//                if (isset($aProfileItemData['representation'])) {
-//                    $this->sDuration = $aProfileItemData['representation'];
-//                }
-//
-//
-//
-//            }
-//            // Create a new AMEE Profile Item - prepare the AMEE REST API path &
-//            // options
-//            $sPath = '/profiles/' . $oProfile->getUID() . $aProfileItemData['categoryPath'];
-//            $aOptions = array(
-//                'dataItemUid' => $aProfileItemData['dataItemUid']
-//            );
-//            if (isset($aProfileItemData['name'])) {
-//                $aOptions['name'] = $aProfileItemData['name'];
-//            }
-//            if (isset($aProfileItemData['startDate'])) {
-//                $aOptions['startDate'] = $this->_formatDate($aProfileItemData['startDate']);
-//            }
-//            if (isset($aProfileItemData['endDate'])) {
-//                $aOptions['endDate'] = $this->_formatDate($aProfileItemData['endDate']);
-//            }
-//            if (isset($aProfileItemData['duration'])) {
-//                $aOptions['duration'] = $aProfileItemData['duration'];
-//            }
-//            if (isset($aProfileItemData['representation'])) {
-//                $aOptions['representation'] = $aProfileItemData['representation'];
-//            }
-//            foreach ($aProfileItemValues as $sProfileItemValueKey => $sProfileItemValue) {
-//                $aOptions[$sProfileItemValueKey] = $sProfileItemValue;
-//            }
-//            // Call the AMEE REST API
-//            $this->sLastJSON = $this->oAPI->post($sPath, $aOptions);
-//            // Process the result data
-//            $this->aLastJSON = json_decode($this->sLastJSON, true);
-//
-//
-//            print_r($this->aLastJSON);
-//
-//
-//            // Set this object's UID, created date and modified date
-//            $this->sUID      = $this->aLastJSON['profile']['uid'];
-//            $this->sCreated  = $this->_formatDate($this->aLastJSON['profile']['created']);
-//            $this->sModified = $this->_forma
-
+    /**
+     * A method to delete the AMEE Profile Item.
+     *
+     * @return <mixed> An Exception object on error; void otherwise.
+     */
+    public function delete()
+    {
+        try {
+            // Prepare the AMEE REST API call path
+            $sPath = '/profiles/' . $this->oProfile->getUID() .
+                $this->oDataItem->getPath() . '/' . $this->sUID;
+            // Call the AMEE REST API
+            $this->oAPI->delete($sPath);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
 
 }
 

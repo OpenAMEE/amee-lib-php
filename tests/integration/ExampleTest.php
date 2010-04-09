@@ -15,7 +15,8 @@
  */
 
 require_once 'PHPUnit/Framework.php';
-require_once 'Services/AMEE/ProfileList.php';
+require_once 'Services/AMEE/Profile.php';
+require_once 'Services/AMEE/ProfileItem.php';
 
 /**
  * The Services_AMEE_Example_IntegrationTest class provides a PHPUnit
@@ -57,7 +58,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             //      represents a user. So, we create a new AMEE API Profile for
             //      the "User A".
             $oProfile = new Services_AMEE_Profile();
-
+            
             // Step 2: The user's new AMEE API Profile has been created - get
             //      the UID of their new AMEE API Profile, so that the UID can
             //      be stored in your application as part of the user's account
@@ -95,6 +96,34 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                     $aProfileItemValues
                 )
             );
+
+
+            print_r($oProfileItemMetadata->getInfo());
+
+
+            echo "\nSearching for metadata profile item:";
+            echo "\n";
+            $oProfileItemMetadata2 = new Services_AMEE_ProfileItem(
+                array(
+                    $oProfile,
+                    $oDataItemMetadata,
+                    array('returnUnit' => 'g')
+                )
+            );
+
+            print_r($oProfileItemMetadata2->getInfo());
+
+            $oProfileItemMetadata2->updateReturn(
+                array('returnPerUnit' => 'month')
+            );
+
+            print_r($oProfileItemMetadata2->getInfo());
+
+            echo "\nDELETING!\n";
+
+            $oProfileItemMetadata2->delete();
+
+            $oProfile->delete();
 
 
 //
@@ -156,12 +185,6 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
     function testExampleDeleteProfile()
     {
         try {
-
-            // Step 1: Initialise the Services_AMEE_ProfileList class, which is
-            //      used to manage AMEE Profiles
-            $oProfileList = new Services_AMEE_ProfileList();
-
-            // Step 2: Check to ensure
 
         } catch (Exception $oException) {
 

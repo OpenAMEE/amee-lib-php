@@ -17,7 +17,6 @@
 require_once 'PHPUnit/Framework.php';
 require_once 'tests/testConfig.php';
 require_once 'tests/integration/DataItemTest.php';
-require_once 'tests/integration/ProfileListTest.php';
 require_once 'tests/integration/ProfileTest.php';
 require_once 'tests/integration/ExampleTest.php';
 
@@ -40,17 +39,12 @@ class Services_AMEE_AllIntegrationTests extends PHPUnit_Framework_TestSuite
         $oIntegrationTestSuite = new Services_AMEE_AllIntegrationTests();
 
         // Add all of the individual integration test classes
-        $oIntegrationTestSuite->addTestSuite(
-            'Services_AMEE_DataItem_IntegrationTest'
-
-        );
-        $oIntegrationTestSuite->addTestSuite(
-            'Services_AMEE_ProfileList_IntegrationTest'
-            
-        );
-        $oIntegrationTestSuite->addTestSuite(
-            'Services_AMEE_Profile_IntegrationTest'
-        );
+//        $oIntegrationTestSuite->addTestSuite(
+//            'Services_AMEE_DataItem_IntegrationTest'
+//        );
+//        $oIntegrationTestSuite->addTestSuite(
+//            'Services_AMEE_Profile_IntegrationTest'
+//        );
         $oIntegrationTestSuite->addTestSuite(
             'Services_AMEE_Example_IntegrationTest'
         );

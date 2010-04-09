@@ -58,7 +58,13 @@ class Services_AMEE_API
      */
     protected $aPostPathOpenings = array(
         '/auth$',
-        '/profiles$'
+        '/profiles$',
+        '/profiles/[0-9A-F]{12}/business',
+        '/profiles/[0-9A-F]{12}/embodied',
+        '/profiles/[0-9A-F]{12}/home',
+        '/profiles/[0-9A-F]{12}/metadata',
+        '/profiles/[0-9A-F]{12}/planet',
+        '/profiles/[0-9A-F]{12}/transport'
     );
 
     /**
@@ -67,7 +73,13 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     protected $aPutPathOpenings = array(
-        '/profiles/[A-F0-9]{12}$'
+        '/profiles/[0-9A-F]{12}$',
+        '/profiles/[0-9A-F]{12}/business',
+        '/profiles/[0-9A-F]{12}/embodied',
+        '/profiles/[0-9A-F]{12}/home',
+        '/profiles/[0-9A-F]{12}/metadata',
+        '/profiles/[0-9A-F]{12}/planet',
+        '/profiles/[0-9A-F]{12}/transport'
     );
 
     /**
@@ -77,7 +89,7 @@ class Services_AMEE_API
      */
     protected $aGetPathOpenings = array(
         '/profiles$',
-        '/profiles/[A-F0-9]{12}',
+        '/profiles/[0-9A-F]{12}',
         '/data'
     );
 
@@ -87,7 +99,7 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     protected $aDeletePathOpenings = array(
-        '/profiles/[A-F0-9]{12}'
+        '/profiles/[0-9A-F]{12}'
     );
 
     /**
@@ -207,7 +219,7 @@ class Services_AMEE_API
             // Test to ensure that the path at least as a valid opening
             $this->validPath($sPath, 'delete');
             // Send the AMEE REST API delete request
-            $aResult = $this->sendRequest("DELETE $sPath");
+            $this->sendRequest("DELETE $sPath");
             // Return success
             return true;
         } catch (Exception $oException) {
@@ -338,11 +350,17 @@ class Services_AMEE_API
             );
         }
         // Obtain the AMEE REST API response
-        $aResponseLines = array();
-        $aJSON = array();
+        $aResponseLines  = array();
+        $aLocationHeader = array();
+        $aJSON           = array();
         while (!$this->_socketEOF($rSocket)) {
-            $sLine = $this->_socketGetLine($rSocket);
+            $sLine = trim($this->_socketGetLine($rSocket));
             $aResponseLines[] = $sLine;
+            if (preg_match('/^Location: /', $sLine)) {
+                // The line is a Location: header response line, store it
+                // separately
+                $aLocationHeader[] = $sLine;
+            }
             if (preg_match('/^{/', $sLine)) {
                 // The line is a JSON response line, store it separately
                 $aJSON[] = $sLine;
@@ -378,7 +396,31 @@ class Services_AMEE_API
 		if($bReturnHeaders) {
 			return $aResponseLines;
 		} else {
-			return $aJSON;
+            // Return the JSON data response only, if it exists
+            if (!empty($aJSON)) {
+                return $aJSON;
+            }
+            // There was no JSON data in the response! Return the Location:
+            // header information re-formatted as JSON data, if it exists
+            if (!empty($aLocationHeader)) {
+                // Extract the entity UID
+                if (preg_match('#/([0-9A-F]{12})$#', $aLocationHeader[0], $aMatches)) {
+                    $aJSON[] = "{\"UID\":\"" . $aMatches[1] . "\"}";
+                    return $aJSON;
+                }
+                // Location: header wasn't formatted as expected
+                throw new Services_AMEE_Exception(
+                    'The AMEE REST API returned an unexpected Location: ' .
+                    'header response'
+                );
+            }
+            // Oh dear, nothing to return - okay for DELETE methods, not for
+            // anything else...
+            if (!preg_match('/^DELETE/', $sPath)) {
+                throw new Services_AMEE_Exception(
+                    'The AMEE REST API failed to return an expected result'
+                );
+            }
 		}
     }
 

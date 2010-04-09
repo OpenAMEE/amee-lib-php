@@ -54,7 +54,7 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
         }
         // Error, object is not itialized
         throw new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getCreated() on an ' .
+            'Cannot call Service_AMEE_BaseItemObject::getCreated() on an ' .
             'un-initialized object'
         );
     }
@@ -72,7 +72,7 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
         }
         // Error, object is not itialized
         throw new Services_AMEE_Exception(
-            'Cannot call Service_AMEE_BaseObject::getModified() on an ' .
+            'Cannot call Service_AMEE_BaseItemObject::getModified() on an ' .
             'un-initialized object'
         );
     }

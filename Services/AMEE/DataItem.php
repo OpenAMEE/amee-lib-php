@@ -71,12 +71,12 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
                 $sPath = $aMatches[1];
             }
             // Store the path and array
-            $this->sPath = $sPath;
+            $this->sPath    = $sPath;
             $this->aOptions = $aOptions;
             // Prepare the AMEE REST API path
             $sPath = '/data' . $this->sPath . '/drill';
             // Call the AMEE REST API
-            $this->sLastJSON = $this->oAPI->get($sPath, $aOptions);
+            $this->sLastJSON = $this->oAPI->get($sPath, $this->aOptions);
             // Process the result data
             $this->aLastJSON = json_decode($this->sLastJSON, true);
             // Test that a valid Data Item UID has been located
@@ -97,6 +97,24 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
         } catch (Exception $oException) {
             throw $oException;
         }
+    }
+
+    /**
+     * A method to retun the AMEE API Data Item's path
+     *
+     * @return <mixed> This AMEE API Data Item's path as a string; an Exception
+     *      object if this object hasn't been initialized.
+     */
+    public function getPath()
+    {
+        if (!empty($this->sPath)) {
+            return $this->sPath;
+        }
+        // Error, object is not itialized
+        throw new Services_AMEE_Exception(
+            'Cannot call Service_AMEE_DataItem::getPath() on an ' .
+            'un-initialized object'
+        );
     }
 
 }
