@@ -58,7 +58,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             //      represents a user. So, we create a new AMEE API Profile for
             //      the "User A".
             $oProfile = new Services_AMEE_Profile();
-            
+        
             // Step 2: The user's new AMEE API Profile has been created - get
             //      the UID of their new AMEE API Profile, so that the UID can
             //      be stored in your application as part of the user's account

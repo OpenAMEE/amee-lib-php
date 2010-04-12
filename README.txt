@@ -1,16 +1,17 @@
 AMEE API PEAR Library
 
+Version 0.1
+
 Requires PHP 5.2.0+
 
 Core PHP packages that are required for the library:
   - Network
   - JSON
 
-Can use openssl for POST /auth connections, if the package is installed, to
+Suports the use of openssl for POST /auth connections, if the package is installed, to
 protect username/password info; if not present, will send username/password
 information to the API "in the clear".
 
-Caching TODO List:
 
-1. Caching of Data Item Drill Down UIDs
-2. 
+No Caching
+No Advanced Searching

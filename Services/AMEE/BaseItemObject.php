@@ -78,13 +78,13 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
     }
 
     /**
-     * A protected method that correctly formats date strings into ISO 8601
+     * A public method that correctly formats date strings into ISO 8601
      * format.
      *
      * @param <string> $sDate The date string to format.
      * @return <string> The same date as an ISO 8601 formatted string.
      */
-    protected function _formatDate($sDate)
+    public function formatDate($sDate)
     {
         return date('c', strtotime($sDate));
     }

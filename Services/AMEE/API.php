@@ -299,6 +299,7 @@ class Services_AMEE_API
         // Prepare the HTTP request string
         $sRequest =
             $sPath . " HTTP/1.1\n" .
+            "Connection: close\n" .
             "Accept: application/json\n";
             // Add existing authorisation items to the HTTP request string, if
             // this is not a new authorisation request
@@ -354,7 +355,7 @@ class Services_AMEE_API
         $aLocationHeader = array();
         $aJSON           = array();
         while (!$this->_socketEOF($rSocket)) {
-            $sLine = trim($this->_socketGetLine($rSocket));
+            $sLine = $this->_socketGetLine($rSocket);
             $aResponseLines[] = $sLine;
             if (preg_match('/^Location: /', $sLine)) {
                 // The line is a Location: header response line, store it
@@ -481,7 +482,7 @@ class Services_AMEE_API
      */
     protected function _socketGetLine($rSocket)
     {
-        return fgets($rSocket);
+        return trim(fgets($rSocket));
     }
 
     /**

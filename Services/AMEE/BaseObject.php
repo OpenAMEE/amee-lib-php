@@ -79,7 +79,7 @@ abstract class Services_AMEE_BaseObject
      */
     protected function _hasJSONDecode()
     {
-        if (extension_loaded('json'))
+        if ($this->_extensionLoaded('json'))
         {
             return true;
         }
@@ -87,6 +87,18 @@ abstract class Services_AMEE_BaseObject
             'The PHP function json_decode() does not exist - the JSON ' .
             'package is required'
         );
+    }
+
+    /**
+     * A protected method to return the result of the PHP extension_loaded()
+     * method call on a supplied extension name.
+     *
+     * @param <string> $sExtention The extension to test.
+     * @return <boolean> True if the extension is loaded; false otherwise.
+     */
+    protected function _extensionLoaded($sExtention)
+    {
+        return extension_loaded($sExtention);
     }
 
     /**
