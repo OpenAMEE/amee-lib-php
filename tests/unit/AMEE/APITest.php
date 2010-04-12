@@ -1287,23 +1287,186 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $this->fail('Test failed because expected Exception was not thrown');
     }
 
-
-
-
-
-
-
-
     /**
      * Test the Services_AMEE_API::validPath() method with all possible valid
      * DELETE paths, and some obvious invalid variations.
      */
     public function testValidPathDelete()
     {
-        $this->markTestIncomplete();
-        return;
-
         $oAPI = new Services_AMEE_API();
+
+        // Test valid DELETE path: /profiles/1234567890AB
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB', 'delete');
+        $this->assertTrue($bResult);
+
+        // Test valid DELETE path: /profiles/1234567890AB/business
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/business', 'delete');
+        $this->assertTrue($bResult);
+
+        // Test valid DELETE path: /profiles/1234567890AB/embodied
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/embodied', 'delete');
+        $this->assertTrue($bResult);
+
+        // Test valid DELETE path: /profiles/1234567890AB/home
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/home', 'delete');
+        $this->assertTrue($bResult);
+
+        // Test valid DELETE path: /profiles/1234567890AB/metadata
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/metadata', 'delete');
+        $this->assertTrue($bResult);
+
+        // Test valid DELETE path: /profiles/1234567890AB/planet
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/planet', 'delete');
+        $this->assertTrue($bResult);
+
+        // Test valid DELETE path: /profiles/1234567890AB/transport
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/transport', 'delete');
+        $this->assertTrue($bResult);
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid DELETE
+     * path.
+     */
+    public function testValidPathPostBadDeletePath1()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud DELETE path: /profiles
+        try {
+            $bResult = $oAPI->validPath('/profiles', 'delete');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API DELETE path specified: /profiles'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+    
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid DELETE
+     * path.
+     */
+    public function testValidPathPostBadDeletePath2()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud DELETE path: /profiles/1234567890AB/foo
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AB/foo', 'delete');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API DELETE path specified: /profiles/1234567890AB/foo'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid DELETE
+     * path.
+     */
+    public function testValidPathPostBadDeletePath3()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud DELETE path: /profiles/1234567890A/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890A/transport', 'delete');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API DELETE path specified: /profiles/1234567890A/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid DELETE
+     * path.
+     */
+    public function testValidPathPostBadDeletePath4()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud DELETE path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890ABB/transport', 'delete');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API DELETE path specified: /profiles/1234567890ABB/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid DELETE
+     * path.
+     */
+    public function testValidPathPostBadDeletePath5()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud DELETE path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'delete');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API DELETE path specified: /profiles/1234567890AG/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid DELETE
+     * path.
+     */
+    public function testValidPathPostBadDeletePath6()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud DELETE path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/dat', 'delete');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API DELETE path specified: /dat'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
