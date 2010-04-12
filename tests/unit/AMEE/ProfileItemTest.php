@@ -31,12 +31,27 @@ require_once 'Services/AMEE/ProfileItem.php';
 class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
 {
 
+    // Test to ensure that the Services_AMEE_ProfileItem class extends the
+    // Services_AMEE_BaseItemObject class
+    public function testClassDefinition()
+    {
+        $this->markTestIncomplete();
+        return;
+
+        $oProfile = new Services_AMEE_Profile('1234567890AB');
+        $this->assertTrue(is_a($oProfile, 'Services_AMEE_Profile'));
+        $this->assertTrue(is_a($oProfile, 'Services_AMEE_BaseItemObject'));
+    }
+
     /**
      * Test to ensure the Services_AMEE_ProfileItem has the required class
      * attributes that are inherited from Services_AMEE_BaseObject.
      */
     public function testInheritedVariables()
     {
+        $this->assertClassHasAttribute('oAPI',      'Services_AMEE_ProfileItem');
+        $this->assertClassHasAttribute('sLastJSON', 'Services_AMEE_ProfileItem');
+        $this->assertClassHasAttribute('aLastJSON', 'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sUID',      'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sCreated',  'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sModified', 'Services_AMEE_ProfileItem');
@@ -48,11 +63,14 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      */
     public function testVariables()
     {
-        $this->assertClassHasAttribute('iAmount',    'Services_AMEE_ProfileItem');
+        $this->assertClassHasAttribute('sName',      'Services_AMEE_ProfileItem');
+        $this->assertClassHasAttribute('dAmount',    'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sUnit',      'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sPerUnit',   'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sStartDate', 'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('sEndDate',   'Services_AMEE_ProfileItem');
+        $this->assertClassHasAttribute('oProfile',   'Services_AMEE_ProfileItem');
+        $this->assertClassHasAttribute('oDataItem',  'Services_AMEE_ProfileItem');
     }
 
 }

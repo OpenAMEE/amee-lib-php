@@ -64,10 +64,22 @@ abstract class Services_AMEE_BaseObject
             // Ensure JSON package exists
             $this->_hasJSONDecode();
             // Create the local instance of the API communications class
-            $this->oAPI = Services_AMEE_API::singleton();
+            $this->oAPI = $this->_getAPI();
         } catch (Exception $oException) {
             throw $oException;
         }
+    }
+
+    /**
+     * A protected method to wrap the Services_AMEE_API::singleton() method
+     * for testing.
+     *
+     * @return <Services_AMEE_API> The singleton instance of the
+     *      Services_AMEE_API. 
+     */
+    protected function _getAPI()
+    {
+        return Services_AMEE_API::singleton();
     }
 
     /**

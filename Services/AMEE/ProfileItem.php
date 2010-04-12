@@ -49,7 +49,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
     /**
      * @var <string> $sName Optional name for the AMEE API Profile Item.
      */
-    protected $sName;
+    private $sName;
     
     /**
      * @var <double> $dAmount The amount of CO2e produced by this AMEE API

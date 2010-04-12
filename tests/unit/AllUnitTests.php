@@ -20,8 +20,9 @@ require_once 'tests/unit/AMEE/ExceptionTest.php';
 require_once 'tests/unit/AMEE/BaseObjectTest.php';
 require_once 'tests/unit/AMEE/BaseItemObjectTest.php';
 require_once 'tests/unit/AMEE/APITest.php';
-//require_once 'tests/unit/AMEE/ProfileTest.php';
-//require_once 'tests/unit/AMEE/ProfileItemTest.php';
+require_once 'tests/unit/AMEE/ProfileTest.php';
+require_once 'tests/unit/AMEE/ProfileItemTest.php';
+//require_once 'tests/unit/AMEE/DataItemTest.php';
 
 /**
  * The Services_AMEE_AllUnitTests class provides a convenient way of running all
@@ -47,8 +48,9 @@ class Services_AMEE_AllUnitTests extends PHPUnit_Framework_TestSuite
         $oUnitTestSuite->addTestSuite('Services_AMEE_BaseObject_UnitTest');
         $oUnitTestSuite->addTestSuite('Services_AMEE_BaseItemObject_UnitTest');
         $oUnitTestSuite->addTestSuite('Services_AMEE_API_UnitTest');
-//        $oUnitTestSuite->addTestSuite('Services_AMEE_Profile_UnitTest');
-//        $oUnitTestSuite->addTestSuite('Services_AMEE_ProfileItem_UnitTest');
+        $oUnitTestSuite->addTestSuite('Services_AMEE_Profile_UnitTest');
+        $oUnitTestSuite->addTestSuite('Services_AMEE_ProfileItem_UnitTest');
+//        $oUnitTestSuite->addTestSuite('Services_AMEE_DataItem_UnitTest');
 
         // Return the test suite
         return $oUnitTestSuite;
