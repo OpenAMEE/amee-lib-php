@@ -43,54 +43,182 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $this->assertClassHasAttribute('aPutPathOpenings',    'Services_AMEE_API');
         $this->assertClassHasAttribute('aGetPathOpenings',    'Services_AMEE_API');
         $this->assertClassHasAttribute('aDeletePathOpenings', 'Services_AMEE_API');
+        $this->assertClassHasStaticAttribute('oAPI', 'Services_AMEE_API');
     }
 
     /**
-     * Test the post(), put(), get() and delete() methods, using a mocked
-     * version of the validPath() method which returns an Exception.
+     * Test to ensure the Services_AMEE_API::signleton() method does only ever
+     * create a single instance of the class.
      */
-    public function testPostPutGetDeleteInvalidPath()
+    public function testSingleton()
+    {
+        // Create a new instance of the class via the singleton
+        $oAPI_Instance1 = Services_AMEE_API::singleton();
+
+        // Create a second instance of the class via the singleton
+        $oAPI_Instance2 = Services_AMEE_API::singleton();
+
+        // Create a third instance of the class via the constructor
+        $oAPI_Instance3 = new Services_AMEE_API();
+
+        // Test that the instances generated via the singleton method are the
+        // same object
+        $this->assertSame($oAPI_Instance1, $oAPI_Instance2);
+
+        // Test that the instances generated via the singletone method and the
+        // class constructor are different objects
+        $this->assertNotSame($oAPI_Instance1, $oAPI_Instance3);
+        $this->assertNotSame($oAPI_Instance2, $oAPI_Instance3);
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::post() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::validPath()
+     * method.
+     */
+    public function testPostValidPathError()
     {
         // Prepare testing Exception to return
         $oPathException = new Exception('Valid Path Test Exception');
 
-        // Create the mocked versions of the Services_AMEE_API class, with the
+        // Create the mocked version of the Services_AMEE_API class, with the
         // validPath() method mocked
         $aMockMethods = array(
             'validPath'
         );
-        $oMockAPIPost   = $this->getMock('Services_AMEE_API', $aMockMethods);
-        $oMockAPIPut    = $this->getMock('Services_AMEE_API', $aMockMethods);
-        $oMockAPIGet    = $this->getMock('Services_AMEE_API', $aMockMethods);
-        $oMockAPIDelete = $this->getMock('Services_AMEE_API', $aMockMethods);
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
 
-        // Set the expectation for the mocked objects that the validPath()
-        // method will be called exactly once, with the path paramter
-        // "/invalidpath" and type parameters "post", "put", "get" and "delete"
-        // respectively for the mocked objects. Set the Exception that will be
-        // thrown by the method call in all four cases.
-        $oMockAPIPost->expects($this->once())
+        // Set the expectation on the mocked object that the validPath()
+        // method will be called exactly once with the path paramter
+        // "/invalidpath" and type parameter "post", and set the Exception that
+        // will be thrown by the method call.
+        $oMockAPI->expects($this->once())
                 ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('post')
                 )
                 ->will($this->throwException($oPathException));
-        $oMockAPIPut->expects($this->once())
+
+        // Call the post() method
+        try {
+            $oMockAPI->post('/invalidpath');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oPathException);
+            return;
+        }
+        
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::put() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::validPath()
+     * method.
+     */
+    public function testPutValidPathError()
+    {
+        // Prepare testing Exception to return
+        $oPathException = new Exception('Valid Path Test Exception');
+
+        // Create the mocked version of the Services_AMEE_API class, with the
+        // validPath() method mocked
+        $aMockMethods = array(
+            'validPath'
+        );
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath()
+        // method will be called exactly once with the path paramter
+        // "/invalidpath" and type parameter "put", and set the Exception that
+        // will be thrown by the method call.
+        $oMockAPI->expects($this->once())
                 ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('put')
                 )
                 ->will($this->throwException($oPathException));
-        $oMockAPIGet->expects($this->once())
+
+        // Call the put() method
+        try {
+            $oMockAPI->put('/invalidpath');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oPathException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::get() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::validPath()
+     * method.
+     */
+    public function testGetValidPathError()
+    {
+        // Prepare testing Exception to return
+        $oPathException = new Exception('Valid Path Test Exception');
+
+        // Create the mocked version of the Services_AMEE_API class, with the
+        // validPath() method mocked
+        $aMockMethods = array(
+            'validPath'
+        );
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath()
+        // method will be called exactly once with the path paramter
+        // "/invalidpath" and type parameter "get", and set the Exception that
+        // will be thrown by the method call.
+        $oMockAPI->expects($this->once())
                 ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
                     $this->equalTo('get')
                 )
                 ->will($this->throwException($oPathException));
-        $oMockAPIDelete->expects($this->once())
+
+        // Call the get() method
+        try {
+            $oMockAPI->get('/invalidpath');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oPathException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::delete() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::validPath()
+     * method.
+     */
+    public function testDeleteValidPathError()
+    {
+        // Prepare testing Exception to return
+        $oPathException = new Exception('Valid Path Test Exception');
+
+        // Create the mocked version of the Services_AMEE_API class, with the
+        // validPath() method mocked
+        $aMockMethods = array(
+            'validPath'
+        );
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath()
+        // method will be called exactly once with the path paramter
+        // "/invalidpath" and type parameter "delete", and set the Exception
+        // that will be thrown by the method call.
+        $oMockAPI->expects($this->once())
                 ->method('validPath')
                 ->with(
                     $this->equalTo('/invalidpath'),
@@ -98,167 +226,241 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->throwException($oPathException));
 
-        // Call the post() method
-        try {
-            $oMockAPIPost->post('/invalidpath');
-        } catch (Exception $oException) {
-            // Test the Exception was correctly bubbled up
-            $this->assertSame($oException, $oPathException);
-        }
-
-        // Call the put() method
-        try {
-            $oMockAPIPut->put('/invalidpath');
-        } catch (Exception $oException) {
-            // Test the Exception was correctly bubbled up
-            $this->assertSame($oException, $oPathException);
-        }
-
-        // Call the get() method
-        try {
-            $oMockAPIGet->get('/invalidpath');
-        } catch (Exception $oException) {
-            // Test the Exception was correctly bubbled up
-            $this->assertSame($oException, $oPathException);
-        }
-
         // Call the delete() method
         try {
-            $oMockAPIDelete->delete('/invalidpath');
+            $oMockAPI->delete('/invalidpath');
         } catch (Exception $oException) {
             // Test the Exception was correctly bubbled up
             $this->assertSame($oException, $oPathException);
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test the post(), put(), get() and delete() methods, using a mocked
-     * version of the validPath() method which returns true, and a mocked
-     * version of the sendRequest() method which returns an Exception.
+     * Test to ensure that the Services_AMEE_API::post() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::sendRequest()
+     * method.
      */
-    public function testPostPutGetDeleteAPIError()
+    public function testPostSendRequestError()
     {
         // Prepare testing Exception to return
         $oRequestException = new Exception('Send Request Test Exception');
 
-        // Create the mocked versions of the Services_AMEE_API class, with the
+        // Create the mocked version of the Services_AMEE_API class, with the
         // validPath() and sendRequest() methods mocked
         $aMockMethods = array(
             'validPath',
             'sendRequest'
         );
-        $oMockAPIPost   = $this->getMock('Services_AMEE_API', $aMockMethods);
-        $oMockAPIPut    = $this->getMock('Services_AMEE_API', $aMockMethods);
-        $oMockAPIGet    = $this->getMock('Services_AMEE_API', $aMockMethods);
-        $oMockAPIDelete = $this->getMock('Services_AMEE_API', $aMockMethods);
-        
-        // Set the expectation for the mocked objects that the validPath()
-        // method will be called exactly once, with the path paramters
-        // "/auth",
-        // "/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08",
-        // "/profiles" and
-        // "/profiles/228A21573085/home/energy/quantity/B56410A978B6"
-        // respectively and type parameters "post", "put", "get" and "delete"
-        // respectively for the mocked objects. Set the return respose of
-        // "true".
-        $oMockAPIPost->expects($this->once())
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath() method
+        // will be called exactly once with the path paramter "/auth" and type
+        // parameter "post", and set the return value of true.
+        $oMockAPI->expects($this->once())
                 ->method('validPath')
                 ->with(
                     $this->equalTo('/auth'),
                     $this->equalTo('post')
                 )
                 ->will($this->returnValue(true));
-        $oMockAPIPut->expects($this->once())
-                ->method('validPath')
-                ->with(
-                    $this->equalTo('/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
-                    $this->equalTo('put')
-                )
-                ->will($this->returnValue(true));
-        $oMockAPIGet->expects($this->once())
-                ->method('validPath')
-                ->with(
-                    $this->equalTo('/profiles'),
-                    $this->equalTo('get')
-                )
-                ->will($this->returnValue(true));
-        $oMockAPIDelete->expects($this->once())
-                ->method('validPath')
-                ->with(
-                    $this->equalTo('/profiles/228A21573085/home/energy/quantity/B56410A978B6'),
-                    $this->equalTo('delete')
-                )
-                ->will($this->returnValue(true));
-        
-        // Set the expectation that the sendRequest() method will be called
-        // once, with the paramters as suggested by the expectations above. Set
-        // the Exception that will be thrown by the method call. Note the
-        // null body parameter expections for GET and DELETE.
-        $oMockAPIPost->expects($this->once())
+
+        // Set the expectation on the mocked object that sendRequest() method
+        // will be called exactly once, with the paramters as suggested by the
+        // expectation above. Set the Exception that will be thrown by the
+        // method call.
+        $oMockAPI->expects($this->once())
                 ->method('sendRequest')
                 ->with(
                     $this->equalTo('POST /auth'),
                     $this->equalTo('')
                 )
                 ->will($this->throwException($oRequestException));
-        $oMockAPIPut->expects($this->once())
+
+        // Call the post() method
+        try {
+            $oMockAPI->post('/auth');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oRequestException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::put() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::sendRequest()
+     * method.
+     */
+    public function testPutSendRequestError()
+    {
+        // Prepare testing Exception to return
+        $oRequestException = new Exception('Send Request Test Exception');
+
+        // Create the mocked version of the Services_AMEE_API class, with the
+        // validPath() and sendRequest() methods mocked
+        $aMockMethods = array(
+            'validPath',
+            'sendRequest'
+        );
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath() method
+        // will be called exactly once with the path paramter
+        // "/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08"
+        // and type parameter "put", and set the return value of true.
+        $oMockAPI->expects($this->once())
+                ->method('validPath')
+                ->with(
+                    $this->equalTo('/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
+                    $this->equalTo('put')
+                )
+                ->will($this->returnValue(true));
+
+        // Set the expectation on the mocked object that sendRequest() method
+        // will be called exactly once, with the paramters as suggested by the
+        // expectation above. Set the Exception that will be thrown by the
+        // method call.
+        $oMockAPI->expects($this->once())
                 ->method('sendRequest')
                 ->with(
                     $this->equalTo('PUT /profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08'),
                     $this->equalTo('')
                 )
                 ->will($this->throwException($oRequestException));
-        $oMockAPIGet->expects($this->once())
+
+        // Call the put() method
+        try {
+            $oMockAPI->put('/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oRequestException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::get() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::sendRequest()
+     * method.
+     */
+    public function testGetSendRequestError()
+    {
+        // Prepare testing Exception to return
+        $oRequestException = new Exception('Send Request Test Exception');
+
+        // Create the mocked version of the Services_AMEE_API class, with the
+        // validPath() and sendRequest() methods mocked
+        $aMockMethods = array(
+            'validPath',
+            'sendRequest'
+        );
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath() method
+        // will be called exactly once with the path paramter "/profiles" and type
+        // parameter "get", and set the return value of true.
+        $oMockAPI->expects($this->once())
+                ->method('validPath')
+                ->with(
+                    $this->equalTo('/profiles'),
+                    $this->equalTo('get')
+                )
+                ->will($this->returnValue(true));
+
+        // Set the expectation on the mocked object that sendRequest() method
+        // will be called exactly once, with the paramters as suggested by the
+        // expectation above. Set the Exception that will be thrown by the
+        // method call.
+        $oMockAPI->expects($this->once())
                 ->method('sendRequest')
                 ->with(
                     $this->equalTo('GET /profiles')
                 )
                 ->will($this->throwException($oRequestException));
-        $oMockAPIDelete->expects($this->once())
+
+        // Call the get() method
+        try {
+            $oMockAPI->get('/profiles');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oRequestException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::delete() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::sendRequest()
+     * method.
+     */
+    public function testDeleteSendRequestError()
+    {
+        // Prepare testing Exception to return
+        $oRequestException = new Exception('Send Request Test Exception');
+
+        // Create the mocked version of the Services_AMEE_API class, with the
+        // validPath() and sendRequest() methods mocked
+        $aMockMethods = array(
+            'validPath',
+            'sendRequest'
+        );
+        $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
+
+        // Set the expectation on the mocked object that the validPath() method
+        // will be called exactly once with the path paramter
+        // "/profiles/228A21573085/home/energy/quantity/B56410A978B6" and type
+        // parameter "delete", and set the return value of true.
+        $oMockAPI->expects($this->once())
+                ->method('validPath')
+                ->with(
+                    $this->equalTo('/profiles/228A21573085/home/energy/quantity/B56410A978B6'),
+                    $this->equalTo('delete')
+                )
+                ->will($this->returnValue(true));
+
+        // Set the expectation on the mocked object that sendRequest() method
+        // will be called exactly once, with the paramters as suggested by the
+        // expectation above. Set the Exception that will be thrown by the
+        // method call.
+        $oMockAPI->expects($this->once())
                 ->method('sendRequest')
                 ->with(
                     $this->equalTo('DELETE /profiles/228A21573085/home/energy/quantity/B56410A978B6')
                 )
                 ->will($this->throwException($oRequestException));
 
-        // Call the post() method
-        try {
-            $oMockAPIPost->post('/auth');
-        } catch (Exception $oException) {
-            // Test the Exception was correctly bubbled up
-            $this->assertSame($oException, $oRequestException);
-        }
-
-        // Call the put() method
-        try {
-            $oMockAPIPut->put('/profiles/4A546C3F1B2E/transport/motorcycle/generic/9B32A9FC3B08');
-        } catch (Exception $oException) {
-            // Test the Exception was correctly bubbled up
-            $this->assertSame($oException, $oRequestException);
-        }
-
-        // Call the get() method
-        try {
-            $oMockAPIGet->get('/profiles');
-        } catch (Exception $oException) {
-            // Test the Exception was correctly bubbled up
-            $this->assertSame($oException, $oRequestException);
-        }
-
         // Call the delete() method
         try {
-            $oMockAPIDelete->delete('/profiles/228A21573085/home/energy/quantity/B56410A978B6');
+            $oMockAPI->delete('/profiles/228A21573085/home/energy/quantity/B56410A978B6');
         } catch (Exception $oException) {
             // Test the Exception was correctly bubbled up
             $this->assertSame($oException, $oRequestException);
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test the post(), put(), get() and delete() methods, using a mocked
-     * version of the validPath() method which returns true, and a mocked
-     * version of the sendRequest() method which returns a fake JSON response
-     * in an array.
+     * Test to ensure that the Services_AMEE_API::post(),
+     * Services_AMEE_API::put(), Services_AMEE_API::get() and
+     * Services_AMEE_API::delete() methods correctly extract and return the
+     * required JSON data returned from the Services_AMEE_API::sendRequest()
+     * method return array.
      */
     public function testPostPutGetDelete()
     {
@@ -389,144 +591,156 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test all possible valid POST paths, and some obvious invalid variations.
+     * Test the Services_AMEE_API::validPath() method with all possible valid
+     * POST paths, and some obvious invalid variations.
      */
-    public function testValidPostPath()
+    public function testValidPathPost()
     {
-        $oAPI = new Services_AMEE_API();
-
-        // Test POST /auth methods
-        unset($bResult);
-        $bResult = $oAPI->validPath('/auth', 'post');
-        $this->assertTrue($bResult);
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/aut', 'post');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API POST path specified: /aut'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/authh', 'post');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API POST path specified: /authh'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-
-        // Test POST /profiles methods
-        unset($bResult);
-        $bResult = $oAPI->validPath('/profiles', 'post');
-        $this->assertTrue($bResult);
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/profile', 'post');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API POST path specified: /profile'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/profiless', 'post');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API POST path specified: /profiless'
-            );
-        }
-        $this->assertFalse(isset($bResult));
+        $this->markTestIncomplete();
+        return;
+//        $oAPI = new Services_AMEE_API();
+//
+//        // Test POST /auth methods
+//        unset($bResult);
+//        $bResult = $oAPI->validPath('/auth', 'post');
+//        $this->assertTrue($bResult);
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/aut', 'post');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API POST path specified: /aut'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/authh', 'post');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API POST path specified: /authh'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//
+//        // Test POST /profiles methods
+//        unset($bResult);
+//        $bResult = $oAPI->validPath('/profiles', 'post');
+//        $this->assertTrue($bResult);
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/profile', 'post');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API POST path specified: /profile'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/profiless', 'post');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API POST path specified: /profiless'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
     }
 
     /**
-     * Test all possible valid PUSH paths, and some obvious invalid variations.
+     * Test the Services_AMEE_API::validPath() method with all possible valid
+     * PUSH paths, and some obvious invalid variations.
      */
-    public function testValidPushPath()
+    public function testValidPathPush()
     {
-        $oAPI = new Services_AMEE_API();
-
-        // Test PUT /profiles methods
-        try {
-            $bResult = $oAPI->validPath('/profile', 'put');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API PUT path specified: /profile'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/profiles', 'put');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API PUT path specified: /profiles'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/profiles/ACDF76287', 'put');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API PUT path specified: /profiles/ACDF76287'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-        unset($bResult);
-        try {
-            $bResult = $oAPI->validPath('/profiles/ACDF7628DF577', 'put');
-        } catch (Exception $oException) {
-            $this->assertEquals(
-                $oException->getMessage(),
-                'Invalid AMEE REST API PUT path specified: /profiles/ACDF7628DF577'
-            );
-        }
-        $this->assertFalse(isset($bResult));
-        unset($bResult);
-        $bResult = $oAPI->validPath('/profiles/ACDF7628D527', 'put');
-        $this->assertTrue($bResult);
+        $this->markTestIncomplete();
+        return;
+//        $oAPI = new Services_AMEE_API();
+//
+//        // Test PUT /profiles methods
+//        try {
+//            $bResult = $oAPI->validPath('/profile', 'put');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API PUT path specified: /profile'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/profiles', 'put');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API PUT path specified: /profiles'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/profiles/ACDF76287', 'put');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API PUT path specified: /profiles/ACDF76287'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//        unset($bResult);
+//        try {
+//            $bResult = $oAPI->validPath('/profiles/ACDF7628DF577', 'put');
+//        } catch (Exception $oException) {
+//            $this->assertEquals(
+//                $oException->getMessage(),
+//                'Invalid AMEE REST API PUT path specified: /profiles/ACDF7628DF577'
+//            );
+//        }
+//        $this->assertFalse(isset($bResult));
+//        unset($bResult);
+//        $bResult = $oAPI->validPath('/profiles/ACDF7628D527', 'put');
+//        $this->assertTrue($bResult);
     }
 
     /**
-     * Test all possible valid GET paths, and some obvious invalid variations.
+     * Test the Services_AMEE_API::validPath() method with all possible valid
+     * GET paths, and some obvious invalid variations.
      */
-    public function testValidGetPath()
+    public function testValidPathGet()
     {
-        $oAPI = new Services_AMEE_API();
-
+        $this->markTestIncomplete();
+        return;
+//        $oAPI = new Services_AMEE_API();
     }
 
     /**
-     * Test all possible valid DELETE paths, and some obvious invalid
-     * variations.
+     * Test the Services_AMEE_API::validPath() method with all possible valid
+     * DELETE paths, and some obvious invalid variations.
      */
-    public function testValidDeletePath()
+    public function testValidPathDelete()
     {
-        $oAPI = new Services_AMEE_API();
-
+        $this->markTestIncomplete();
+        return;
+//        $oAPI = new Services_AMEE_API();
     }
 
     /**
-     * Test the sendRequest() method with a bad method (i.e. not PUT, PUSH,
-     * GET or DELETE).
+     * Test to ensure that the Services_AMEE_API::sendRequest() method throws
+     * an exception when called with a bad method (i.e. not PUT, PUSH, GET or
+     * DELETE).
      */
     public function testSendRequestBadMethod()
     {
+        // Prepare the expected exception
         $oBadMethodException = new Services_AMEE_Exception(
             'Invalid AMEE REST API method specified: FOO /auth'
         );
-        
+
+        // Create a guaranteed new insteance of the class
         $oAPI = new Services_AMEE_API();
 
         // Test the sendRequest() method with a bad method
@@ -545,16 +759,21 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 $oException->getMessage(),
                 $oBadMethodException->getMessage()
             );
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test the sendRequest() method where a non-authorisation method call is
-     * made, and a connection to the AMEE REST API cannot be made (i.e. the
-     * connect() method throws an error).
+     * Test to ensure the Services_AMEE_API::sendRequest() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::connect()
+     * method.
      */
     public function testSendRequestConnectionException()
     {
+        // Prepare the expected exception
         $oConnectException = new Exception('Connection Exception');
 
         // Create a mocked version of the Services_AMEE_API class, with the
@@ -565,7 +784,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         );
         $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
 
-        // Set the expectation for the mocked object that the connected()
+        // Set the expectation onthe mocked object that the connected()
         // method will be called exactly once and will return false. Set the
         // epxectation for the mocked object that the connect() method will be
         // called exactly once and will throw an Exception.
@@ -581,16 +800,20 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         } catch (Exception $oException) {
             // Test the exception was correctly bubbled up
             $this->assertEquals($oException, $oConnectException);
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test the sendRequest() method where an authorisation method call is
-     * made, and a connection to the AMEE REST API cannot be made (i.e. the
-     * built in PHP fsockopen() function returns false).
+     * Test to ensure that the Services_AMEE_API::sendRequest() method throws
+     * an exception if the built in PHP fsockopen() function returns false.
      */
     public function testSendRequestSocketOpenError()
     {
+        // Prepare the expected exception
         $oSendRequestException = new Services_AMEE_Exception(
             'Unable to connect to the AMEE REST API: '
         );
@@ -645,17 +868,20 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 $oException->getMessage(),
                 $oSendRequestException->getMessage()
             );
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test the sendRequest() method where an authorisation method call is
-     * made, and a write to the AMEE REST API cannot be made (i.e. the
-     * built in PHP fwrite() function returns false OR returns a character
-     * write count different to the original write string).
+     * Test to ensure that the Services_AMEE_API::sendRequest() method throws
+     * an exception if the built in PHP fwrite() function returns false.
      */
-    public function testSendRequestSocketWriteError()
+    public function testSendRequestSocketWriteErrorFalse()
     {
+        // Prepare the expected exception
         $oSendRequestException = new Services_AMEE_Exception(
             'Error sending the AMEE REST API request'
         );
@@ -699,6 +925,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue(true));
         $sWrite = "POST /auth HTTP/1.1\n" .
+                "Connection: close\n" .
                 "Accept: application/json\n" .
                 "Host: " . AMEE_API_URL . "\n" .
                 "\n";
@@ -725,7 +952,24 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 $oException->getMessage(),
                 $oSendRequestException->getMessage()
             );
+            return;
         }
+        
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::sendRequest() method throws
+     * an exception if the built in PHP fwrite() function returns a character
+     * write count different to the original write string length.
+     */
+    public function testSendRequestSocketWriteErrorBadWrite()
+    {
+        // Prepare the expected exception
+        $oSendRequestException = new Services_AMEE_Exception(
+            'Error sending the AMEE REST API request'
+        );
 
         // Create a mocked version of the Services_AMEE_API class, with the
         // connected() and connect() methods and the protected _socketOpen()
@@ -766,6 +1010,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue(true));
         $sWrite = "POST /auth HTTP/1.1\n" .
+                "Connection: close\n" .
                 "Accept: application/json\n" .
                 "Host: " . AMEE_API_URL . "\n" .
                 "\n";
@@ -792,16 +1037,22 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 $oException->getMessage(),
                 $oSendRequestException->getMessage()
             );
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test the sendRequest() method where an authorisation method call is
-     * made, but a 401 UNAUTH response is returned, and check that the method
-     * call is repeated once only.
+     * Test to ensure that the Services_AMEE_API::sendRequest() method throws
+     * an exception if an authorisation method call is made but a 401 UNAUTH
+     * response is returned; also check that the method call is repeated only
+     * once.
      */
     public function testSendRequestSocketUnath()
     {
+        // Prepare the expected exception
         $oSendRequestException = new Services_AMEE_Exception(
             'The AMEE REST API returned an authorisation failure result'
         );
@@ -824,7 +1075,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
 
         // Set the expectation for the mocked object that the connected() and
         // connect() methods will never be called, and then that:
-        // 
+        //
         // - The _socketOpen() method will be called with appropriate parameters
         //      and will return a socket resource (in this case, faked with the
         //      string "socket_01");
@@ -865,6 +1116,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue('socket_01'));
         $sWrite = "POST /auth HTTP/1.1\n" .
+                "Connection: close\n" .
                 "Accept: application/json\n" .
                 "Host: " . AMEE_API_URL . "\n" .
                 "\n";
@@ -957,14 +1209,17 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 $oException->getMessage(),
                 $oSendRequestException->getMessage()
             );
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
-     * Test a valid sendRequest() method call where the headers as well as the
-     * JSON data is requested to be returned.
-     *
-     * Also tests the message sent, where no body exists.
+     * Test the return data for a valid Services_AMEE_API::sendRequest() method
+     * call where the headers as well as the JSON data is requested to be
+     * returned; also tests the HTTP message sent, where no body exists.
      */
     public function testSendRequestHeaders()
     {
@@ -982,7 +1237,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $oMockAPI = $this->getMock('Services_AMEE_API', $aMockMethods);
 
         // Set the expectation for the mocked object that|:
-        // 
+        //
         // - The connected() method will be called and will return true;
         // - The _socketOpen() method will be called with appropriate parameters
         //      and will return a socket resource (in this case, faked with the
@@ -997,7 +1252,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         //   - The _socketGetLine() method will be called with appropriate
         //      parameters, and will return a valid response string;
         // END LOOP
-        // 
+        //
         // - The _socketEOF() method will be called with appropriate parameters
         //      and will return true;
         // - The _socketClose() method will be called with appropriate
@@ -1017,6 +1272,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue('socket'));
         $sWrite = "GET /profiles HTTP/1.1\n" .
+                "Connection: close\n" .
                 "Accept: application/json\n" .
                 "Cookie: authToken=\n" .
                 "Host: " . AMEE_API_URL . "\n" .
@@ -1088,10 +1344,9 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test a valid sendRequest() method call where just the JSON data is
-     * requested to be returned.
-     *
-     * Also tests the message sent, where the body DOES exist.
+     * Test the return data for a valid Services_AMEE_API::sendRequest() method
+     * call where just the JSON data is requested to be returned; also tests
+     * the HTTP message sent, where a body does exist.
      */
     public function testSendRequestJSON()
     {
@@ -1145,6 +1400,7 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue('socket'));
         $sWrite = "GET /profiles HTTP/1.1\n" .
+                "Connection: close\n" .
                 "Accept: application/json\n" .
                 "Cookie: authToken=\n" .
                 "Host: " . AMEE_API_URL . "\n" .
@@ -1217,13 +1473,13 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the connect() method.
-     *
-     * No testing of the exceptions raised in the event that required constants
-     * are not defined.
+     * Test to ensure that the Services_AMEE_API::connect() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::sendRequest()
+     * method.
      */
-    public function testConnect()
+    public function testConnectSendRequestError()
     {
+        // Prepare the expected exception
         $oSendRequestException = new Exception('Send Request Exception');
 
         // Create a mocked version of the Services_AMEE_API class, with the
@@ -1253,7 +1509,24 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         } catch (Exception $oException) {
             // Test the Exception was correctly bubbled up
             $this->assertSame($oException, $oSendRequestException);
+            return;
         }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::connect() method throws
+     * an exception if the Services_AMEE_API::sendRequest() method does not
+     * return an authorsation token.
+     */
+    public function testConnectSendRequestNoAuthToken()
+    {
+        // Prepare the expected exception
+        $oConnectionException = new Services_AMEE_Exception(
+            'Authentication error: No authToken returned by the AMEE REST API'
+        );
 
         // Create a mocked version of the Services_AMEE_API class, with the
         // sendRequest() method mocked
@@ -1281,11 +1554,6 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue($aReturn));
 
-        // Prepare the expected Exception that connect() should raise
-        $oConnectionException = new Services_AMEE_Exception(
-            'Authentication error: No authToken returned by the AMEE REST API'
-        );
-
         // Call the connect() method
         try {
             $oMockAPI->connect();
@@ -1302,8 +1570,19 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
                 $oException->getMessage(),
                 $oConnectionException->getMessage()
             );
+            return;
         }
 
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::connect() method returns true
+     * if the connection was created correctly.
+     */
+    public function testConnect()
+    {
         // Create a mocked version of the Services_AMEE_API class, with the
         // sendRequest() method mocked
         $aMockMethods = array(
@@ -1335,9 +1614,11 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         $bResult = $oMockAPI->connect();
         $this->assertTrue($bResult);
     }
-
+    
     /**
-     * Test the connected() method and the disconnect() method.
+     * Test to ensure that the Services_AMEE_API::connected() method and the
+     * Services_AMEE_API::disconnect() method behave as expected when there is
+     * and is not a connection.
      */
     public function testConnectedDisconnect()
     {
@@ -1389,12 +1670,15 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the reconnect() method.
+     * Test to ensure that the Services_AMEE_API::reconnect() method correctly
+     * bubbles up an Exception thrown by the Services_AMEE_API::connect()
+     * method.
      */
-    public function testReconnect()
+    public function testReconnectConnectError()
     {
+        // Prepare the expected exception
         $oConnectException = new Exception('Connect Exception');
-        
+
         // Create a mocked version of the Services_AMEE_API class, with the
         // disconnect() and connect() methods mocked
         $aMockMethods = array(
@@ -1420,8 +1704,19 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
         } catch (Exception $oException) {
             // Test the Exception was correctly bubbled up
             $this->assertSame($oException, $oConnectException);
+            return;
         }
-        
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_API::reconnect() method returns
+     * true if the connection can be re-made.
+     */
+    public function testReconnect()
+    {
         // Create a mocked version of the Services_AMEE_API class, with the
         // disconnect() and connect() methods mocked
         $aMockMethods = array(

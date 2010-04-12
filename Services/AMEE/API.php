@@ -56,7 +56,7 @@ class Services_AMEE_API
      *      are valid for AMEE REST API post operations (in Perl Regex format,
      *      excluding the opening ^ limiter).
      */
-    protected $aPostPathOpenings = array(
+    private $aPostPathOpenings = array(
         '/auth$',
         '/profiles$',
         '/profiles/[0-9A-F]{12}/business',
@@ -72,7 +72,7 @@ class Services_AMEE_API
      *      are valid for AMEE REST API put operations (in Perl Regex format,
      *      excluding the opening ^ limiter).
      */
-    protected $aPutPathOpenings = array(
+    private $aPutPathOpenings = array(
         '/profiles/[0-9A-F]{12}$',
         '/profiles/[0-9A-F]{12}/business',
         '/profiles/[0-9A-F]{12}/embodied',
@@ -87,7 +87,7 @@ class Services_AMEE_API
      *      are valid for AMEE REST API get operations (in Perl Regex format,
      *      excluding the opening ^ limiter).
      */
-    protected $aGetPathOpenings = array(
+    private $aGetPathOpenings = array(
         '/profiles$',
         '/profiles/[0-9A-F]{12}',
         '/data'
@@ -98,9 +98,11 @@ class Services_AMEE_API
      *      are valid for AMEE REST API delete operations (in Perl Regex format,
      *      excluding the opening ^ limiter).
      */
-    protected $aDeletePathOpenings = array(
+    private $aDeletePathOpenings = array(
         '/profiles/[0-9A-F]{12}'
     );
+
+    private static $oAPI;
 
     /**
      * A static singleton method to obtain an instance of this class, while
@@ -109,10 +111,10 @@ class Services_AMEE_API
      */
     static function singleton()
     {
-        if (!isset($_GLOBALS['Services_AMEE_API'])) {
-            $_GLOBALS['Services_AMEE_API'] = new Services_AMEE_API();
+        if (!isset(self::$oAPI)) {
+            self::$oAPI = new Services_AMEE_API();
         }
-        return $_GLOBALS['Services_AMEE_API'];
+        return self::$oAPI;
     }
 
     /**

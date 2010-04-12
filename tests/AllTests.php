@@ -42,10 +42,10 @@ class Services_AMEE_AllTests extends PHPUnit_Framework_TestSuite
             Services_AMEE_AllUnitTests::suite()
         );
 
-//        // Add all of the integration tests
-//        $oTestSuite->addTestSuite(
-//            Services_AMEE_AllIntegrationTests::suite()
-//        );
+        // Add all of the integration tests
+        $oTestSuite->addTestSuite(
+            Services_AMEE_AllIntegrationTests::suite()
+        );
 
         return $oTestSuite;
     }

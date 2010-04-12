@@ -19,9 +19,7 @@ require_once 'tests/testConfig.php';
 require_once 'tests/unit/AMEE/ExceptionTest.php';
 require_once 'tests/unit/AMEE/BaseObjectTest.php';
 require_once 'tests/unit/AMEE/BaseItemObjectTest.php';
-
-
-//require_once 'tests/unit/AMEE/APITest.php';
+require_once 'tests/unit/AMEE/APITest.php';
 //require_once 'tests/unit/AMEE/ProfileTest.php';
 //require_once 'tests/unit/AMEE/ProfileItemTest.php';
 
@@ -48,7 +46,7 @@ class Services_AMEE_AllUnitTests extends PHPUnit_Framework_TestSuite
         $oUnitTestSuite->addTestSuite('Services_AMEE_Exception_UnitTest');
         $oUnitTestSuite->addTestSuite('Services_AMEE_BaseObject_UnitTest');
         $oUnitTestSuite->addTestSuite('Services_AMEE_BaseItemObject_UnitTest');
-//        $oUnitTestSuite->addTestSuite('Services_AMEE_API_UnitTest');
+        $oUnitTestSuite->addTestSuite('Services_AMEE_API_UnitTest');
 //        $oUnitTestSuite->addTestSuite('Services_AMEE_Profile_UnitTest');
 //        $oUnitTestSuite->addTestSuite('Services_AMEE_ProfileItem_UnitTest');
 
