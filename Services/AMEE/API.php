@@ -89,7 +89,13 @@ class Services_AMEE_API
      */
     private $aGetPathOpenings = array(
         '/profiles$',
-        '/profiles/[0-9A-F]{12}',
+        '/profiles/[0-9A-F]{12}$',
+        '/profiles/[0-9A-F]{12}/business',
+        '/profiles/[0-9A-F]{12}/embodied',
+        '/profiles/[0-9A-F]{12}/home',
+        '/profiles/[0-9A-F]{12}/metadata',
+        '/profiles/[0-9A-F]{12}/planet',
+        '/profiles/[0-9A-F]{12}/transport',
         '/data'
     );
 
@@ -99,7 +105,13 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     private $aDeletePathOpenings = array(
-        '/profiles/[0-9A-F]{12}'
+        '/profiles/[0-9A-F]{12}$',
+        '/profiles/[0-9A-F]{12}/business',
+        '/profiles/[0-9A-F]{12}/embodied',
+        '/profiles/[0-9A-F]{12}/home',
+        '/profiles/[0-9A-F]{12}/metadata',
+        '/profiles/[0-9A-F]{12}/planet',
+        '/profiles/[0-9A-F]{12}/transport'
     );
 
     private static $oAPI;

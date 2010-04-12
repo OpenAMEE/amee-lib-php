@@ -596,114 +596,465 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
      */
     public function testValidPathPost()
     {
-        $this->markTestIncomplete();
-        return;
-//        $oAPI = new Services_AMEE_API();
-//
-//        // Test POST /auth methods
-//        unset($bResult);
-//        $bResult = $oAPI->validPath('/auth', 'post');
-//        $this->assertTrue($bResult);
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/aut', 'post');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API POST path specified: /aut'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/authh', 'post');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API POST path specified: /authh'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//
-//        // Test POST /profiles methods
-//        unset($bResult);
-//        $bResult = $oAPI->validPath('/profiles', 'post');
-//        $this->assertTrue($bResult);
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/profile', 'post');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API POST path specified: /profile'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/profiless', 'post');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API POST path specified: /profiless'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
+        $oAPI = new Services_AMEE_API();
+
+        // Test valid POST path: /auth
+        unset($bResult);
+        $bResult = $oAPI->validPath('/auth', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles/1234567890AB/business
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/business', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles/1234567890AB/embodied
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/embodied', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles/1234567890AB/home
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/home', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles/1234567890AB/metadata
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/metadata', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles/1234567890AB/planet
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/planet', 'post');
+        $this->assertTrue($bResult);
+
+        // Test valid POST path: /profiles/1234567890AB/transport
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/transport', 'post');
+        $this->assertTrue($bResult);
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath1()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /aut
+        try {
+            $bResult = $oAPI->validPath('/aut', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /aut'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath2()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /authh
+        try {
+            $bResult = $oAPI->validPath('/authh', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /authh'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath3()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profile
+        try {
+            $bResult = $oAPI->validPath('/profile', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profile'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath4()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profiless
+        try {
+            $bResult = $oAPI->validPath('/profiless', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiless'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath5()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profiles/1234567890AB
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AB', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiles/1234567890AB'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath6()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profiles/1234567890AB/foo
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AB/foo', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiles/1234567890AB/foo'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath7()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profiles/1234567890A/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890A/transport', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiles/1234567890A/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath8()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890ABB/transport', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiles/1234567890ABB/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid POST path.
+     */
+    public function testValidPathPostBadPostPath9()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud POST path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'post');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API POST path specified: /profiles/1234567890AG/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
      * Test the Services_AMEE_API::validPath() method with all possible valid
-     * PUSH paths, and some obvious invalid variations.
+     * PUT paths, and some obvious invalid variations.
      */
-    public function testValidPathPush()
+    public function testValidPathPut()
     {
-        $this->markTestIncomplete();
-        return;
-//        $oAPI = new Services_AMEE_API();
-//
-//        // Test PUT /profiles methods
-//        try {
-//            $bResult = $oAPI->validPath('/profile', 'put');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API PUT path specified: /profile'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/profiles', 'put');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API PUT path specified: /profiles'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/profiles/ACDF76287', 'put');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API PUT path specified: /profiles/ACDF76287'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//        unset($bResult);
-//        try {
-//            $bResult = $oAPI->validPath('/profiles/ACDF7628DF577', 'put');
-//        } catch (Exception $oException) {
-//            $this->assertEquals(
-//                $oException->getMessage(),
-//                'Invalid AMEE REST API PUT path specified: /profiles/ACDF7628DF577'
-//            );
-//        }
-//        $this->assertFalse(isset($bResult));
-//        unset($bResult);
-//        $bResult = $oAPI->validPath('/profiles/ACDF7628D527', 'put');
-//        $this->assertTrue($bResult);
+        $oAPI = new Services_AMEE_API();
+
+        // Test valid PUT path: /profiles/1234567890AB
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB', 'put');
+        $this->assertTrue($bResult);
+
+        // Test valid PUT path: /profiles/1234567890AB/business
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/business', 'put');
+        $this->assertTrue($bResult);
+
+        // Test valid PUT path: /profiles/1234567890AB/embodied
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/embodied', 'put');
+        $this->assertTrue($bResult);
+
+        // Test valid PUT path: /profiles/1234567890AB/home
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/home', 'put');
+        $this->assertTrue($bResult);
+
+        // Test valid PUT path: /profiles/1234567890AB/metadata
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/metadata', 'put');
+        $this->assertTrue($bResult);
+
+        // Test valid PUT path: /profiles/1234567890AB/planet
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/planet', 'put');
+        $this->assertTrue($bResult);
+
+        // Test valid PUT path: /profiles/1234567890AB/transport
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/transport', 'put');
+        $this->assertTrue($bResult);
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath1()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /auth
+        try {
+            $bResult = $oAPI->validPath('/auth', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /auth'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath2()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profiles
+        try {
+            $bResult = $oAPI->validPath('/profiles', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath3()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profile
+        try {
+            $bResult = $oAPI->validPath('/profile', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profile'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath4()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profiless
+        try {
+            $bResult = $oAPI->validPath('/profiless', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiless'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath5()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profiles/1234567890AB/foo
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AB/foo', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles/1234567890AB/foo'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath6()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profiles/1234567890A/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890A/transport', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles/1234567890A/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath7()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890ABB/transport', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles/1234567890ABB/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid PUT path.
+     */
+    public function testValidPathPostBadPutPath8()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud PUT path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'put');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API PUT path specified: /profiles/1234567890AG/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
     /**
@@ -712,10 +1063,236 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
      */
     public function testValidPathGet()
     {
-        $this->markTestIncomplete();
-        return;
-//        $oAPI = new Services_AMEE_API();
+        $oAPI = new Services_AMEE_API();
+
+        // Test valid GET path: /profiles
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB/business
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/business', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB/embodied
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/embodied', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB/home
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/home', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB/metadata
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/metadata', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB/planet
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/planet', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /profiles/1234567890AB/transport
+        unset($bResult);
+        $bResult = $oAPI->validPath('/profiles/1234567890AB/transport', 'get');
+        $this->assertTrue($bResult);
+
+        // Test valid GET path: /data
+        unset($bResult);
+        $bResult = $oAPI->validPath('/data', 'get');
+        $this->assertTrue($bResult);
     }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath1()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /auth
+        try {
+            $bResult = $oAPI->validPath('/auth', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /auth'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath2()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profile
+        try {
+            $bResult = $oAPI->validPath('/profile', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /profile'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath3()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profiless
+        try {
+            $bResult = $oAPI->validPath('/profiless', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /profiless'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath4()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profiles/1234567890AB/foo
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AB/foo', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /profiles/1234567890AB/foo'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath5()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profiles/1234567890A/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890A/transport', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /profiles/1234567890A/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath6()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890ABB/transport', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /profiles/1234567890ABB/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath7()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /profiles/1234567890AG/transport'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test the Services_AMEE_API::validPath() method with an invalid GET path.
+     */
+    public function testValidPathPostBadGetPath8()
+    {
+        $oAPI = new Services_AMEE_API();
+
+        // Test invalud GET path: /profiles/1234567890ABB/transport
+        try {
+            $bResult = $oAPI->validPath('/dat', 'get');
+        } catch (Exception $oException) {
+            $this->assertEquals(
+                $oException->getMessage(),
+                'Invalid AMEE REST API GET path specified: /dat'
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+
+
+
+
+
+
 
     /**
      * Test the Services_AMEE_API::validPath() method with all possible valid
@@ -725,7 +1302,8 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     {
         $this->markTestIncomplete();
         return;
-//        $oAPI = new Services_AMEE_API();
+
+        $oAPI = new Services_AMEE_API();
     }
 
     /**
