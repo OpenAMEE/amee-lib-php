@@ -270,7 +270,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                     'with a parameter that is not an array'
                 );
             }
-            if (count($aParams) == 1 || count($aParams) > 5) {
+            if (count($aParams) < 2 || count($aParams) > 5) {
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method called ' .
                     'with the parameter array containing an invalid number ' .
@@ -310,7 +310,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                 // 'new' and 'uid'
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method called ' .
-                    'with the parameter array\'s fourth parameter being set,' .
+                    'with the parameter array\'s fourth parameter being set, ' .
                     'but with other parameters such that a fourth parameter ' .
                     'is not expected to be set'
                 );
@@ -324,7 +324,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                 // 'new'
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem constructor method called ' .
-                    'with the parameter array\'s fifth parameter being set,' .
+                    'with the parameter array\'s fifth parameter being set, ' .
                     'but with other parameters such that a fifth parameter ' .
                     'is not expected to be set'
                 );
@@ -468,7 +468,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             if (!in_array($sKey, $this->aValidProfileItemOptions)) {
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem method called with option ' .
-                    'parameter array containing invalid key ' . $sKey
+                    'parameter array containing invalid key \'' . $sKey . '\''
                 );
             }
         }
@@ -517,7 +517,8 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             if (!in_array($sKey, $this->aValidReturnUnitOptions)) {
                 throw new Services_AMEE_Exception(
                     'Services_AMEE_ProfileItem method called with the return ' .
-                    'unit parameter array containing invalid key ' . $sKey
+                    'unit parameter array containing invalid key \'' . $sKey .
+                    '\''
                 );
             }
         }
@@ -644,8 +645,8 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
     {
         // Set the AMEE API Profile Item's properties
         $this->sUID       = $aData['uid'];
-        $this->sCreated   = $this->_formatDate($aData['created']);
-        $this->sModified  = $this->_formatDate($aData['modified']);
+        $this->sCreated   = $this->formatDate($aData['created']);
+        $this->sModified  = $this->formatDate($aData['modified']);
         $this->sName      = $aData['name'];
         $this->dAmount    = $aData['amount']['value'];
         $this->sUnit      = '';
@@ -659,10 +660,10 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             }
         }
         if (!empty($aData['startDate'])) {
-            $this->sStartDate = $this->_formatDate($aData['startDate']);
+            $this->sStartDate = $this->formatDate($aData['startDate']);
         }
         if (!empty($aData['endDate'])) {
-            $this->sEndDate   = $this->_formatDate($aData['endDate']);
+            $this->sEndDate   = $this->formatDate($aData['endDate']);
         }
     }
 
