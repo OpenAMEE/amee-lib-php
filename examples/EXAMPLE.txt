@@ -1,0 +1,1 @@
+See the tests/integration/AMEE/ExampleTest.php file.

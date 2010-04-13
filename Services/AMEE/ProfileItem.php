@@ -623,7 +623,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             }
             // Could not find the AMEE API Profile Item requested
             throw new Services_AMEE_Exception(
-                'Services_AMEE_ProfileItem constructor method requested an' .
+                'Services_AMEE_ProfileItem constructor method requested an ' .
                 'existing AMEE API Profile Item by AMEE API Data Item UID ' .
                 $this->oDataItem->getUID() . ', but no such AMEE API Profile ' .
                 'Item could be located'
