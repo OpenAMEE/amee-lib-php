@@ -80,7 +80,10 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
             // Process the result data
             $this->aLastJSON = json_decode($this->sLastJSON, true);
             // Test that a valid Data Item UID has been located
-            if ($this->aLastJSON['choices']['name'] == 'uid'
+            if (isset($this->aLastJSON['choices'])
+                && isset($this->aLastJSON['choices']['name'])
+                && $this->aLastJSON['choices']['name'] == 'uid'
+                && isset($this->aLastJSON['choices']['choices'])
                 && count($this->aLastJSON['choices']['choices']) == 1
                 && isset($this->aLastJSON['choices']['choices'][0])
                 && isset($this->aLastJSON['choices']['choices'][0]['value'])) {
@@ -88,10 +91,10 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
                 $this->sUID = $this->aLastJSON['choices']['choices'][0]['value'];
             } else {
                 throw new Services_AMEE_Exception(
-                    'AMEE API Data Item Drill Down for path ' . $sPath . ' with the' .
-                    'specified options did not return a Data Item UID - check that ' .
-                    'the specified options fully define a complete Drill Down to a ' .
-                    'single Data Item'
+                    'AMEE API Data Item Drill Down for path \'' . $sPath .
+                    '\' with the specified options did not return a Data ' .
+                    'Item UID - check that the specified options fully ' .
+                    'define a complete Drill Down to a single Data Item'
                 );
             }
         } catch (Exception $oException) {
