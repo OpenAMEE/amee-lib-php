@@ -779,7 +779,8 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
         try {
             // Validate the return options
             $this->_validateReturnUnitParamArray($aReturnOptions);
-            // Re-load this object from the API
+            // Re-load this object from the API, now that the new
+            // return options have been set by the above
             $this->_constructExistingByUID($this->sUID);
         } catch (Exception $oException) {
             throw $oException;

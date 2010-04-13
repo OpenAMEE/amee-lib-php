@@ -39,9 +39,13 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      * to allow the mocked Services_AMEE_DataItem to be constructed for the
      * "/metadata" path.
      *
-     * @return <Services_AMEE_DataItem>
+     * @param <array> $aExtraMockMethods An optional array of additional methods
+     *      that should be mocked in the returned mock version of the
+     *      Services_AMEE_DataItem class.
+     * @return <Services_AMEE_DataItem> The mocked version of the
+     *      Services_AMEE_DataItem class.
      */
-    private function _getDataItem()
+    private function _getDataItem($aExtraMockMethods = array())
     {
 
 
@@ -74,9 +78,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                 )
                 ->will($this->returnValue($sMetadataDrillJSON));
 
+        $aMockMethods = array(
+            '_getAPI'
+        );
+        foreach ($aExtraMockMethods as $sMethod) {
+            $aMockMethods[] = $sMethod;
+        }
         $oMockDataItem = $this->getMock(
             'Services_AMEE_DataItem',
-            array('_getAPI'),
+            $aMockMethods,
             array(),
             '',
             false
@@ -190,6 +200,10 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
         $this->assertClassHasAttribute('oProfile',   'Services_AMEE_ProfileItem');
         $this->assertClassHasAttribute('oDataItem',  'Services_AMEE_ProfileItem');
     }
+
+    /***************************************************************************
+     * NON-SPECIFIC CONSTRUCTOR TESTS
+     **************************************************************************/
 
     /**
      * Test to ensure that the Services_AMEE_ProfileItem::_construct() method
@@ -819,8 +833,131 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructNew()
     {
-        $this->markTestIncomplete();
-        return;
+        // Prepare a mocked version of the Services_AMEE_Profile object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockProfile = $this->getMock(
+            'Services_AMEE_Profile',
+            array('getUID'),
+            array('1234567890AB')
+        );
+        $oMockProfile->expects($this->exactly(3))
+                ->method('getUID')
+                ->will($this->returnValue('1234567890AB'));
+
+        // Prepare a mocked version of the Services_AMEE_DataItem object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $aExtraMockMethods = array(
+            'getUID',
+            'getPath'
+        );
+        $oMockDataItem = $this->_getDataItem($aExtraMockMethods);
+        $oMockDataItem->expects($this->exactly(3))
+                ->method('getPath')
+                ->will($this->returnValue('/home/energy/quantity'));
+        $oMockDataItem->expects($this->exactly(2))
+                ->method('getUID')
+                ->will($this->returnValue('BA0987654321'));
+
+        // Prepare a mocked version of the Services_AMEE_API object that can
+        // be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockAPI = $this->getMock(
+            'Services_AMEE_API'
+        );
+        $sPostJSON = '
+            {
+              "UID":"000000000000"
+            }';
+        $oMockAPI->expects($this->once())
+                ->method('post')
+                ->with(
+                    '/profiles/1234567890AB/home/energy/quantity',
+                    array(
+                        'dataItemUid'     => 'BA0987654321',
+                        'lastReading'     => 12345,
+                        'currentReading'  => 12890,
+                        'includesHeating' => true,
+                        'name'            => 'someName'
+                    )
+                )
+                ->will($this->returnValue($sPostJSON));
+        $sSearchJSON = '
+            {
+              "profileItem":
+                {
+                  "modified": "2010-04-13T13:37:29+01:00",
+                  "name": "someName",
+                  "amount": {
+                    "value": 50000,
+                    "unit": "g/week"
+                  },
+                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "uid": "000000000000",
+                  "endDate": "",
+                  "created": "2010-04-13T13:37:19+01:00"
+                }
+            }';
+        $oMockAPI->expects($this->once())
+                ->method('get')
+                ->with(
+                    '/profiles/1234567890AB/home/energy/quantity/000000000000',
+                    array(
+                        'returnUnit'    => 'g',
+                        'returnPerUnit' => 'week'
+                    )
+                )
+                ->will($this->returnValue($sSearchJSON));
+
+        // Prepare a mocked version of the Service_AMEE_ProfileItem object that
+        // has the _getAPI() method mocked and set to return the above mocked
+        // version of the Services_AMEE_API
+        $oMockProfileItem = $this->getMock(
+            'Services_AMEE_ProfileItem',
+            array('_getAPI'),
+            array(),
+            '',
+            false
+        );
+        $oMockProfileItem->expects($this->once())
+                ->method('_getAPI')
+                ->will($this->returnValue($oMockAPI));
+
+        // Create the Services_AMEE_ProfileItem object
+        $oMockProfileItem->__construct(
+            array(
+                $oMockProfile,
+                $oMockDataItem,
+                array(
+                    'lastReading'     => 12345,
+                    'currentReading'  => 12890,
+                    'includesHeating' => true
+                ),
+                array(
+                    'name' => 'someName'
+                ),
+                array(
+                    'returnUnit'    => 'g',
+                    'returnPerUnit' => 'week'
+                )
+            )
+        );
+
+        // Test that the object was created as expected
+        $aExpectedInfo = array(
+            'uid'         => '000000000000',
+            'name'        => 'someName',
+            'created'     => '2010-04-13T13:37:19+01:00',
+            'modified'    => '2010-04-13T13:37:29+01:00',
+            'profileUid'  => '1234567890AB',
+            'path'        => '/home/energy/quantity',
+            'dataItemUid' => 'BA0987654321',
+            'amount'      => '50000',
+            'unit'        => 'g',
+            'perUnit'     => 'week',
+            'startDate'   => '2010-04-13T13:37:00+01:00',
+            'endDate'     => ''
+        );
+        $aInfo = $oMockProfileItem->getInfo();
+        $this->assertEquals($aExpectedInfo, $aInfo);
     }
 
     /***************************************************************************
@@ -972,12 +1109,105 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      * classes are made and that a valid Services_AMEE_ProfileItem class is
      * created when the class is constructed via the "uid" technique.
      *
-     * Also test the Services_AMEE_ProfileItem::getInfo() method.
+     * Also test the Services_AMEE_ProfileItem::getInfo() method, "double" GHG
+     * output values and all possible class variables that will be set from the
+     * results returned by the API.
      */
     public function testConstructUID()
     {
-        $this->markTestIncomplete();
-        return;
+        // Prepare a mocked version of the Services_AMEE_Profile object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockProfile = $this->getMock(
+            'Services_AMEE_Profile',
+            array('getUID'),
+            array('555555555555')
+        );
+        $oMockProfile->expects($this->exactly(2))
+                ->method('getUID')
+                ->will($this->returnValue('555555555555'));
+
+        // Prepare a mocked version of the Services_AMEE_DataItem object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $aExtraMockMethods = array(
+            'getUID',
+            'getPath'
+        );
+        $oMockDataItem = $this->_getDataItem($aExtraMockMethods);
+        $oMockDataItem->expects($this->exactly(2))
+                ->method('getPath')
+                ->will($this->returnValue('/home/energy/quantity'));
+        $oMockDataItem->expects($this->once())
+                ->method('getUID')
+                ->will($this->returnValue('777777777777'));
+
+        // Prepare a mocked version of the Services_AMEE_API object that can
+        // be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockAPI = $this->getMock(
+            'Services_AMEE_API'
+        );
+        $sSearchJSON = '
+            {
+              "profileItem":
+                {
+                  "modified": "2010-04-13T13:37:29+01:00",
+                  "name": "testName",
+                  "amount": {
+                    "value": 123123123123123.669973,
+                    "unit": "kg/year"
+                  },
+                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "uid": "888888888888",
+                  "endDate": "2010-04-13T13:39:00+01:00",
+                  "created": "2010-04-13T13:37:19+01:00"
+                }
+            }';
+        $oMockAPI->expects($this->once())
+                ->method('get')
+                ->with(
+                    '/profiles/555555555555/home/energy/quantity/888888888888'
+                )
+                ->will($this->returnValue($sSearchJSON));
+
+        // Prepare a mocked version of the Service_AMEE_ProfileItem object that
+        // has the _getAPI() method mocked and set to return the above mocked
+        // version of the Services_AMEE_API
+        $oMockProfileItem = $this->getMock(
+            'Services_AMEE_ProfileItem',
+            array('_getAPI'),
+            array(),
+            '',
+            false
+        );
+        $oMockProfileItem->expects($this->once())
+                ->method('_getAPI')
+                ->will($this->returnValue($oMockAPI));
+
+        // Create the Services_AMEE_ProfileItem object
+        $oMockProfileItem->__construct(
+            array(
+                $oMockProfile,
+                $oMockDataItem,
+                '888888888888'
+            )
+        );
+
+        // Test that the object was created as expected
+        $aExpectedInfo = array(
+            'uid'         => '888888888888',
+            'name'        => 'testName',
+            'created'     => '2010-04-13T13:37:19+01:00',
+            'modified'    => '2010-04-13T13:37:29+01:00',
+            'profileUid'  => '555555555555',
+            'path'        => '/home/energy/quantity',
+            'dataItemUid' => '777777777777',
+            'amount'      => '123123123123123.669973',
+            'unit'        => 'kg',
+            'perUnit'     => 'year',
+            'startDate'   => '2010-04-13T13:37:00+01:00',
+            'endDate'     => '2010-04-13T13:39:00+01:00'
+        );
+        $aInfo = $oMockProfileItem->getInfo();
+        $this->assertEquals($aExpectedInfo, $aInfo);
     }
 
     /***************************************************************************
@@ -1081,8 +1311,595 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructSearch()
     {
-        $this->markTestIncomplete();
-        return;
+        // Prepare a mocked version of the Services_AMEE_Profile object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockProfile = $this->getMock(
+            'Services_AMEE_Profile',
+            array('getUID'),
+            array('1234567890AB')
+        );
+        $oMockProfile->expects($this->exactly(2))
+                ->method('getUID')
+                ->will($this->returnValue('121212121212'));
+
+        // Prepare a mocked version of the Services_AMEE_DataItem object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $aExtraMockMethods = array(
+            'getUID',
+            'getPath'
+        );
+        $oMockDataItem = $this->_getDataItem($aExtraMockMethods);
+        $oMockDataItem->expects($this->exactly(2))
+                ->method('getPath')
+                ->will($this->returnValue('/home/energy/quantity'));
+        $oMockDataItem->expects($this->exactly(2))
+                ->method('getUID')
+                ->will($this->returnValue('66056991EE23'));
+
+        // Prepare a mocked version of the Services_AMEE_API object that can
+        // be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockAPI = $this->getMock(
+            'Services_AMEE_API'
+        );
+        $sSearchJSON = '
+            {
+              "profileItems":
+                [{
+                  "modified": "2010-04-13T13:37:19+01:00",
+                  "name": null,
+                  "amount": {
+                    "value": 2127.669973,
+                    "unit": "g/week"
+                  },
+                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "uid": "7E941AC2DE82",
+                  "dataItem": {
+                    "Label": "gas",
+                    "uid": "66056991EE23"
+                  },
+                  "endDate": "",
+                  "created": "2010-04-13T13:37:19+01:00"
+                },
+                {
+                  "modified": "2010-04-13T13:37:20+01:00",
+                  "name": null,
+                  "amount": {
+                    "value": 5180.393848,
+                    "unit": "g/week"
+                  },
+                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "uid": "F11AF4561700",
+                  "dataItem": {
+                    "Label": "electricity",
+                    "uid": "CDC2A0BA8DF3"
+                  },
+                  "endDate": "",
+                  "created": "2010-04-13T13:37:20+01:00"
+                }]
+            }';
+        $oMockAPI->expects($this->once())
+                ->method('get')
+                ->with(
+                    '/profiles/121212121212/home/energy/quantity',
+                    array(
+                        'returnUnit'    => 'g',
+                        'returnPerUnit' => 'week'
+                    )
+                )
+                ->will($this->returnValue($sSearchJSON));
+
+        // Prepare a mocked version of the Service_AMEE_ProfileItem object that
+        // has the _getAPI() method mocked and set to return the above mocked
+        // version of the Services_AMEE_API
+        $oMockProfileItem = $this->getMock(
+            'Services_AMEE_ProfileItem',
+            array('_getAPI'),
+            array(),
+            '',
+            false
+        );
+        $oMockProfileItem->expects($this->once())
+                ->method('_getAPI')
+                ->will($this->returnValue($oMockAPI));
+
+        // Create the Services_AMEE_ProfileItem object
+        $oMockProfileItem->__construct(
+            array(
+                $oMockProfile,
+                $oMockDataItem,
+                array(
+                    'returnUnit'    => 'g',
+                    'returnPerUnit' => 'week'
+                )
+            )
+        );
+
+        // Test that the object was created as expected
+        $aExpectedInfo = array(
+            'uid'         => '7E941AC2DE82',
+            'name'        => '',
+            'created'     => '2010-04-13T13:37:19+01:00',
+            'modified'    => '2010-04-13T13:37:19+01:00',
+            'profileUid'  => '121212121212',
+            'path'        => '/home/energy/quantity',
+            'dataItemUid' => '66056991EE23',
+            'amount'      => '2127.669973',
+            'unit'        => 'g',
+            'perUnit'     => 'week',
+            'startDate'   => '2010-04-13T13:37:00+01:00',
+            'endDate'     => ''
+        );
+        $aInfo = $oMockProfileItem->getInfo();
+        $this->assertEquals($aExpectedInfo, $aInfo);
+    }
+
+    /***************************************************************************
+     * NON-CONSTRUCTOR TESTS
+     **************************************************************************/
+
+    /**
+     * A private method to set up a set of test framework objects for the 
+     * non-constructor tests.
+     *
+     * @return <array> An array containing, by index:
+     *      0 => A mocked version of the Services_AMEE_Profile class;
+     *      1 => A mocked version of the Services_AMEE_DataItem class;
+     *      2 => A mocked version of the Services_AMEE_API class; and
+     *      3 => A mocked version of the Services_AMEE_ProfileItem class.
+     *
+     *      These items are set up so that:
+     *          - The Services_AMEE_ProfileItem object has been created, using
+     *            the other mocked objects;
+     *          - Additional expectations can be set on the first three objects,
+     *            so that testing of non-constructor methods can be easily
+     *            performed.
+     */
+    private function _getNonConstructorSetup()
+    {
+        // Prepare a mocked version of the Services_AMEE_Profile object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockProfile = $this->getMock(
+            'Services_AMEE_Profile',
+            array('getUID'),
+            array('111111111111')
+        );
+        $oMockProfile->expects($this->any())
+                ->method('getUID')
+                ->will($this->returnValue('111111111111'));
+
+        // Prepare a mocked version of the Services_AMEE_DataItem object that
+        // can be used in the construction of a Services_AMEE_ProfileItem object
+        $aExtraMockMethods = array(
+            'getUID',
+            'getPath'
+        );
+        $oMockDataItem = $this->_getDataItem($aExtraMockMethods);
+        $oMockDataItem->expects($this->any())
+                ->method('getPath')
+                ->will($this->returnValue('/home/energy/quantity'));
+        $oMockDataItem->expects($this->any())
+                ->method('getUID')
+                ->will($this->returnValue('222222222222'));
+
+        // Prepare a mocked version of the Services_AMEE_API object that can
+        // be used in the construction of a Services_AMEE_ProfileItem object
+        $oMockAPI = $this->getMock(
+            'Services_AMEE_API'
+        );
+        $sSearchJSON = '
+            {
+              "profileItem":
+                {
+                  "modified": "2010-04-13T13:37:29+01:00",
+                  "name": "",
+                  "amount": {
+                    "value": 1234,
+                    "unit": "kg/year"
+                  },
+                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "uid": "333333333333",
+                  "endDate": "2010-04-13T13:39:00+01:00",
+                  "created": "2010-04-13T13:37:19+01:00"
+                }
+            }';
+        $oMockAPI->expects($this->any())
+                ->method('get')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333'
+                )
+                ->will($this->returnValue($sSearchJSON));
+
+        // Prepare a mocked version of the Service_AMEE_ProfileItem object that
+        // has the _getAPI() method mocked and set to return the above mocked
+        // version of the Services_AMEE_API
+        $oMockProfileItem = $this->getMock(
+            'Services_AMEE_ProfileItem',
+            array('_getAPI'),
+            array(),
+            '',
+            false
+        );
+        $oMockProfileItem->expects($this->once())
+                ->method('_getAPI')
+                ->will($this->returnValue($oMockAPI));
+
+        // Create the Services_AMEE_ProfileItem object
+        $oMockProfileItem->__construct(
+            array(
+                $oMockProfile,
+                $oMockDataItem,
+                '333333333333'
+            )
+        );
+
+        // Test that the object was created as expected
+        $aExpectedInfo = array(
+            'uid'         => '333333333333',
+            'name'        => '',
+            'created'     => '2010-04-13T13:37:19+01:00',
+            'modified'    => '2010-04-13T13:37:29+01:00',
+            'profileUid'  => '111111111111',
+            'path'        => '/home/energy/quantity',
+            'dataItemUid' => '222222222222',
+            'amount'      => '1234',
+            'unit'        => 'kg',
+            'perUnit'     => 'year',
+            'startDate'   => '2010-04-13T13:37:00+01:00',
+            'endDate'     => '2010-04-13T13:39:00+01:00'
+        );
+        $aInfo = $oMockProfileItem->getInfo();
+        $this->assertEquals($aExpectedInfo, $aInfo);
+
+        $aReturn = array(
+            0 => $oMockProfile,
+            1 => $oMockDataItem,
+            2 => $oMockAPI,
+            3 => $oMockProfileItem
+        );
+        return $aReturn;
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * correctly throws an exception if passed a non-array parameter.
+     */
+    public function testUpdateValuesValidateNotArrayError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oValidateException = new Exception(
+            'Services_AMEE_ProfileItem::updateValues() called with ' .
+            'non-array parameter'
+        );
+
+        // Call the updateValues() method
+        try {
+            $oMockProfileItem->updateValues('foo');
+        } catch (Exception $oException) {
+            // Test the exception was thrown
+            $this->assertEquals(
+                $oException->getMessage(),
+                $oValidateException->getMessage()
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * correctly throws an exception if passed an empty array parameter.
+     */
+    public function testUpdateValuesValidateEmptyArrayError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oValidateException = new Exception(
+            'Services_AMEE_ProfileItem::updateValues() called with ' .
+            'empty array parameter'
+        );
+
+        // Call the updateValues() method
+        try {
+            $oMockProfileItem->updateValues(array());
+        } catch (Exception $oException) {
+            // Test the exception was thrown
+            $this->assertEquals(
+                $oException->getMessage(),
+                $oValidateException->getMessage()
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * correctly bubbles up an exception thrown by the Services_AMEE_API::put()
+     * method.
+     *
+     * Also tests that the Services_AMEE_Profile::updateValues() method calls
+     * the API correctly to set the updated values.
+     */
+    public function testUpdateValuesAPIPutError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oGetException = new Exception('Test API Exception');
+
+        // Set that the API will throw this error
+        $oMockAPI->expects($this->any())
+                ->method('put')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333',
+                    array(
+                        'some' => 'value'
+                    )
+                )
+                ->will($this->throwException($oGetException));
+
+        // Call the updateValues() method
+        try {
+            $oMockProfileItem->updateValues(array('some' => 'value'));
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oGetException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * correctly bubbles up an exception thrown by the Services_AMEE_API::get()
+     * method.
+     */
+    public function testUpdateValuesAPIGetError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oGetException = new Exception('Test API Exception');
+
+        // Set that the API will throw this error
+        $oMockAPI->expects($this->any())
+                ->method('get')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333'
+                )
+                ->will($this->throwException($oGetException));
+
+        // Call the updateValues() method
+        try {
+            $oMockProfileItem->updateValues(array('some' => 'value'));
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oGetException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateOptions() method
+     * correctly bubbles up an exception thrown by the
+     * Services_AMEE_API::_validateProfileOptionParamArray() method.
+     */
+    public function testUpdateOptionsValidateError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oValidateException = new Exception(
+            'Services_AMEE_ProfileItem method called with option ' .
+            'parameter array not actually being an array'
+        );
+
+        // Call the updateOptions() method
+        try {
+            $oMockProfileItem->updateOptions('foo');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertEquals(
+                $oException->getMessage(),
+                $oValidateException->getMessage()
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateOptions() method
+     * correctly bubbles up an exception thrown by the Services_AMEE_API::put()
+     * method.
+     *
+     * Also tests that the Services_AMEE_Profile::updateOptions() method calls
+     * the API correctly to set the updated options.
+     */
+    public function testUpdateOptionsAPIPutError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oGetException = new Exception('Test API Exception');
+
+        // Set that the API will throw this error
+        $oMockAPI->expects($this->any())
+                ->method('put')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333',
+                    array(
+                        'name' => 'testName'
+                    )
+                )
+                ->will($this->throwException($oGetException));
+
+        // Call the updateOptions() method
+        try {
+            $oMockProfileItem->updateOptions(array('name' => 'testName'));
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oGetException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateOptions() method
+     * correctly bubbles up an exception thrown by the Services_AMEE_API::get()
+     * method.
+     */
+    public function testUpdateOptionsAPIGetError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oGetException = new Exception('Test API Exception');
+
+        // Set that the API will throw this error
+        $oMockAPI->expects($this->any())
+                ->method('get')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333'
+                )
+                ->will($this->throwException($oGetException));
+
+        // Call the updateOptions() method
+        try {
+            $oMockProfileItem->updateOptions(array('name' => 'testName'));
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oGetException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateReturn() method
+     * correctly bubbles up an exception thrown by the
+     * Services_AMEE_API::_validateReturnUnitParamArray() method.
+     */
+    public function testUpdateReturnValidateError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oValidateException = new Exception(
+            'Services_AMEE_ProfileItem method called with return unit ' .
+            'parameter array not actually being an array'
+        );
+
+        // Call the updateReturn() method
+        try {
+            $oMockProfileItem->updateReturn('foo');
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertEquals(
+                $oException->getMessage(),
+                $oValidateException->getMessage()
+            );
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::updateReturn() method
+     * correctly bubbles up an exception thrown by the Services_AMEE_API::get()
+     * method.
+     */
+    public function testUpdateReturnAPIGetError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oGetException = new Exception('Test API Exception');
+
+        // Set that the API will throw this error
+        $oMockAPI->expects($this->any())
+                ->method('get')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333'
+                )
+                ->will($this->throwException($oGetException));
+
+        // Call the updateReturn() method
+        try {
+            $oMockProfileItem->updateReturn(array());
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oGetException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_Profile::delete() method
+     * correctly bubbles up an exception thrown by the
+     * Services_AMEE_API::delete() method.
+     */
+    public function testDeleteAPIError()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Prepare testing Exception to return
+        $oAPIException = new Exception('API Test Exception');
+
+        // Set the fact that the above exception will be thrown by the API
+        // on delete, and set the call expectation for the method
+        $oMockAPI->expects($this->once())
+                ->method('delete')
+                ->with(
+                    '/profiles/111111111111/home/energy/quantity/333333333333'
+                )
+                ->will($this->throwException($oAPIException));
+
+        // Call the delete() method
+        try {
+            $oMockProfileItem->delete();
+        } catch (Exception $oException) {
+            // Test the Exception was correctly bubbled up
+            $this->assertSame($oException, $oAPIException);
+            return;
+        }
+
+        // If we get here, the test has failed
+        $this->fail('Test failed because expected Exception was not thrown');
     }
 
 }
