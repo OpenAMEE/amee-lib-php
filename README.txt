@@ -1,17 +1,60 @@
-AMEE API PEAR Library
+AMEE REST API PEAR Library
+--------------------------
 
-Version 0.1
+A PHP PEAR wrapper library for the AMEE REST API.
 
-Requires PHP 5.2.0+
 
-Core PHP packages that are required for the library:
+About the AMEE REST API
+-----------------------
+
+AMEE makes it easy to develop applications to measure and track environmental
+impacts, enabling companies, governments and consumers calculate their carbon
+footprint and model energy consumption.
+
+AMEE supports the data and algorithms provided for the greenhouse gas emissions
+calculations required to support the Global Reporting Initiative (GRI), the
+Carbon Reduction Commitment (CRC) and other initiatives.
+
+AMEE finds, verifies, and makes accessible the best carbon-related data in the
+world: that is, emissions factors and the algorithms for using them. The AMEE
+REST API then allows you to access and embed best-practice carbon models into
+carbon accounting systems, carbon calculators, and many other applications.
+
+
+About the library
+-----------------
+
+Version:   1.0
+
+Copyright: 2010 AMEE UK Limited
+
+License:   MIT
+
+ - Please see http://www.opensource.org/licenses/mit-license.html for the full
+   details of the MIT license.
+
+Supports:  AMEE REST API v2
+
+Source:    https://github.com/AMEE/amee-lib-php
+
+Requirements:
+
+ - PHP 5.2.0+
+ - Core PHP packages:
   - Network
   - JSON
 
-Suports the use of openssl for POST /auth connections, if the package is installed, to
-protect username/password info; if not present, will send username/password
-information to the API "in the clear".
+Authentication:
 
+  This library suports the use of OpenSSL to encypher AMEE REST API username and
+  password details, if the PHP OpenSSL package is installed and emabled. If the
+  PHP OpenSSL package is not installed and enabled, then all username and
+  password details will be sent "in the clear".
 
-No Caching
-No Advanced Searching
+TODO:
+
+  At present there is no caching support of GET request data. This will be added
+  in the next version.
+
+  At present there is no support for advanced time-period based reporting on
+  AMEE API Profile Item data. This will be added in the next version.
