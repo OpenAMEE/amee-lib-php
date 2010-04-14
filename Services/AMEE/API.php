@@ -429,9 +429,17 @@ class Services_AMEE_API
                     'header response'
                 );
             }
-            // Oh dear, nothing to return - okay for DELETE methods, not for
-            // anything else...
-            if (!preg_match('/^DELETE/', $sPath)) {
+            // Oh dear, nothing to return - okay for DELETE methods and PUT
+            // methods where an already existing AMEE API Profile Item is being
+            // updated; not for anything else...
+            $bOkay = false;
+            if (preg_match('#^DELETE#', $sPath)) {
+                $bOkay = true;
+            }
+            if (preg_match('#^PUT /profiles/[0-9A-F]{12}/.+/[0-9A-F]{12}$#', $sPath)) {
+                $bOkay = true;
+            }
+            if (!$bOkay) {
                 throw new Services_AMEE_Exception(
                     'The AMEE REST API failed to return an expected result'
                 );

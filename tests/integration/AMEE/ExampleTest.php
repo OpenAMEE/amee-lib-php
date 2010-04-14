@@ -35,17 +35,10 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var <string> $sUserProfileUID Somewhere to store the AMEE API Profile
-     *      UID for "User A" in the example.
+     * A private array for storing data during & between tests. Uses PHPUnit's
+     * return & parameter passing mechanism to maintain state.
      */
-    private $sUserAProfileUID;
-
-    /**
-     * Two private variables which have nothing to do with the example code.
-     * They are simply for PHPUnit integration testing.
-     */
-    private $sTestDataItemGasUID;
-    private $sTestDataItemElectricityUID;
+    private $aDataStore = array();
 
     /**
      * A PHPUnit integration test that simluates a sample "real world"
@@ -74,14 +67,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             //      Profile UID somewhere, if we intend to remember that this
             //      AMEE API Profile "belongs" to "User A"!
 
-            $this->sUserAProfileUID = $oProfile->getUID();
-
-            // Step 2.1: As this is a PHPUnit integration test, we'll just check
-            //      that a valid AMEE API Profile UID has now been obtained from
-            //      the AMEE REST API...
-
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $this->sUserAProfileUID);
-            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $this->aDataStore['sUserAProfileUID'] = $oProfile->getUID();
 
             // Step 3: Now that "User A" has an AMEE API Profile, the AMEE API
             //      Profile's metadata should be added, to configure the AMEE
@@ -94,14 +80,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             $sPath = '/metadata';
             $oDataItemMetadata = new Services_AMEE_DataItem($sPath);
 
-            // Step 3.2: As this is a PHPUnit integration test, we'll just check
-            //      that a valid AMEE API Data Item has now been obtained from
-            //      the AMEE REST API...
-
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemMetadata->getUID());
-            $this->assertEquals($bResult, 1); // preg_matches returns an integer
-
-            // Step 3.3: Now create an AMEE API Profile Item with the required
+            // Step 3.2: Now create an AMEE API Profile Item with the required
             //      metadata AMEE API Profile Item Values in "User A's" AMEE API
             //      Profile.
             //      
@@ -122,19 +101,66 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                 )
             );
 
-            // Step 3.4: As this is a PHPUnit integration test, we'll just check
-            //      that a valid AMEE API Profile Item has now been obtained
-            //      from the AMEE REST API...
+            /*******************************************************************
+             * End example code in this method -- the code below are assertions
+             * for this integration test.
+             ******************************************************************/
 
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfileItemMetadata->getUID());
+            // Assert that the AMEE API Profile created has a vaild UID
+            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfile->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
+            // Assert that the AMEE API Data Item created has a valid UID
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oDataItemMetadata->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Assert that the AMEE API Data Item path is as expected
+            $this->assertEquals($oDataItemMetadata->getPath(), '/metadata');
+
+            // Assert that the AMEE API Profile Item created has a valid UID
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemMetadata->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Assert that the AMEE API Profile Item created has expected info
+            $aInfo = $oProfileItemMetadata->getInfo();
+            $this->assertEquals($aInfo['uid'], $oProfileItemMetadata->getUID());
+            $this->assertEquals($aInfo['name'], '');
+            $this->assertTrue(
+                strtotime(date('c')) >= strtotime($aInfo['created'])
+            );
+            $this->assertTrue(
+                strtotime(date('c')) >= strtotime($aInfo['modified'])
+            );
+            $this->assertEquals($aInfo['created'], $aInfo['modified']);
+            $this->assertEquals($aInfo['profileUid'], $oProfile->getUID());
+            $this->assertEquals($aInfo['path'], '/metadata');
+            $this->assertEquals(
+                $aInfo['dataItemUid'], $oDataItemMetadata->getUID()
+            );
+            $this->assertEquals($aInfo['amount'], 0);
+            $this->assertEquals($aInfo['unit'], 'kg');
+            $this->assertEquals($aInfo['perUnit'], 'year');
+            $this->assertTrue(
+                strtotime(date('c')) >= strtotime($aInfo['startDate'])
+            );
+            $this->assertEquals($aInfo['endDate'], '');
+
+            // Return the data store array for use in the next test
+            return $this->aDataStore;
 
         } catch (Exception $oException) {
 
-            // A real world appliction would deal with errors more gracefully
-            // than just displaying them to the user, of course!
-            echo $oException->getMessage();
+            // A real world appliction would deal with errors gracefully here,
+            // and show the user a helpful error message. However, as this is
+            // a PHPUnit integration test, we fail the test if an exception is
+            // thrown!
+            $this->fail(
+                'Test failed, as no Exception should have been thrown!'
+            );
 
         }
     }
@@ -145,16 +171,24 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
      *
      * In this test, the sample application adds some AMEE API Profile Items
      * to the user's AMEE API Profile.
+     *
+     * @depends testExampleNewProfile
      */
-    function testExampleAddProfileItems()
+    function testExampleAddProfileItems($aDataStore)
     {
+
+        // Set up the private data store array on the basis of the previous test
+        $this->aDataStore = $aDataStore;
+
         try {
 
             // Step 1: Before we can add the user's AMEE API Profile Items, we
             //      need to retrieve their AMEE API Profile, of course. Luckily,
             //      we saved their AMEE API Profile UID.
 
-            $oProfile = new Services_AMEE_Profile($this->sUserAProfileUID);
+            $oProfile = new Services_AMEE_Profile(
+                $this->aDataStore['sUserAProfileUID']
+            );
 
             // Step 2: Now that we have the user's AMEE API Profile, we can add
             //      their GHG generation items. Imagine that this sample
@@ -185,19 +219,9 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             $aOptions = array(
                 'type' => 'electricity'
             );
-            $oDataItemElectricity = new Services_AMEE_DataItem($sPath, $aOptions);
-
-            // Step 2.1: As this is a PHPUnit integration test, we'll just check
-            //      that two valid AMEE API Data Items have now been obtained
-            //      from the AMEE REST API, and store them for later testing
-
-            $this->sTestDataItemGasUID = $oDataItemGas->getUID();
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $this->sTestDataItemGasUID);
-            $this->assertEquals($bResult, 1); // preg_matches returns an integer
-
-            $this->sTestDataItemElectricityUID = $oDataItemElectricity->getUID();
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $this->sTestDataItemElectricityUID);
-            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $oDataItemElectricity = new Services_AMEE_DataItem(
+                $sPath, $aOptions
+            );
 
             // Step 3: Now we are ready to add the user's details of their gas
             //      and electricity usage, based on inputs from the user that
@@ -231,7 +255,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                 'currentReading'  => 12890,
                 'includesHeating' => true
             );
-            $oProfileItemGasUse = new Services_AMEE_ProfileItem(
+            $oProfileItemGas = new Services_AMEE_ProfileItem(
                 array(
                     $oProfile,
                     $oDataItemGas,
@@ -240,10 +264,10 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             );
 
             $aProfileItemElectricityValues = array(
-                'energyConsumption' => 5000,
+                'energyConsumption' => 500,
                 'greenTarrif'       => true
             );
-            $oProfileItemElectricityUse = new Services_AMEE_ProfileItem(
+            $oProfileItemElectricity = new Services_AMEE_ProfileItem(
                 array(
                     $oProfile,
                     $oDataItemElectricity,
@@ -251,21 +275,72 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                 )
             );
 
-            // Step 3.1: As this is a PHPUnit integration test, we'll just check
-            //      that two valid AMEE API Profile Items have now been obtained
-            //      from the AMEE REST API...
+            /*******************************************************************
+             * End example code in this method -- the code below are assertions
+             * for this integration test.
+             ******************************************************************/
 
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfileItemGasUse->getUID());
+            // Assert that the retrieved AMEE API Profile has the expected UID
+            $this->assertEquals(
+                $oProfile->getUID(), $this->aDataStore['sUserAProfileUID'])
+            ;
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electricity have valid UIDs
+            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID()
+            );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfileItemElectricityUse->getUID());
+            // Assert that the two AMEE API Data Items created for gas and
+            // electrictiy have paths as expected
+            $this->assertEquals(
+                $oDataItemGas->getPath(), '/home/energy/quantity'
+            );
+            $this->assertEquals(
+                $oDataItemElectricity->getPath(), '/home/energy/quantity'
+            );
+
+            // Assert that the two AMEE API Profile Items created for gas and
+            // electricity have valid UIDs
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemGas->getUID()
+            );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemElectricity->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Store the UIDs of the two created AMEE API Data Items for gas
+            // and electricity for use in the next test
+            $this->aDataStore['sDataItemGasUID'] = $oDataItemGas->getUID();
+            $this->aDataStore['sDataItemElectricityUID'] =
+                $oDataItemElectricity->getUID();
+
+            // Store the UIDs of the two created AMEE API Profile Items for gas
+            // and electricity for use in the next test
+            $this->aDataStore['sProfileItemGasUID'] =
+                $oProfileItemGas->getUID();
+            $this->aDataStore['sProfileItemElectricityUID'] =
+                $oProfileItemElectricity->getUID();
+
+            // Return the data store array for use in the next test
+            return $this->aDataStore;
 
         } catch (Exception $oException) {
 
-            // A real world appliction would deal with errors more gracefully
-            // than just displaying them to the user, of course!
             echo $oException->getMessage();
+
+            // A real world appliction would deal with errors gracefully here,
+            // and show the user a helpful error message. However, as this is
+            // a PHPUnit integration test, we fail the test if an exception is
+            // thrown!
+            $this->fail(
+                'Test failed, as no Exception should have been thrown!'
+            );
 
         }
     }
@@ -276,16 +351,24 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
      *
      * In this test, the sample application reports on the GHG output for the
      * user's AMEE API Profile Items.
+     *
+     * @depends testExampleAddProfileItems
      */
-    function testExampleReport()
+    function testExampleReport($aDataStore)
     {
+
+        // Set up the private data store array on the basis of the previous test
+        $this->aDataStore = $aDataStore;
+        
         try {
 
             // Step 1: Before we can add the user's AMEE API Profile Items, we
             //      need to retrieve their AMEE API Profile, of course. Luckily,
             //      we saved their AMEE API Profile UID.
 
-            $oProfile = new Services_AMEE_Profile($this->sUserAProfileUID);
+            $oProfile = new Services_AMEE_Profile(
+                $this->aDataStore['sUserAProfileUID']
+            );
 
             // Step 2: Now that the user has input their gas and electrictiy
             //      use, the application can report the GHG use to the user,
@@ -305,7 +388,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             //      track of the AMEE API Profile Item UIDs in the previous test
             //      when they were created, so the application needs to search
             //      for the items.
-            //      
+            //
             //      The applicaiton knows that it only deals with AMEE API Data
             //      Items that are in the "/home/energy/quantity" path and with
             //      types "gas" and "electrictiy"; so, the application knows to
@@ -324,31 +407,11 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             $aOptions = array(
                 'type' => 'electricity'
             );
-            $oDataItemElectricity = new Services_AMEE_DataItem($sPath, $aOptions);
+            $oDataItemElectricity =new Services_AMEE_DataItem(
+                $sPath, $aOptions
+            );
 
-            // Step 2.2: As this is a PHPUnit integration test, we'll just check
-            //      that two valid AMEE API Data Items have now been obtained
-            //      from the AMEE REST API, and test them against the stored
-            //      AMEE API Data Item UIDs from the previous test
-
-            /**
-             * @TODO Fix the assertions below, and assert the remainder of the
-             *      test.
-             */
-
-//            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
-//            $this->assertEquals($bResult, 1); // preg_matches returns an integer
-//            $this->assertEquals($this->sTestDataItemGasUID, $oDataItemGas->getUID());
-//
-//            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID());
-//            $this->assertEquals($bResult, 1); // preg_matches returns an integer
-//            $this->assertEquals($this->sTestDataItemElectricityUID, $oDataItemElectricity->getUID());
-
-            
-            $this->markTestIncomplete();
-            return;
-
-            // Step 2.3: Search for existing AMEE API Profile Items by AMEE
+            // Step 2.2: Search for existing AMEE API Profile Items by AMEE
             //      API Data Item.
 
             $oProfileItemGas = new Services_AMEE_ProfileItem(
@@ -365,7 +428,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                 )
             );
 
-            // Step 2.4: The AMEE REST API supports returning GHG in all manner
+            // Step 2.3: The AMEE REST API supports returning GHG in all manner
             //      of different units (eg. g, kg, etc.) and time periods (which
             //      we are ignoring in this sample application).
             //
@@ -386,7 +449,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
             // Step 2.5: Extract the GHG emission amounts from each AMEE API
             //      Profile Item, and calculate the total.
-            
+
             $aResult = array();
 
             $aTemp = $oProfileItemGas->getInfo();
@@ -400,30 +463,280 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             $aResult['total'] = $aResult['gas'] + $aResult['electricity'];
             $aResult['total_units'] = $aResult['gas_units'];
 
-            // Step 2.6: Normally, this is where you would show the output of
-            //      the totals to the user; instead, we're going to execute
-            //      a PHPUnit assertion to check that the GHG totals returned
-            //      are correct.
+            // Step 2.6: Now that we have the GHG emissions, in kg, that would
+            //      result from the user's gas and electricity use, the sample
+            //      application would be able to display the $aResult array
+            //      values to the user appropriately here...
 
-            $this->assertEquals($aResult['gas'],                0);
-            $this->assertEquals($aResult['gas_units'],          'kg');
-            $this->assertEquals($aResult['electricity'],        0);
+            /*******************************************************************
+             * End example code in this method -- the code below are assertions
+             * for this integration test.
+             ******************************************************************/
+
+            // Assert that the retrieved AMEE API Profile has the expected UID
+            $this->assertEquals(
+                $oProfile->getUID(), $this->aDataStore['sUserAProfileUID']
+            );
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electricity have valid UIDs
+            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electrictiy have paths as expected
+            $this->assertEquals(
+                $oDataItemGas->getPath(), '/home/energy/quantity'
+            );
+            $this->assertEquals(
+                $oDataItemElectricity->getPath(), '/home/energy/quantity'
+            );
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electricity have the same UIDs as the same AMEE API Data Items
+            // created in the previous test
+            $this->assertEquals(
+                $oDataItemGas->getUID(), $this->aDataStore['sDataItemGasUID']
+            );
+            $this->assertEquals(
+                $oDataItemElectricity->getUID(),
+                $this->aDataStore['sDataItemElectricityUID']
+            );
+
+            // Assert that the two AMEE API Profile Items created for gas and
+            // electricity have valid UIDs
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemGas->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemElectricity->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Assert that the two AMEE API Profile Items created for gas and
+            // electricity have the same UIDs as the same AMEE API Profile Items
+            // created in the previous test
+            $this->assertEquals(
+                $oProfileItemGas->getUID(),
+                $this->aDataStore['sProfileItemGasUID']
+            );
+            $this->assertEquals(
+                $oProfileItemElectricity->getUID(),
+                $this->aDataStore['sProfileItemElectricityUID']
+            );
+
+            // Assert that there are real GHG emissions available in the resutls
+            // array. Note that we don't actually assert the expected GHG
+            // values, as one of the advantages of the AMEE REST API is that,
+            // if emissions standards are ever updated/changed/improved, the
+            // AMEE REST API will update the emissions to reflect the
+            // update/changed/improved standards!
+            $this->assertTrue($aResult['gas'] > 0);
+            $this->assertEquals($aResult['gas_units'], 'kg');
+            $this->assertTrue($aResult['electricity'] > 0);
             $this->assertEquals($aResult['electricity_units'], 'kg');
-            $this->assertEquals($aResult['total'],              0);
-            $this->assertEquals($aResult['total_units'],        'kg');
+            $this->assertTrue($aResult['total'] > 0);
+            $this->assertEquals($aResult['total_units'], 'kg');
+
+            // Store the GHG emissions for the gas and electricity AMEE API
+            // Profile Items for use in the next test
+            $this->aDataStore['gasGHG'] = $aResult['gas'];
+            $this->aDataStore['electricityGHG'] = $aResult['electricity'];
+
+            // Return the data store array for use in the next test
+            return $this->aDataStore;
 
         } catch (Exception $oException) {
 
-            // A real world appliction would deal with errors more gracefully
-            // than just displaying them to the user, of course!
-            echo $oException->getMessage();
+            // A real world appliction would deal with errors gracefully here,
+            // and show the user a helpful error message. However, as this is
+            // a PHPUnit integration test, we fail the test if an exception is
+            // thrown!
+            $this->fail(
+                'Test failed, as no Exception should have been thrown!'
+            );
 
         }
     }
 
-    function testExampleUpdateProfile()
+    /**
+     * A PHPUnit integration test that simluates a sample "real world"
+     * application's use of the AMEE REST API.
+     *
+     * In this test, the sample application updates the user consuption, based
+     * on updated input from the user, to produce new GHG output values for the
+     * user's AMEE API Profile Items.
+     *
+     * @depends testExampleReport
+     */
+    function testExampleUpdate($aDataStore)
     {
-        $this->markTestIncomplete();
+
+        // Set up the private data store array on the basis of the previous test
+        $this->aDataStore = $aDataStore;
+
+        try {
+
+            // Step 1: Before we can add the user's AMEE API Profile Items, we
+            //      need to retrieve their AMEE API Profile, of course. Luckily,
+            //      we saved their AMEE API Profile UID.
+
+            $oProfile = new Services_AMEE_Profile(
+                $this->aDataStore['sUserAProfileUID']
+            );
+
+            // Step 2: Retrieve the user's AMEE API Profile Items, as done in
+            //      the last test.
+
+            $sPath = '/home/energy/quantity';
+            $aOptions = array(
+                'type' => 'gas'
+            );
+            $oDataItemGas = new Services_AMEE_DataItem($sPath, $aOptions);
+
+            $sPath = '/home/energy/quantity';
+            $aOptions = array(
+                'type' => 'electricity'
+            );
+            $oDataItemElectricity =new Services_AMEE_DataItem(
+                $sPath, $aOptions
+            );
+
+
+            $oProfileItemGas = new Services_AMEE_ProfileItem(
+                array(
+                    $oProfile,
+                    $oDataItemGas
+                )
+            );
+
+            $oProfileItemElectricity = new Services_AMEE_ProfileItem(
+                array(
+                    $oProfile,
+                    $oDataItemElectricity
+                )
+            );
+
+            // Step 3: Now that we have the user's existing AMEE API Profile
+            //      Items for gas and electricty use, we can update them with
+            //      new readings that the user has supplied -- suppose they
+            //      accidently entered an end gas meter reading that was too
+            //      low, and they accidently said they use more electricty than
+            //      they really do...
+
+            $aProfileItemGasValues = array(
+                'currentReading'  => 99999
+            );
+            $oProfileItemGas->updateValues($aProfileItemGasValues);
+//
+            $aProfileItemElectricityValues = array(
+                'energyConsumption' => 400
+            );
+//            $oProfileItemElectricity->updateValues(
+//                $aProfileItemElectricityValues
+//            );
+
+            // Step 4: The sample application would now have the updated GHG
+            //      emissions for these two AMEE API Profile Items, and could
+            //      display them to the user here...
+
+            /*******************************************************************
+             * End example code in this method -- the code below are assertions
+             * for this integration test.
+             ******************************************************************/
+
+            // Assert that the retrieved AMEE API Profile has the expected UID
+            $this->assertEquals(
+                $oProfile->getUID(), $this->aDataStore['sUserAProfileUID'])
+            ;
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electricity have valid UIDs
+            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electrictiy have paths as expected
+            $this->assertEquals(
+                $oDataItemGas->getPath(), '/home/energy/quantity'
+            );
+            $this->assertEquals(
+                $oDataItemElectricity->getPath(), '/home/energy/quantity'
+            );
+
+            // Assert that the two AMEE API Data Items created for gas and
+            // electricity have the same UIDs as the same AMEE API Data Items
+            // created in the previous test
+            $this->assertEquals(
+                $oDataItemGas->getUID(), $this->aDataStore['sDataItemGasUID']
+            );
+            $this->assertEquals(
+                $oDataItemElectricity->getUID(),
+                $this->aDataStore['sDataItemElectricityUID']
+            );
+
+            // Assert that the two AMEE API Profile Items created for gas and
+            // electricity have valid UIDs
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemGas->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+            $bResult = preg_match(
+                '/^[0-9A-F]{12}$/', $oProfileItemElectricity->getUID()
+            );
+            $this->assertEquals($bResult, 1); // preg_matches returns an integer
+
+            // Assert that the two AMEE API Profile Items created for gas and
+            // electricity have the same UIDs as the same AMEE API Profile Items
+            // created in the previous test
+            $this->assertEquals(
+                $oProfileItemGas->getUID(),
+                $this->aDataStore['sProfileItemGasUID']
+            );
+            $this->assertEquals(
+                $oProfileItemElectricity->getUID(),
+                $this->aDataStore['sProfileItemElectricityUID']
+            );
+
+            // Assert that the new GHG emissions amount for the AMEE API
+            // Profile Item for gas are greater than in the previous test, and
+            // that the GHG emissions amount for the AMEE API Profile Item for
+            // electricity is decreased
+//            $aGasInfo = $oProfileItemGas->getInfo();
+//            $this->assertTrue(
+//                $aGasInfo['amount'] > $this->aDataStore['gasGHG']
+//            );
+//            $aElectricityInfo = $oProfileItemElectricity->getInfo();
+//            $this->assertTrue(
+//                $aElectricityInfo['amount']
+//                    > $this->aDataStore['electricityGHG']
+//            );
+
+            // Return the data store array for use in the next test
+            return $this->aDataStore;
+
+        } catch (Exception $oException) {
+
+            // A real world appliction would deal with errors gracefully here,
+            // and show the user a helpful error message. However, as this is
+            // a PHPUnit integration test, we fail the test if an exception is
+            // thrown!
+//            $this->fail(
+//                'Test failed, as no Exception should have been thrown!'
+//            );
+
+            echo $oException->getMessage();
+
+        }
     }
 
     /**
@@ -434,16 +747,25 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
      * application, and rather than re-using the AMEE API Profile for another
      * user (which is encouraged), the sample application will delete the AMEE
      * API Profile instead.
+     *
+     * @depends testExampleUpdate
+     * @backupGlobals enabled
      */
-    function testExampleDeleteProfile()
+    function testExampleDeleteProfile($aDataStore)
     {
+
+        // Set up the private data store array on the basis of the previous test
+        $this->aDataStore = $aDataStore;
+        
         try {
 
             // Step 1: Before we can add the user's AMEE API Profile Items, we
             //      need to retrieve their AMEE API Profile, of course. Luckily,
             //      we saved their AMEE API Profile UID.
 
-            $oProfile = new Services_AMEE_Profile($this->sUserAProfileUID);
+            $oProfile = new Services_AMEE_Profile(
+                $this->aDataStore['sUserAProfileUID']
+            );
 
             // Step 2: Delete the user's AMEE API Profile. Can't be undone!
 
@@ -451,9 +773,13 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
         } catch (Exception $oException) {
 
-            // A real world appliction would deal with errors more gracefully
-            // than just displaying them to the user, of course!
-            echo $oException->getMessage();
+            // A real world appliction would deal with errors gracefully here,
+            // and show the user a helpful error message. However, as this is
+            // a PHPUnit integration test, we fail the test if an exception is
+            // thrown!
+            $this->fail(
+                'Test failed, as no Exception should have been thrown!'
+            );
 
         }
     }
