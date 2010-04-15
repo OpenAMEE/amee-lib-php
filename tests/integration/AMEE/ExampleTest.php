@@ -633,13 +633,13 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                 'currentReading'  => 99999
             );
             $oProfileItemGas->updateValues($aProfileItemGasValues);
-//
+
             $aProfileItemElectricityValues = array(
                 'energyConsumption' => 400
             );
-//            $oProfileItemElectricity->updateValues(
-//                $aProfileItemElectricityValues
-//            );
+            $oProfileItemElectricity->updateValues(
+                $aProfileItemElectricityValues
+            );
 
             // Step 4: The sample application would now have the updated GHG
             //      emissions for these two AMEE API Profile Items, and could
@@ -711,15 +711,15 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             // Profile Item for gas are greater than in the previous test, and
             // that the GHG emissions amount for the AMEE API Profile Item for
             // electricity is decreased
-//            $aGasInfo = $oProfileItemGas->getInfo();
-//            $this->assertTrue(
-//                $aGasInfo['amount'] > $this->aDataStore['gasGHG']
-//            );
-//            $aElectricityInfo = $oProfileItemElectricity->getInfo();
-//            $this->assertTrue(
-//                $aElectricityInfo['amount']
-//                    > $this->aDataStore['electricityGHG']
-//            );
+            $aGasInfo = $oProfileItemGas->getInfo();
+            $this->assertTrue(
+                $aGasInfo['amount'] > $this->aDataStore['gasGHG']
+            );
+            $aElectricityInfo = $oProfileItemElectricity->getInfo();
+            $this->assertTrue(
+                $aElectricityInfo['amount']
+                    < $this->aDataStore['electricityGHG']
+            );
 
             // Return the data store array for use in the next test
             return $this->aDataStore;
@@ -730,11 +730,9 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             // and show the user a helpful error message. However, as this is
             // a PHPUnit integration test, we fail the test if an exception is
             // thrown!
-//            $this->fail(
-//                'Test failed, as no Exception should have been thrown!'
-//            );
-
-            echo $oException->getMessage();
+            $this->fail(
+                'Test failed, as no Exception should have been thrown!'
+            );
 
         }
     }
