@@ -34,8 +34,8 @@ printf("Data Item UID: %s\n", $oDataItemPlane->getUID());
 
 // Create a profile item for a journey from Gatwick to LA
 $aProfileItemValues = array(
-    'IATACode1'     => "LGW",
-    'IATACode2'  => "LAX",
+    'IATACode1'          => "LGW",
+    'IATACode2'          => "LAX",
     'numberOfPassengers' => 1
 );
 $oProfileItemPlane = new Services_AMEE_ProfileItem(
@@ -46,7 +46,8 @@ $oProfileItemPlane = new Services_AMEE_ProfileItem(
     )
 );
 
-// Print out the co2 value
+// Print out the CO2 value
 $aTemp = $oProfileItemPlane->getInfo();
 printf("CO2: %f %s\n", $aTemp['amount'], $aTemp['unit']);
+
 ?>
