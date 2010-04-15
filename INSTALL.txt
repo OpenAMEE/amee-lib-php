@@ -1,33 +1,18 @@
 AMEE REST API PEAR Library Install Instructions
 -----------------------------------------------
 
-The AMEE REST API PEAR library is intended to ultimately be installed via PEAR.
-At the present time, however, the library has not yet been submitted for
-inclusion in the PEAR repository - AMEE will do this shortly. Until then, the
-library can easily be installed manually:
+The AMEE REST API PEAR library should be installed via the pearhub.org
+(http://pearhub.org/) channel.
 
 1. Ensure that you have PEAR installed. If you need to install PEAR, please
     follow the instructions at http://pear.php.net/manual/en/installation.php.
 
-2. Download the AMEE REST API PEAR library from
-    http://github.com/AMEE/amee-lib-php/downloads, if you have not already
-    done so.
+2. Ensure that the pearhub.org channel is set up in your PEAR instance:
 
-3. Unzip or untar the AMEE REST API PEAR library download. This will create a
-    new directory prefixed with "AMEE-amee-lib-php-". The exact name of the
-    directory will depend on the version of the library.
+    pear channel-discover pearhub.org
 
-4. Locate your PEAR library installation path. You can do this easily by running
-    the command "pear config-show", and by locating the value of the
-    "PEAR directory" (e.g. /usr/lib/php).
+3. Install the AMEE REST API PEAR library:
 
-5. Copy the contents of the library's Services/ directory into the Services/
-    directory in your PEAR library installation path. You may need to create
-    this directory if it does not exist. For example:
-
-        cd /usr/lib/php
-        mkdir -p Services
-        cp -r /path/to/download/AMEE-amee-lib-php-1b234d5/Services/* \
-            /usr/lib/php/Services/
+    pear install pearhub/Services_AMEE
 
 The AMEE REST API PEAR library is now installed, and ready for use.
