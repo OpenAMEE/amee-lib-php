@@ -71,6 +71,24 @@ Please see the INSTALL.txt file.
 Using the library
 -----------------
 
-Please see the tests/integration/AMEE/ExampleTest.php file, which acts as both
-a PHPUnit integration test for the library as well as a well documented example
-of how the AMEE REST API PHP PEAR library can be used.
+To use the AMEE REST API PEAR library:
+
+1. Install the library by following the install instructions above.
+
+2. Include the three main required files in your code:
+
+    require_once 'Services/AMEE/DataItem.php';
+    require_once 'Services/AMEE/Profile.php';
+    require_once 'Services/AMEE/ProfileItem.php';
+
+3. Create three definitions, for the AMEE REST API host name, your AMEE API
+    key, and your AMEE API password. For example:
+
+    define('AMEE_API_URL',              'stage.amee.com');
+    define('AMEE_API_PROJECT_KEY',      'your_api_key');
+    define('AMEE_API_PROJECT_PASSWORD', 'your_api_password');
+
+4. Create AMEE API Profiles and AMEE API Profile Items & use them as required.
+
+Please see the examples/EXAMPLES.txt file for details of code examples that will
+help you to understand and use the AMEE REST API PEAR library.

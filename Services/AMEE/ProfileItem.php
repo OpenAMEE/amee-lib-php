@@ -667,6 +667,28 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
         }
     }
 
+    /**
+     * A method to return the information & results for an AMEE API Profile
+     * Item. The information returned is:
+     *
+     *      - 'uid'         => The UID;
+     *      - 'name'        => The name, if set;
+     *      - 'created'     => The created date/time;
+     *      - 'modified'    => The most recently modified date/time;
+     *      - 'profileUid'  => The UID of the parent AMEE API Profile;
+     *      - 'path'        => The path of the AMEE API Data Item the AMEE API
+     *                          Profile Item was created with;
+     *      - 'dataItemUid' => The UID of the AMEE API Data Item the AMEE API
+     *                          Profile Item was created with;
+     *      - 'amount'      => The GHG emission result amount;
+     *      - 'unit'        => The GHG emission result unit;
+     *      - 'perUnit'     => The GHG emission result per time unit;
+     *      - 'startDate'   => The vaid from start date/time; and
+     *      - 'endDate'     => The vaid to end date/time, is set.
+     *
+     * @return <array> An array containing the AMEE API Profile Item's
+     *      information, including the result of any GHG emission calculations.
+     */
     public function getInfo()
     {
         $aReturn = array(

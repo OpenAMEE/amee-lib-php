@@ -51,6 +51,13 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
     {
         try {
 
+            // Step 0: Before using the AMEE REST API PEAR Library, you need
+            //      to ensure that your AMEE REST API server, API key and
+            //      API password are defined. This has already been done in
+            //      this example by the tests/testConfig.php file - although
+            //      you would need to update this file if you wanted to actually
+            //      run this script!
+
             // Step 1: A new user (let's call them "User A") has created an
             //      account in the application, ready to start adding their
             //      data. All data needs to go into an AMEE API Profile, and in
