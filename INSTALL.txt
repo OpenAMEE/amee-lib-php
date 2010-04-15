@@ -9,13 +9,13 @@ library can easily be installed manually:
 1. Ensure that you have PEAR installed. If you need to install PEAR, please
     follow the instructions at http://pear.php.net/manual/en/installation.php.
 
-2. Locate your PEAR library installation path. You can do this easily by running
+2. Download the AMEE REST API PEAR library from
+    http://github.com/AMEE/amee-lib-php/downloads, if you have not already
+    done so.
+
+3. Locate your PEAR library installation path. You can do this easily by running
     the command "pear config-show", and by locating the value of the
     "PEAR directory" (e.g. /usr/lib/php).
-
-3. Download the AMEE REST API PEAR library from
-    http://github.com/AMEE/amee-lib-php/downloads, if you have not already 
-    done so.
 
 4. Unzip or untar the AMEE REST API PEAR library download. This will create a
     new directory prefixed with "AMEE-amee-lib-php-". The exact name of the
