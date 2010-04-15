@@ -1,3 +1,5 @@
 Please see the tests/integration/AMEE/ExampleTest.php file, which acts as both
 a PHPUnit integration test for the library as well as a well documented example
 of how the AMEE REST API PHP PEAR library can be used.
+
+Also, this directory contains extra examples showing particular use cases.
