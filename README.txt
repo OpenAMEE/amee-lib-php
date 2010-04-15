@@ -35,7 +35,9 @@ License:   MIT
 
 Supports:  AMEE REST API v2
 
-Source:    https://github.com/AMEE/amee-lib-php
+Download:  http://github.com/AMEE/amee-lib-php/downloads
+
+Source:    http://github.com/AMEE/amee-lib-php
 
 Requirements:
 
@@ -58,3 +60,17 @@ TODO:
 
   At present there is no support for advanced time-period based reporting on
   AMEE API Profile Item data. This will be added in the next version.
+
+
+Installing the library
+----------------------
+
+Please see the INSTALL.txt file.
+
+
+Using the library
+-----------------
+
+Please see the tests/integration/AMEE/ExampleTest.php file, which acts as both
+a PHPUnit integration test for the library as well as a well documented example
+of how the AMEE REST API PHP PEAR library can be used.
