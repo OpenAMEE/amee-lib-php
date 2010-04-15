@@ -13,13 +13,13 @@ library can easily be installed manually:
     http://github.com/AMEE/amee-lib-php/downloads, if you have not already
     done so.
 
-3. Locate your PEAR library installation path. You can do this easily by running
-    the command "pear config-show", and by locating the value of the
-    "PEAR directory" (e.g. /usr/lib/php).
-
-4. Unzip or untar the AMEE REST API PEAR library download. This will create a
+3. Unzip or untar the AMEE REST API PEAR library download. This will create a
     new directory prefixed with "AMEE-amee-lib-php-". The exact name of the
     directory will depend on the version of the library.
+
+4. Locate your PEAR library installation path. You can do this easily by running
+    the command "pear config-show", and by locating the value of the
+    "PEAR directory" (e.g. /usr/lib/php).
 
 5. Copy the contents of the library's Services/ directory into the Services/
     directory in your PEAR library installation path. You may need to create
