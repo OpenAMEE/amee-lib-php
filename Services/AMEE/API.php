@@ -290,6 +290,7 @@ class Services_AMEE_API
      */
     public function sendRequest($sPath, $sBody = null, $bReturnHeaders = false, $bRepeat = true)
     {
+
         // Ensure that the request is a valid type
         if (!preg_match('/^(GET|POST|PUT|DELETE)/', $sPath)) {
             throw new Services_AMEE_Exception(
@@ -459,7 +460,7 @@ class Services_AMEE_API
      *
      * See http://php.net/manual/en/function.fsockopen.php.
      */
-    protected function _socketOpen($sHost, $sPort, $iError, $sError)
+    protected function _socketOpen($sHost, $sPort, &$iError, &$sError)
     {
         return fsockopen($sHost, $sPort, $iError, $sError);
     }
