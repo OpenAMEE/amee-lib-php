@@ -1,0 +1,36 @@
+AMEE REST API PEAR Library Release History
+------------------------------------------
+
+Current Version:
+
+v1.1.0
+
+- Released on: 2010-04-29
+- Fixed a bug with the Services_AMEE_API class, which meant that the exception
+    thrown when fsockopen() failed did not include a complete error message.
+- Added support to the Services_AMEE_DataItem class for obtaining the drill down
+    options array used in the process of obtaining the AMEE API Data Item.
+- Added support to the Services_AMEE_DataItem class for browsing AMEE API Data
+    Item paths, to see what drill down options exist and the values supported by
+    the AMEE API for each option.
+- Added support to the Services_AMEE_ProfileItem class for obtaining the
+    Services_AMEE_DataItem object used in the process of creating the AMEE API
+    Profile Item.
+- Added support to the Servicems_AMEE_ProfileItem class for obtaining the
+    AMEE API Profile Item Value(s) used in the process of creating the AMEE API
+    Profile Item.
+
+--------------------------------------------------------------------------------
+
+Previous Versions:
+
+v1.0.1
+
+- Released on: 2010-04-15
+- Updated the installation instructions to address the fact that the library
+    is now released via, and installable from, the pearhub.org channel.
+
+v1.0.0
+
+- Released on: 2010-04-15
+- Initial release of the AMEE REST API PEAR Library.

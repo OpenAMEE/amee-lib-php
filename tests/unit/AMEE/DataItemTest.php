@@ -247,6 +247,131 @@ class Services_AMEE_DataItem_UnitTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1234567890AB', $oMockDataItem->getUID());
     }
 
+    /**
+     * Test the functionality of the
+     * Services_AMEE_DataItem::getDrillDownOptions() method when there are no
+     * drill down options set.
+     */
+    public function testGetDrillDownOptionNoOptions()
+    {
+        // Prepare a mocked version of the Services_AMEE_API class, with the
+        // required call expectations and return JSON
+        $oMockAPI = $this->getMock('Services_AMEE_API');
+        $sReturnJSON = '
+            {
+              "choices":
+              {
+                "name":"uid",
+                "choices":
+                [{
+                  "name":"1234567890AB",
+                  "value":"1234567890AB"
+                }]
+
+              }
+            }';
+        $oMockAPI->expects($this->once())
+                ->method('get')
+                ->with(
+                    '/data/metadata/drill',
+                    array()
+                )
+                ->will($this->returnValue($sReturnJSON));
+
+        // Prepare a mocked version of the Services_AMEE_DataItem class,
+        // with the _hasJSONDecode() method mocked, without calling the
+        // constructor method
+        $aMockMethods = array(
+            '_getAPI'
+        );
+        $oMockDataItem = $this->getMock(
+            'Services_AMEE_DataItem',
+            $aMockMethods,
+            array(),
+            '',
+            false
+        );
+
+        // Set the expectation on the mocked object that the _getAPI() method
+        // will be called exactly once and set the mocked Services_AMEE_API
+        // object to be returned
+        $oMockDataItem->expects($this->once())
+                ->method('_getAPI')
+                ->will($this->returnValue($oMockAPI));
+
+        // Call the __construct() method
+        $oMockDataItem->__construct('/metadata');
+
+        // Test the getDrillDownbOptions() method
+        $this->assertEquals(array(), $oMockDataItem->getDrillDownOptions());
+    }
+
+
+    /**
+     * Test the functionality of the
+     * Services_AMEE_DataItem::getDrillDownOptions() method when there are drill
+     * down options set.
+     */
+    public function testGetDrillDownOptionWithOptions()
+    {
+        // Prepare a mocked version of the Services_AMEE_API class, with the
+        // required call expectations and return JSON
+        $oMockAPI = $this->getMock('Services_AMEE_API');
+        $sReturnJSON = '
+            {
+              "choices":
+              {
+                "name":"uid",
+                "choices":
+                [{
+                  "name":"66056991EE23",
+                  "value":"66056991EE23"
+                }]
+
+              }
+            }';
+        $oMockAPI->expects($this->once())
+                ->method('get')
+                ->with(
+                    '/data/home/energy/quantity/drill',
+                    array('type' => 'gas')
+                )
+                ->will($this->returnValue($sReturnJSON));
+
+        // Prepare a mocked version of the Services_AMEE_DataItem class,
+        // with the _hasJSONDecode() method mocked, without calling the
+        // constructor method
+        $aMockMethods = array(
+            '_getAPI'
+        );
+        $oMockDataItem = $this->getMock(
+            'Services_AMEE_DataItem',
+            $aMockMethods,
+            array(),
+            '',
+            false
+        );
+
+        // Set the expectation on the mocked object that the _getAPI() method
+        // will be called exactly once and set the mocked Services_AMEE_API
+        // object to be returned
+        $oMockDataItem->expects($this->once())
+                ->method('_getAPI')
+                ->will($this->returnValue($oMockAPI));
+
+        // Call the __construct() method
+        $oMockDataItem->__construct(
+            '/home/energy/quantity',
+            array('type' => 'gas')
+        );
+
+        // Test the getDrillDownbOptions() method
+        $this->assertEquals(
+            array('type' => 'gas'),
+            $oMockDataItem->getDrillDownOptions()
+        );
+    }
+
 }
 
 ?>
