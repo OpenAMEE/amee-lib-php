@@ -709,6 +709,18 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
     }
 
     /**
+     * A method to return the AMEE API Data Item that the AMEE API Profile
+     * Item was created with.
+     *
+     * @return <Services_AMEE_DataItem> The AMEE API Data Item that the AMEE
+     *      API Profile Item was created with.
+     */
+    public function getDataItem()
+    {
+        return $this->oDataItem;
+    }
+
+    /**
      * A method to allow an AMEE API Profile Item object's AMEE API Profile
      * Item Value(s) to be updated.
      *

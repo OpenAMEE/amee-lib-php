@@ -1560,7 +1560,25 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * Test to ensure that the Services_AMEE_ProfileItem::getDataItem() method
+     * returns the Services_AMEE_DataItem used in the construction of the
+     * Services_AMEE_ProfileItem object.
+     */
+    public function testGetDataItem()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Call the getDataItem() method
+        $oObtainedDataItem = $oMockProfileItem->getDataItem();
+
+        // Check that the returned AMEE API Data Item object is the same as
+        // the one used to create the AMEE API Profile Item object
+        $this->assertSame($oObtainedDataItem, $oMockDataItem);
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_ProfileItem::updateValues() method
      * correctly throws an exception if passed a non-array parameter.
      */
     public function testUpdateValuesValidateNotArrayError()
@@ -1591,7 +1609,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateValues() method
      * correctly throws an exception if passed an empty array parameter.
      */
     public function testUpdateValuesValidateEmptyArrayError()
@@ -1622,7 +1640,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateValues() method
      * correctly bubbles up an exception thrown by the Services_AMEE_API::put()
      * method.
      *
@@ -1662,7 +1680,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateValues() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateValues() method
      * correctly bubbles up an exception thrown by the Services_AMEE_API::get()
      * method.
      */
@@ -1696,7 +1714,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateOptions() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateOptions() method
      * correctly bubbles up an exception thrown by the
      * Services_AMEE_API::_validateProfileOptionParamArray() method.
      */
@@ -1728,7 +1746,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateOptions() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateOptions() method
      * correctly bubbles up an exception thrown by the Services_AMEE_API::put()
      * method.
      *
@@ -1768,7 +1786,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateOptions() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateOptions() method
      * correctly bubbles up an exception thrown by the Services_AMEE_API::get()
      * method.
      */
@@ -1802,7 +1820,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateReturn() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateReturn() method
      * correctly bubbles up an exception thrown by the
      * Services_AMEE_API::_validateReturnUnitParamArray() method.
      */
@@ -1834,7 +1852,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::updateReturn() method
+     * Test to ensure that the Services_AMEE_ProfileItem::updateReturn() method
      * correctly bubbles up an exception thrown by the Services_AMEE_API::get()
      * method.
      */
@@ -1868,7 +1886,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to ensure that the Services_AMEE_Profile::delete() method
+     * Test to ensure that the Services_AMEE_ProfileItem::delete() method
      * correctly bubbles up an exception thrown by the
      * Services_AMEE_API::delete() method.
      */
