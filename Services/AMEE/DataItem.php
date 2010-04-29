@@ -138,6 +138,72 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
         );
     }
 
+    /**
+     * A static method that can be used to obtain the drill down name and
+     * values that may exist for a given AMEE API Data Item path and optional
+     * AMEE API Data Item's drill down name/value pairs.
+     *
+     * @param <string> $sPath The path of the AMEE API Data Item.
+     * @param <array> $aOptions An optional array of AMEE API Data Item
+     *      name/value pairs that define either a full or partial set of
+     *      AMEE API Data Item's Drill Down options.
+     * @return <mixed> An array of two items, with the following keys
+     *      - "drillOption": The name of the drill down that the array of
+     *                       options below is for; and
+     *      - "options"      An array of drill down option name/value pairs
+     *                       (empty when none exist);
+     *      or an Exception object on error.
+     */
+    public static function browseDrillDownOptions($sPath, $aOptions = array())
+    {
+        try {
+            // Prepare the AMEE REST API connection
+            $oAPI = Services_AMEE_API::singleton();
+            // Prepare the AMEE REST API path
+            $sPath = '/data' . $sPath . '/drill';
+            // Call the AMEE REST API
+            $sLastJSON = $oAPI->get($sPath, $aOptions);
+            // Process the result data
+            $aLastJSON = json_decode($sLastJSON, true);
+            // Test that a valid Data Item drill down option array can be
+            // generated & returned
+            $aReturn = array();
+            if (isset($aLastJSON['choices'])
+                && isset($aLastJSON['choices']['name'])
+                && $aLastJSON['choices']['name'] != 'uid'
+                && isset($aLastJSON['choices']['choices'])
+                && is_array($aLastJSON['choices']['choices'])) {
+                // Prepare the return array
+                $aReturn['drillOption'] = $aLastJSON['choices']['name'];
+                foreach ($aLastJSON['choices']['choices'] as $aChoice) {
+                    $aReturn['options'][$aChoice['name']] = $aChoice['value'];
+                }
+                return $aReturn;
+            } else if (isset($aLastJSON['choices'])
+                && isset($aLastJSON['choices']['name'])
+                && $aLastJSON['choices']['name'] == 'uid'
+                && isset($aLastJSON['selections'])
+                && is_array($aLastJSON['selections'])) {
+                // Prepare the return array
+                foreach ($aLastJSON['selections'] as $aSelection) {
+                    if (!array_key_exists($aSelection['name'], $aOptions)) {
+                        $aReturn['drillOption'] = $aSelection['name'];
+                        $aReturn['options'][$aSelection['value']] = $aSelection['value'];
+                    }
+                }
+                return $aReturn;
+            } else {
+                throw new Services_AMEE_Exception(
+                    'AMEE API Data Item Drill Down for path \'' . $sPath .
+                    '\' with the specified options did not return a Data ' .
+                    'Item option set - check the specified options'
+                );
+            }
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
+
 }
 
 ?>
