@@ -130,7 +130,87 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                 "startDate": "2010-04-13T10:19:00+01:00",
                 "uid": "A606D4394BAD",
                 "endDate": "",
-                "created": "2010-04-13T10:19:18+01:00"
+                "created": "2010-04-13T10:19:18+01:00",
+                "itemValues": [
+                  {
+                    "path": "otherDetails",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "greenTariff",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "peopleInHousehold",
+                    "value": "1",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "state",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "postcode",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "childrenInHousehold",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "country",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "profileStatus",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "adultsInHousehold",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "profileType",
+                    "value": "Individual",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "mainHeatingSystem",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "buildingType",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  },
+                  {
+                    "path": "floorAreaM2",
+                    "value": "",
+                    "unit": "",
+                    "perUnit": ""
+                  }
+                ]
               }
             }';
         $oMockAPI->expects($this->once())
@@ -893,7 +973,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                   "startDate": "2010-04-13T13:37:00+01:00",
                   "uid": "000000000000",
                   "endDate": "",
-                  "created": "2010-04-13T13:37:19+01:00"
+                  "created": "2010-04-13T13:37:19+01:00",
+                  "itemValues": [
+                    {
+                      "path": "someValue",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    }
+                  ]
                 }
             }';
         $oMockAPI->expects($this->once())
@@ -1158,7 +1246,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                   "startDate": "2010-04-13T13:37:00+01:00",
                   "uid": "888888888888",
                   "endDate": "2010-04-13T13:39:00+01:00",
-                  "created": "2010-04-13T13:37:19+01:00"
+                  "created": "2010-04-13T13:37:19+01:00",
+                  "itemValues": [
+                    {
+                      "path": "someValue",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    }
+                  ]
                 }
             }';
         $oMockAPI->expects($this->once())
@@ -1358,7 +1454,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                     "uid": "66056991EE23"
                   },
                   "endDate": "",
-                  "created": "2010-04-13T13:37:19+01:00"
+                  "created": "2010-04-13T13:37:19+01:00",
+                  "itemValues": [
+                    {
+                      "path": "someValue",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    }
+                  ]
                 },
                 {
                   "modified": "2010-04-13T13:37:20+01:00",
@@ -1374,7 +1478,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                     "uid": "CDC2A0BA8DF3"
                   },
                   "endDate": "",
-                  "created": "2010-04-13T13:37:20+01:00"
+                  "created": "2010-04-13T13:37:20+01:00",
+                  "itemValues": [
+                    {
+                      "path": "someValue",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    }
+                  ]
                 }]
             }';
         $oMockAPI->expects($this->once())
@@ -1493,13 +1605,75 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                   "modified": "2010-04-13T13:37:29+01:00",
                   "name": "",
                   "amount": {
-                    "value": 1234,
+                    "value": 20.37,
                     "unit": "kg/year"
                   },
                   "startDate": "2010-04-13T13:37:00+01:00",
                   "uid": "333333333333",
                   "endDate": "2010-04-13T13:39:00+01:00",
-                  "created": "2010-04-13T13:37:19+01:00"
+                  "created": "2010-04-13T13:37:19+01:00",
+                  "itemValues": [
+                    {
+                      "path": "energyConsumption",
+                      "value": "100",
+                      "unit": "kWh",
+                      "perUnit": "year"
+                    },
+                    {
+                      "path": "currentReading",
+                      "value": "0",
+                      "unit": "kWh",
+                      "perUnit": "year"
+                    },
+                    {
+                      "path": "includesHeating",
+                      "value": "false",
+                      "unit": "",
+                      "perUnit": ""
+                    },
+                    {
+                      "path": "greenTariff",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    },
+                    {
+                      "path": "season",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    },
+                    {
+                      "path": "paymentFrequency",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": ""
+                    },
+                    {
+                      "path": "massPerTime",
+                      "value": "0",
+                      "unit": "kg",
+                      "perUnit": "year"
+                    },
+                    {
+                      "path": "lastReading",
+                      "value": "0",
+                      "unit": "kWh",
+                      "perUnit": "year"
+                    },
+                    {
+                      "path": "deliveries",
+                      "value": "",
+                      "unit": "",
+                      "perUnit": "year"
+                    },
+                    {
+                      "path": "volumePerTime",
+                      "value": "0",
+                      "unit": "L",
+                      "perUnit": "year"
+                    }
+                  ]
                 }
             }';
         $oMockAPI->expects($this->any())
@@ -1541,7 +1715,7 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
             'profileUid'  => '111111111111',
             'path'        => '/home/energy/quantity',
             'dataItemUid' => '222222222222',
-            'amount'      => '1234',
+            'amount'      => '20.37',
             'unit'        => 'kg',
             'perUnit'     => 'year',
             'startDate'   => '2010-04-13T13:37:00+01:00',
@@ -1575,6 +1749,74 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
         // Check that the returned AMEE API Data Item object is the same as
         // the one used to create the AMEE API Profile Item object
         $this->assertSame($oObtainedDataItem, $oMockDataItem);
+    }
+
+    /**
+     * Test to ensure that the Services_AMEE_ProfileItem::getItemValue() method
+     * returns false when an AMEE API Profile Item Value is requested that does
+     * not exist for the AMEE API Profile Item.
+     */
+    public function testGetDataItemNotExists()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Call the getItemValue() method for an AMEE API Profile Item Value
+        // that does not exist
+        $bResult = $oMockProfileItem->getItemValue('doesNotExist');
+
+        // Check that the returned value is false
+        $this->assertSame($bResult, false);
+    }
+    
+    /**
+     * Test to ensure that the Services_AMEE_ProfileItem::getItemValue() method
+     * returns correct values when an AMEE API Profile Item Value that exists is
+     * requested.
+     */
+    public function testGetDataItemExists()
+    {
+        list($oMockProfile, $oMockDataItem, $oMockAPI, $oMockProfileItem) =
+            $this->_getNonConstructorSetup();
+
+        // Call the getItemValue() method for an AMEE API Profile Item Value
+        // that exists
+        $aResult = $oMockProfileItem->getItemValue('energyConsumption');
+
+        // Check that the returned value is as expected
+        $aExpected = array(
+            'path'    => 'energyConsumption',
+            'value'   => 100,
+            'unit'    => 'kWh',
+            'perUnit' => 'year'
+        );
+        $this->assertEquals($aResult, $aExpected);
+
+        // Call the getItemValue() method for an AMEE API Profile Item Value
+        // that exists
+        $aResult = $oMockProfileItem->getItemValue('massPerTime');
+
+        // Check that the returned value is as expected
+        $aExpected = array(
+            'path'    => 'massPerTime',
+            'value'   => 0,
+            'unit'    => 'kg',
+            'perUnit' => 'year'
+        );
+        $this->assertEquals($aResult, $aExpected);
+
+        // Call the getItemValue() method for an AMEE API Profile Item Value
+        // that exists
+        $aResult = $oMockProfileItem->getItemValue('paymentFrequency');
+
+        // Check that the returned value is as expected
+        $aExpected = array(
+            'path'    => 'paymentFrequency',
+            'value'   => '',
+            'unit'    => '',
+            'perUnit' => ''
+        );
+        $this->assertEquals($aResult, $aExpected);
     }
 
     /**

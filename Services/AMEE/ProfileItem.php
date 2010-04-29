@@ -96,6 +96,12 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
     private $oDataItem;
 
     /**
+     * @var <array> $aItemValues An array for storing information about the
+     *      current AMEE API Profile Item Values in the AMEE API Profile Item.
+     */
+    private $aItemValues;
+
+    /**
      * @var <array> $aReturnUnitOptions An array to store the return unit
      *      options set, if present.
      */
@@ -588,6 +594,15 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             // Process the result data
             $this->aLastJSON = json_decode($this->sLastJSON, true);
             // Set the objcet variables
+            if (!isset($this->aLastJSON['profileItem'])) {
+                // Bad UID given
+                throw new Services_AMEE_Exception(
+                    'Services_AMEE_ProfileItem constructor method requested ' .
+                    'an existing AMEE API Profile Item by AMEE API Profile ' .
+                    'Item UID ' . $sUID . ', but no such AMEE API Profile ' .
+                    'Item could be located'
+                );
+            }
             $this->_constructExistingByDataArray($this->aLastJSON['profileItem']);
         } catch (Exception $oException) {
             throw $oException;
@@ -665,6 +680,16 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
         if (!empty($aData['endDate'])) {
             $this->sEndDate   = $this->formatDate($aData['endDate']);
         }
+        if (!empty($aData['itemValues'])) {
+            foreach ($aData['itemValues'] as $aItemValue) {
+                $this->aItemValues[$aItemValue['path']] = array(
+                    'path'    => $aItemValue['path'],
+                    'value'   => $aItemValue['value'],
+                    'unit'    => $aItemValue['unit'],
+                    'perUnit' => $aItemValue['perUnit']
+                );
+            }
+        }
     }
 
     /**
@@ -718,6 +743,22 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
     public function getDataItem()
     {
         return $this->oDataItem;
+    }
+
+    /**
+     * A method to return the AMEE API Profile Item Value set in the AMEE API
+     * Profile Item, if it exists.
+     *
+     * @param <string> $sItemName The AMEE API Profile Item Value name.
+     * @return <mixed> The AMEE API Profile Item's value for the given AMEE API
+     *      Profile Item Value name, if it exists; false otherwise.
+     */
+    public function getItemValue($sItemName)
+    {
+        if (isset($this->aItemValues[$sItemName])) {
+            return $this->aItemValues[$sItemName];
+        }
+        return false;
     }
 
     /**
