@@ -54,9 +54,9 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
      * The constructor for the Services_AMEE_DataItem class.
      *
      * @param <string> $sPath The path of the AMEE API Data Item.
-     * @param <array> $aOptions An optional array of AMEE Data Item name/value
-     *      pairs that define the AMEE Data Item's Drill Down UID, in those
-     *      cases where the path does not define the UID.
+     * @param <array> $aOptions An optional array of AMEE API Data Item
+     *      name/value pairs that define the AMEE API Data Item's Drill Down
+     *      UID, in those cases where the path does not define the UID.
      * @return <object> The created Services_AMEE_DataItem object; an Exception
      *      object otherwise.
      */
@@ -116,6 +116,24 @@ class Services_AMEE_DataItem extends Services_AMEE_BaseItemObject
         // Error, object is not itialized
         throw new Services_AMEE_Exception(
             'Cannot call Service_AMEE_DataItem::getPath() on an ' .
+            'un-initialized object'
+        );
+    }
+
+    /**
+     * A method to return the AMEE API Data Item's drill down options.
+     *
+     * @return <mixed> This AMEE API Data Item's drill down options as an array;
+     *      an Exception object if this object hasn't been initialized.
+     */
+    public function getDrillDownOptions()
+    {
+        if (is_array($this->aOptions)) {
+            return $this->aOptions;
+        }
+        // Error, object is not itialized
+        throw new Services_AMEE_Exception(
+            'Cannot call Service_AMEE_DataItem::getDrillDownOptions() on an ' .
             'un-initialized object'
         );
     }
