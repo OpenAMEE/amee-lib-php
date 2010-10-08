@@ -47,8 +47,6 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      */
     private function _getDataItem($aExtraMockMethods = array())
     {
-
-
         // Prepare a mocked version of the Services_AMEE_DataItem object that
         // can be used in the construction of a Services_AMEE_ProfileItem object
         //

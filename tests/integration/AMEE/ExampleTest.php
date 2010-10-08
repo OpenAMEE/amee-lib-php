@@ -391,10 +391,10 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             //      Profile Item UIDs for every AMEE API Profile Item created,
             //      if you want, and access the AMEE API Profile Items by UID.
             //
-            //      However, in this case, the sample application did not keep
-            //      track of the AMEE API Profile Item UIDs in the previous test
-            //      when they were created, so the application needs to search
-            //      for the items.
+            //      However, in this case, let's assume that the sample
+            //      application did not keep track of the AMEE API Profile Item
+            //      UIDs in the previous test when they were created, so the
+            //      application needs to search for the items.
             //
             //      The applicaiton knows that it only deals with AMEE API Data
             //      Items that are in the "/home/energy/quantity" path and with
@@ -454,7 +454,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
             $oProfileItemElectricity->updateReturn($aReturnUnits);
 
-            // Step 2.5: Extract the GHG emission amounts from each AMEE API
+            // Step 2.4: Extract the GHG emission amounts from each AMEE API
             //      Profile Item, and calculate the total.
 
             $aResult = array();
@@ -470,7 +470,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             $aResult['total'] = $aResult['gas'] + $aResult['electricity'];
             $aResult['total_units'] = $aResult['gas_units'];
 
-            // Step 2.6: Now that we have the GHG emissions, in kg, that would
+            // Step 2.5: Now that we have the GHG emissions, in kg, that would
             //      result from the user's gas and electricity use, the sample
             //      application would be able to display the $aResult array
             //      values to the user appropriately here...
@@ -537,7 +537,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
                 $this->aDataStore['sProfileItemElectricityUID']
             );
 
-            // Assert that there are real GHG emissions available in the resutls
+            // Assert that there are real GHG emissions available in the results
             // array. Note that we don't actually assert the expected GHG
             // values, as one of the advantages of the AMEE REST API is that,
             // if emissions standards are ever updated/changed/improved, the
