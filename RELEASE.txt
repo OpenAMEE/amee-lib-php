@@ -5,8 +5,12 @@ Current Version:
 
 v1.2.0
 
-- Released on: 2010-10-??
+- Released on: 2010-11-03
 - Added support for Multiple Algorithm Return Values.
+- Fixed a bug with the Services_AMEE_ProfileItem class, which prevented the
+    creation of new Profile Items where no input values are required for that
+    Profile Item (for example, when creating a profile item for Data Item
+    http://explorer.amee.com/categories/Reductions/data/fix%20dripping%20tap.
 
 --------------------------------------------------------------------------------
 

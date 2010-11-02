@@ -407,15 +407,11 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             $this->_validateReturnUnitParamArray($aParam);
             return 'search';
         }
-        // Assume a "new" type construction; validate that the array has at
-        // leaast one name/value pair, and return type "new"
-        if (count($aParam) == 0) {
-            throw new Services_AMEE_Exception(
-                'Services_AMEE_ProfileItem constructor method called with' .
-                'the parameter array\'s third parameter being an empty AMEE ' .
-                'API Profile Item Value array'
-            );
-        }
+        // Assume a "new" type construction; return type "new"
+        //
+        // It is permitted to create a new Profile Item without any parameters,
+        // for example, see
+        // http://explorer.amee.com/categories/Reductions/data/fix%20dripping%20tap
         return 'new';
     }
 
