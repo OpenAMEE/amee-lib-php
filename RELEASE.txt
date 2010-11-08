@@ -11,6 +11,8 @@ v1.2.0
     creation of new Profile Items where no input values are required for that
     Profile Item (for example, when creating a profile item for Data Item
     http://explorer.amee.com/categories/Reductions/data/fix%20dripping%20tap.
+- Improved the message for Exceptions that are thrown when an API call is made
+    with invalid parameters.
 
 --------------------------------------------------------------------------------
 

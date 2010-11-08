@@ -386,7 +386,7 @@ class Services_AMEE_API
         // Check that the request was authorised
         if (strpos($aResponseLines[0], '401 UNAUTH') !== false){
             // Authorisation failed
-			if ($bRepeat){
+			if ($bRepeat) {
                 // Try once more
                 $this->reconnect();
                 try {
@@ -406,10 +406,20 @@ class Services_AMEE_API
                 );
             }
 		}
+        // Check for a 400 return error where the JSON response advises that
+        // invalid parameters were used to make the API call
+        if (strpos($aResponseLines[0], '400') !== false && !empty($aJSON)) {
+            $aJSONError = json_decode($aJSON[0], true);
+            if (strpos($aJSONError['status']['description'], 'invalid parameters') !== false) {
+                throw new Services_AMEE_Exception(
+                    'The AMEE REST API was called called with invalid parameters'
+                );
+            }
+        }
         // Update the authorisation time (now + authorisation timeout)
         $this->iAuthExpires = time() + AMEE_API_AUTH_TIMEOUT;
         // Return the AMEE REST API's results
-		if($bReturnHeaders) {
+		if ($bReturnHeaders) {
 			return $aResponseLines;
 		} else {
             // Return the JSON data response only, if it exists

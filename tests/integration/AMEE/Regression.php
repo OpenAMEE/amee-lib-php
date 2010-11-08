@@ -112,13 +112,52 @@ class Services_AMEE_Regression_IntegrationTest extends PHPUnit_Framework_TestCas
             $this->assertEquals($aInfo['endDate'], '');
 
         } catch (Exception $oException) {
-
-            // A real world appliction would deal with errors gracefully here,
-            // and show the user a helpful error message. However, as this is
-            // a PHPUnit integration test, we fail the test if an exception is
-            // thrown!
             $this->fail(
                 'Test failed, as no Exception should have been thrown!'
+            );
+        }
+    }
+
+    /**
+     * A PHPUnit regression integration test for COM-166, a bug where a poor
+     * error message was returned in the event of an unvalid unit parameter
+     * being supplied.
+     */
+    function test_COM_166()
+    {
+        try {
+
+            // Create a new AMEE API Profile
+            $oProfile = new Services_AMEE_Profile();
+
+            // Create a Data Item object for /home/energy/quantity
+            $sPath = '/home/energy/quantity';
+            $aOptions = array(
+                'type' => 'gas'
+            );
+            $oDataItem = new Services_AMEE_DataItem($sPath, $aOptions);
+
+            // Create a Profile Item
+            $oProfileItem = new Services_AMEE_ProfileItem(
+                array(
+                    $oProfile,
+                    $oDataItem,
+                    array(
+                      'energyConsumption'        => '42',
+                      'energyConsumptionPerUnit' => 'hour'
+                    )
+                )
+            );
+
+            $this->fail(
+                'Test failed, as no Exception should have been thrown!'
+            );
+
+        } catch (Exception $oException) {
+
+            $this->assertEquals(
+                $oException->getMessage(),
+                'The AMEE REST API was called called with invalid parameters'
             );
 
         }
