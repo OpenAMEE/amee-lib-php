@@ -5,7 +5,7 @@ Current Version:
 
 v1.2.0
 
-- Released on: 2010-11-03
+- Released on: 2010-11-18
 - Added support for Multiple Algorithm Return Values.
 - Fixed a bug with the Services_AMEE_ProfileItem class, which prevented the
     creation of new Profile Items where no input values are required for that
@@ -13,6 +13,8 @@ v1.2.0
     http://explorer.amee.com/categories/Reductions/data/fix%20dripping%20tap.
 - Improved the message for Exceptions that are thrown when an API call is made
     with invalid parameters.
+- Updated the library to support new Profile UID formats & "Life Cycle Carbon"
+    categories in AMEE.
 
 --------------------------------------------------------------------------------
 
