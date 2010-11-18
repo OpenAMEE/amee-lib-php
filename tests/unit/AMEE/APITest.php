@@ -822,13 +822,13 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     {
         $oAPI = new Services_AMEE_API();
 
-        // Test invalud POST path: /profiles/1234567890ABB/transport
+        // Test invalud POST path: /profiles/1234567890AB@/transport
         try {
-            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'post');
+            $bResult = $oAPI->validPath('/profiles/1234567890A@/transport', 'post');
         } catch (Exception $oException) {
             $this->assertEquals(
                 $oException->getMessage(),
-                'Invalid AMEE REST API POST path specified: /profiles/1234567890AG/transport'
+                'Invalid AMEE REST API POST path specified: /profiles/1234567890A@/transport'
             );
             return;
         }
@@ -1042,13 +1042,13 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     {
         $oAPI = new Services_AMEE_API();
 
-        // Test invalud PUT path: /profiles/1234567890ABB/transport
+        // Test invalud PUT path: /profiles/1234567890AB@/transport
         try {
-            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'put');
+            $bResult = $oAPI->validPath('/profiles/1234567890A@/transport', 'put');
         } catch (Exception $oException) {
             $this->assertEquals(
                 $oException->getMessage(),
-                'Invalid AMEE REST API PUT path specified: /profiles/1234567890AG/transport'
+                'Invalid AMEE REST API PUT path specified: /profiles/1234567890A@/transport'
             );
             return;
         }
@@ -1250,13 +1250,13 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     {
         $oAPI = new Services_AMEE_API();
 
-        // Test invalud GET path: /profiles/1234567890ABB/transport
+        // Test invalud GET path: /profiles/1234567890AB@/transport
         try {
-            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'get');
+            $bResult = $oAPI->validPath('/profiles/1234567890A@/transport', 'get');
         } catch (Exception $oException) {
             $this->assertEquals(
                 $oException->getMessage(),
-                'Invalid AMEE REST API GET path specified: /profiles/1234567890AG/transport'
+                'Invalid AMEE REST API GET path specified: /profiles/1234567890A@/transport'
             );
             return;
         }
@@ -1431,13 +1431,13 @@ class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
     {
         $oAPI = new Services_AMEE_API();
 
-        // Test invalud DELETE path: /profiles/1234567890ABB/transport
+        // Test invalud DELETE path: /profiles/1234567890AB@/transport
         try {
-            $bResult = $oAPI->validPath('/profiles/1234567890AG/transport', 'delete');
+            $bResult = $oAPI->validPath('/profiles/1234567890A@/transport', 'delete');
         } catch (Exception $oException) {
             $this->assertEquals(
                 $oException->getMessage(),
-                'Invalid AMEE REST API DELETE path specified: /profiles/1234567890AG/transport'
+                'Invalid AMEE REST API DELETE path specified: /profiles/1234567890A@/transport'
             );
             return;
         }

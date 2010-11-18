@@ -407,15 +407,11 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             $this->_validateReturnUnitParamArray($aParam);
             return 'search';
         }
-        // Assume a "new" type construction; validate that the array has at
-        // leaast one name/value pair, and return type "new"
-        if (count($aParam) == 0) {
-            throw new Services_AMEE_Exception(
-                'Services_AMEE_ProfileItem constructor method called with' .
-                'the parameter array\'s third parameter being an empty AMEE ' .
-                'API Profile Item Value array'
-            );
-        }
+        // Assume a "new" type construction; return type "new"
+        //
+        // It is permitted to create a new Profile Item without any parameters,
+        // for example, see
+        // http://explorer.amee.com/categories/Reductions/data/fix%20dripping%20tap
         return 'new';
     }
 
@@ -553,7 +549,7 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             $sPath = '/profiles/' . $this->oProfile->getUID() .
                 $this->oDataItem->getPath();
             $aOptions = array(
-                'dataItemUid'    => $this->oDataItem->getUID()
+                'dataItemUid' => $this->oDataItem->getUID()
             );
             foreach ($aParams[2] as $sKey => $sValue) {
                 $aOptions[$sKey] = $sValue;
@@ -664,6 +660,8 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
         $this->sModified  = $this->formatDate($aData['modified']);
         $this->sName      = $aData['name'];
         $this->dAmount    = $aData['amount']['value'];
+        $this->aAmounts   = array();
+        $this->aNotes     = array();
         $this->sUnit      = '';
         $this->sPerUnit   = '';
         if (!empty($aData['amount']['unit'])) {
@@ -690,6 +688,18 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
                 );
             }
         }
+        if (!empty($aData['amounts'])) {
+            if (!empty($aData['amounts']['amount'])) {
+                foreach ($aData['amounts']['amount'] as $aMARV) {
+                    $this->aAmounts[$aMARV['type']] = $aMARV;
+                }
+            }
+            if (!empty($aData['amounts']['note'])) {
+                foreach ($aData['amounts']['note'] as $aMARVNote) {
+                    $this->aNotes[] = $aMARVNote['value'];
+                }
+            }
+        }
     }
 
     /**
@@ -706,6 +716,11 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
      *      - 'dataItemUid' => The UID of the AMEE API Data Item the AMEE API
      *                          Profile Item was created with;
      *      - 'amount'      => The GHG emission result amount;
+     *      - 'amounts'     => An array of additional GHG emission results, when
+     *                          this is supported by the category in use;
+     *      - 'notes'       => An array of notes about the additional GHG
+     *                          emission results, when this is supported by the
+     *                          category in use;
      *      - 'unit'        => The GHG emission result unit;
      *      - 'perUnit'     => The GHG emission result per time unit;
      *      - 'startDate'   => The vaid from start date/time; and
@@ -730,6 +745,12 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             'startDate'   => $this->sStartDate,
             'endDate'     => $this->sEndDate
         );
+        if (!empty($this->aAmounts)) {
+            $aReturn['amounts'] = $this->aAmounts;
+        }
+        if (!empty($this->aNotes)) {
+            $aReturn['notes'] = $this->aNotes;
+        }
         return $aReturn;
     }
 

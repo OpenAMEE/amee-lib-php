@@ -18,6 +18,8 @@ require_once 'PHPUnit/Framework.php';
 require_once 'tests/testConfig.php';
 require_once 'tests/integration/AMEE/DataItemTest.php';
 require_once 'tests/integration/AMEE/ExampleTest.php';
+require_once 'tests/integration/AMEE/ExampleMARVTest.php';
+require_once 'tests/integration/AMEE/Regression.php';
 
 /**
  * The Services_AMEE_AllIntegrationTests class provides a convenient way of
@@ -44,6 +46,12 @@ class Services_AMEE_AllIntegrationTests extends PHPUnit_Framework_TestSuite
         );
         $oIntegrationTestSuite->addTestSuite(
             'Services_AMEE_Example_IntegrationTest'
+        );
+        $oIntegrationTestSuite->addTestSuite(
+            'Services_AMEE_Example_IntegrationMARVTest'
+        );
+        $oIntegrationTestSuite->addTestSuite(
+            'Services_AMEE_Regression_IntegrationTest'
         );
 
         // Return the test suite

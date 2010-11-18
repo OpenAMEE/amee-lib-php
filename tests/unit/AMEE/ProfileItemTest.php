@@ -47,8 +47,6 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
      */
     private function _getDataItem($aExtraMockMethods = array())
     {
-
-
         // Prepare a mocked version of the Services_AMEE_DataItem object that
         // can be used in the construction of a Services_AMEE_ProfileItem object
         //
@@ -567,46 +565,6 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
     /***************************************************************************
      * TESTS FOR THE "NEW" STYLE OF CREATION
      **************************************************************************/
-
-    /**
-     * Test to ensure that the Services_AMEE_ProfileItem::__construct() method
-     * throws an exception if called with an array parameters set that is for
-     * a "uid" style construction (i.e. third param is an array of items) but
-     * where that third parameter is an empty array.
-     */
-    public function testConstructNewParamThreeEmptyArrayError()
-    {
-        // Prepare a Services_AMEE_Profile object that be used in the
-        // construction of a Services_AMEE_ProfileItem object
-        $oProfile = new Services_AMEE_Profile('1234567890AB');
-
-        // Prepare a mocked version of the Services_AMEE_DataItem object that
-        // can be used in the construction of a Services_AMEE_ProfileItem object
-        $oMockDataItem = $this->_getDataItem();
-
-        // Prepare the expected exception
-        $oArrayException = new Services_AMEE_Exception(
-            'Services_AMEE_ProfileItem constructor method called with' .
-            'the parameter array\'s third parameter being an empty AMEE ' .
-            'API Profile Item Value array'
-        );
-
-        try {
-            $oProfileItem = new Services_AMEE_ProfileItem(
-                array($oProfile, $oMockDataItem, array())
-            );
-        } catch (Exception $oException) {
-            // Test the Exception was correctly thrown
-            $this->assertEquals(
-                $oException->getMessage(),
-                $oArrayException->getMessage()
-            );
-            return;
-        }
-
-        // If we get here, the test has failed
-        $this->fail('Test failed because expected Exception was not thrown');
-    }
 
     /**
      * Test to ensure that the Services_AMEE_ProfileItem::__construct() method

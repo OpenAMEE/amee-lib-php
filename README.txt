@@ -24,7 +24,9 @@ carbon accounting systems, carbon calculators, and many other applications.
 About the library
 -----------------
 
-Version:   1.1.0
+Version:   1.2.0
+
+ - Please see the RELEASE.txt file for details of releases.
 
 Copyright: 2010 AMEE UK Limited
 
