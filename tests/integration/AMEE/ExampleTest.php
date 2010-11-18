@@ -114,12 +114,12 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
              ******************************************************************/
 
             // Assert that the AMEE API Profile created has a vaild UID
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfile->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oProfile->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
             // Assert that the AMEE API Data Item created has a valid UID
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oDataItemMetadata->getUID()
+                '/^[0-9A-Z]{12}$/', $oDataItemMetadata->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -128,7 +128,7 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
             // Assert that the AMEE API Profile Item created has a valid UID
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemMetadata->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemMetadata->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -294,10 +294,10 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
             // Assert that the two AMEE API Data Items created for gas and
             // electricity have valid UIDs
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oDataItemGas->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID()
+                '/^[0-9A-Z]{12}$/', $oDataItemElectricity->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -313,11 +313,11 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             // Assert that the two AMEE API Profile Items created for gas and
             // electricity have valid UIDs
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemGas->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemGas->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemElectricity->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemElectricity->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -487,10 +487,10 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
             // Assert that the two AMEE API Data Items created for gas and
             // electricity have valid UIDs
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oDataItemGas->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID()
+                '/^[0-9A-Z]{12}$/', $oDataItemElectricity->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -517,11 +517,11 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             // Assert that the two AMEE API Profile Items created for gas and
             // electricity have valid UIDs
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemGas->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemGas->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemElectricity->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemElectricity->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -664,10 +664,10 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
 
             // Assert that the two AMEE API Data Items created for gas and
             // electricity have valid UIDs
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemGas->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oDataItemGas->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oDataItemElectricity->getUID()
+                '/^[0-9A-Z]{12}$/', $oDataItemElectricity->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -694,11 +694,11 @@ class Services_AMEE_Example_IntegrationTest extends PHPUnit_Framework_TestCase
             // Assert that the two AMEE API Profile Items created for gas and
             // electricity have valid UIDs
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemGas->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemGas->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemElectricity->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemElectricity->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 

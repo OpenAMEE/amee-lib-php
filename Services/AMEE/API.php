@@ -59,12 +59,13 @@ class Services_AMEE_API
     private $aPostPathOpenings = array(
         '/auth$',
         '/profiles$',
-        '/profiles/[0-9A-F]{12}/business',
-        '/profiles/[0-9A-F]{12}/embodied',
-        '/profiles/[0-9A-F]{12}/home',
-        '/profiles/[0-9A-F]{12}/metadata',
-        '/profiles/[0-9A-F]{12}/planet',
-        '/profiles/[0-9A-F]{12}/transport'
+        '/profiles/[0-9A-Z]{12}/business',
+        '/profiles/[0-9A-Z]{12}/embodied',
+        '/profiles/[0-9A-Z]{12}/home',
+        '/profiles/[0-9A-Z]{12}/lca',
+        '/profiles/[0-9A-Z]{12}/metadata',
+        '/profiles/[0-9A-Z]{12}/planet',
+        '/profiles/[0-9A-Z]{12}/transport'
     );
 
     /**
@@ -73,13 +74,14 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     private $aPutPathOpenings = array(
-        '/profiles/[0-9A-F]{12}$',
-        '/profiles/[0-9A-F]{12}/business',
-        '/profiles/[0-9A-F]{12}/embodied',
-        '/profiles/[0-9A-F]{12}/home',
-        '/profiles/[0-9A-F]{12}/metadata',
-        '/profiles/[0-9A-F]{12}/planet',
-        '/profiles/[0-9A-F]{12}/transport'
+        '/profiles/[0-9A-Z]{12}$',
+        '/profiles/[0-9A-Z]{12}/business',
+        '/profiles/[0-9A-Z]{12}/embodied',
+        '/profiles/[0-9A-Z]{12}/home',
+        '/profiles/[0-9A-Z]{12}/lca',
+        '/profiles/[0-9A-Z]{12}/metadata',
+        '/profiles/[0-9A-Z]{12}/planet',
+        '/profiles/[0-9A-Z]{12}/transport'
     );
 
     /**
@@ -89,13 +91,14 @@ class Services_AMEE_API
      */
     private $aGetPathOpenings = array(
         '/profiles$',
-        '/profiles/[0-9A-F]{12}$',
-        '/profiles/[0-9A-F]{12}/business',
-        '/profiles/[0-9A-F]{12}/embodied',
-        '/profiles/[0-9A-F]{12}/home',
-        '/profiles/[0-9A-F]{12}/metadata',
-        '/profiles/[0-9A-F]{12}/planet',
-        '/profiles/[0-9A-F]{12}/transport',
+        '/profiles/[0-9A-Z]{12}$',
+        '/profiles/[0-9A-Z]{12}/business',
+        '/profiles/[0-9A-Z]{12}/embodied',
+        '/profiles/[0-9A-Z]{12}/home',
+        '/profiles/[0-9A-Z]{12}/lca',
+        '/profiles/[0-9A-Z]{12}/metadata',
+        '/profiles/[0-9A-Z]{12}/planet',
+        '/profiles/[0-9A-Z]{12}/transport',
         '/data'
     );
 
@@ -105,13 +108,14 @@ class Services_AMEE_API
      *      excluding the opening ^ limiter).
      */
     private $aDeletePathOpenings = array(
-        '/profiles/[0-9A-F]{12}$',
-        '/profiles/[0-9A-F]{12}/business',
-        '/profiles/[0-9A-F]{12}/embodied',
-        '/profiles/[0-9A-F]{12}/home',
-        '/profiles/[0-9A-F]{12}/metadata',
-        '/profiles/[0-9A-F]{12}/planet',
-        '/profiles/[0-9A-F]{12}/transport'
+        '/profiles/[0-9A-Z]{12}$',
+        '/profiles/[0-9A-Z]{12}/business',
+        '/profiles/[0-9A-Z]{12}/embodied',
+        '/profiles/[0-9A-Z]{12}/home',
+        '/profiles/[0-9A-Z]{12}/lca',
+        '/profiles/[0-9A-Z]{12}/metadata',
+        '/profiles/[0-9A-Z]{12}/planet',
+        '/profiles/[0-9A-Z]{12}/transport'
     );
 
     private static $oAPI;
@@ -430,7 +434,7 @@ class Services_AMEE_API
             // header information re-formatted as JSON data, if it exists
             if (!empty($aLocationHeader)) {
                 // Extract the entity UID
-                if (preg_match('#/([0-9A-F]{12})$#', $aLocationHeader[0], $aMatches)) {
+                if (preg_match('#/([0-9A-Z]{12})$#', $aLocationHeader[0], $aMatches)) {
                     $aJSON[] = "{\"UID\":\"" . $aMatches[1] . "\"}";
                     return $aJSON;
                 }
@@ -447,7 +451,7 @@ class Services_AMEE_API
             if (preg_match('#^DELETE#', $sPath)) {
                 $bOkay = true;
             }
-            if (preg_match('#^PUT /profiles/[0-9A-F]{12}/.+/[0-9A-F]{12}$#', $sPath)) {
+            if (preg_match('#^PUT /profiles/[0-9A-Z]{12}/.+/[0-9A-Z]{12}$#', $sPath)) {
                 $bOkay = true;
             }
             if (!$bOkay) {

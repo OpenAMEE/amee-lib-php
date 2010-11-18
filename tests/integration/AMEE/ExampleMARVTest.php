@@ -90,7 +90,7 @@ class Services_AMEE_Example_IntegrationMARVTest extends PHPUnit_Framework_TestCa
              ******************************************************************/
 
             // Assert that the AMEE API Profile created has a vaild UID
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfile->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oProfile->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
             // Return the data store array for use in the next test
@@ -223,7 +223,7 @@ class Services_AMEE_Example_IntegrationMARVTest extends PHPUnit_Framework_TestCa
             ;
 
             // Assert that the AMEE API Data Item created has a valid UID
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemCar->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oDataItemCar->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
             // Assert that the AMEE API Data Items created has path as expected
@@ -233,7 +233,7 @@ class Services_AMEE_Example_IntegrationMARVTest extends PHPUnit_Framework_TestCa
 
             // Assert that the AMEE API Profile Item created has a valid UID
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemCar->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemCar->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -372,7 +372,7 @@ class Services_AMEE_Example_IntegrationMARVTest extends PHPUnit_Framework_TestCa
             );
 
             // Assert that the AMEE API Data Item created has a valid UID
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oDataItemCar->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oDataItemCar->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
             // Assert that the AMEE API Data Items created has path as expected
@@ -388,7 +388,7 @@ class Services_AMEE_Example_IntegrationMARVTest extends PHPUnit_Framework_TestCa
 
             // Assert that the AMEE API Profile Item created has a valid UID
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemCar->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemCar->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 

@@ -65,12 +65,12 @@ class Services_AMEE_Regression_IntegrationTest extends PHPUnit_Framework_TestCas
             );
 
             // Assert that the AMEE API Profile created has a vaild UID
-            $bResult = preg_match('/^[0-9A-F]{12}$/', $oProfile->getUID());
+            $bResult = preg_match('/^[0-9A-Z]{12}$/', $oProfile->getUID());
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
             // Assert that the AMEE API Data Item created has a valid UID
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oDataItemFixDrippingTap->getUID()
+                '/^[0-9A-Z]{12}$/', $oDataItemFixDrippingTap->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
@@ -81,7 +81,7 @@ class Services_AMEE_Regression_IntegrationTest extends PHPUnit_Framework_TestCas
 
             // Assert that the AMEE API Profile Item created has a valid UID
             $bResult = preg_match(
-                '/^[0-9A-F]{12}$/', $oProfileItemFixDrippingTap->getUID()
+                '/^[0-9A-Z]{12}$/', $oProfileItemFixDrippingTap->getUID()
             );
             $this->assertEquals($bResult, 1); // preg_matches returns an integer
 
