@@ -86,6 +86,14 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
      */
     public function formatDate($sDate)
     {
+        if (preg_match("/([+-]\d\d):\d\d$/", $sDate, $aMatches)) {
+            // Store the current timezone
+            $sTZ = date_default_timezone_get();
+            date_default_timezone_set('Etc/GMT' . sprintf('%+d', $aMatches[1]));
+            $sDate = date('c', strtotime($sDate));
+            date_default_timezone_set($sTZ);
+            return $sDate;
+        }
         return date('c', strtotime($sDate));
     }
 

@@ -12,6 +12,9 @@ v1.3.0
 - Updated the unit test suite to only use date/time strings that are in the UTC
     timezone, as this is what the AMEE API always uses for created/modified
     date/time strings.
+- Updated the library to extract and use the timezone specified in the ISO 8601
+    formatted date/time strings returned from the AMEE API when ensuring that
+    all dates are correctly formatted, instead of the local timezone.
 
 --------------------------------------------------------------------------------
 
