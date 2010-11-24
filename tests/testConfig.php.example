@@ -23,7 +23,7 @@
  *      http://my.amee.com/
  */
 if (!defined('AMEE_API_PROJECT_KEY')) {
-    define('AMEE_API_PROJECT_KEY', 'your_api_key');
+    define('AMEE_API_PROJECT_KEY', 'YOUR_VALUE_IN_HERE');
 }
 
 /**
@@ -34,7 +34,7 @@ if (!defined('AMEE_API_PROJECT_KEY')) {
  *      http://my.amee.com/
  */
 if (!defined('AMEE_API_PROJECT_PASSWORD')) {
-    define('AMEE_API_PROJECT_PASSWORD', 'your_api_password');
+    define('AMEE_API_PROJECT_PASSWORD', 'YOUR_VALUE_IN_HERE');
 }
 
 /**
