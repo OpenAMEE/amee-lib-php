@@ -9,6 +9,9 @@ v1.3.0
 - Removed the inclusion of the PHPUnit/Framework.php file from the unit and
     integration tests, as this is deprecated in newer versions of PHPUnit.
 - Moved the example unit & integration test file to a more sensible location.
+- Updated the unit test suite to only use date/time strings that are in the UTC
+    timezone, as this is what the AMEE API always uses for created/modified
+    date/time strings.
 
 --------------------------------------------------------------------------------
 
