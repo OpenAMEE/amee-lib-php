@@ -14,7 +14,6 @@
  * @link http://pear.php.net/package/Services_AMEE
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once 'Services/AMEE/API.php';
 
 /**
