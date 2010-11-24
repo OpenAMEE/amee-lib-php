@@ -14,7 +14,6 @@
  * @link http://pear.php.net/package/Services_AMEE
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once 'tests/testConfig.php';
 require_once 'tests/integration/AMEE/DataItemTest.php';
 require_once 'tests/integration/AMEE/ExampleTest.php';
