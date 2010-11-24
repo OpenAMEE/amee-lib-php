@@ -3,6 +3,16 @@ AMEE REST API PEAR Library Release History
 
 Current Version:
 
+v1.3.0
+
+- Released on: NOT YET RELEASED
+- Removed the inclusion of the PHPUnit/Framework.php file from the unit and
+    integration tests, as this is deprecated in newer versions of PHPUnit.
+
+--------------------------------------------------------------------------------
+
+Previous Versions:
+
 v1.2.0
 
 - Released on: 2010-11-18
@@ -15,10 +25,6 @@ v1.2.0
     with invalid parameters.
 - Updated the library to support new Profile UID formats & "Life Cycle Carbon"
     categories in AMEE.
-
---------------------------------------------------------------------------------
-
-Previous Versions:
 
 v1.1.0
 
