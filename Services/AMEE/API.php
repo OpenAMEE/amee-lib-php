@@ -43,6 +43,12 @@ class Services_AMEE_API
 {
 
     /**
+     *
+     * @var <boolean> $debug Is debugging enabled for the connection?
+     */
+    private $debug;
+
+    /**
      * @var <string> $sAuthToken The AMEE API authorisation token.
      */
     private $sAuthToken;
@@ -297,6 +303,15 @@ class Services_AMEE_API
     public function sendRequest($sPath, $sBody = null, $bReturnHeaders = false, $bRepeat = true)
     {
 
+        if (!isset($this->debug)) {
+            // By default, debugging is not enabled
+            $this->debug = false;
+            // Should debugging be enabled?
+            if (defined('AMEE_API_ENABLE_DEBUGGING') && AMEE_API_ENABLE_DEBUGGING == true) {
+                $this->debug = true;
+            }
+        }
+
         // Ensure that the request is a valid type
         if (!preg_match('/^(GET|POST|PUT|DELETE)/', $sPath)) {
             throw new Services_AMEE_Exception(
@@ -345,6 +360,14 @@ class Services_AMEE_API
         // Connect to the AMEE REST API and send the request
         $iError = '';
         $sError = '';
+        // DEBUG: OPENING SOCKET
+        if ($this->debug) {
+            $aStart = explode(' ', microtime());
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Opening socket';
+            syslog(LOG_NOTICE, $message);
+        }
         if ($bAuthRequest && extension_loaded('openssl')) {
             // Connect over SSL to protect the AMEE REST API username/password
             $rSocket = $this->_socketOpen(
@@ -365,16 +388,52 @@ class Services_AMEE_API
                 'Unable to connect to the AMEE REST API: ' . $sError
             );
         }
+        // DEBUG: SOCKET OPENED
+        if ($this->debug) {
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Socket opened';
+            syslog(LOG_NOTICE, $message);
+        }
+        // DEBUG: SENDING REQUEST TO AMEE API
+        if ($this->debug) {
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Sending request to AMEE API';
+            syslog(LOG_NOTICE, $message);
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ':   => URL:    ' . $sPath;
+            syslog(LOG_NOTICE, $message);
+            if (strlen($sBody) > 0) {
+                $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+                $message .= ':   => Params: ' . $sBody;
+                syslog(LOG_NOTICE, $message);
+            }
+        }
         $iResult = $this->_socketWrite($rSocket, $sRequest);
 		if ($iResult === false || $iResult != strlen($sRequest)) {
             throw new Services_AMEE_Exception(
                 'Error sending the AMEE REST API request'
             );
         }
+        // DEBUG: REQUEST HAS BEEN SENT TO AMEE API
+        if ($this->debug) {
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Request sent';
+            syslog(LOG_NOTICE, $message);
+        }
         // Obtain the AMEE REST API response
         $aResponseLines  = array();
         $aLocationHeader = array();
         $aJSON           = array();
+        // DEBUG: GETTING RESPONSE FROM AMEE API
+        if ($this->debug) {
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Getting response from AMEE API';
+            syslog(LOG_NOTICE, $message);
+        }
         while (!$this->_socketEOF($rSocket)) {
             $sLine = $this->_socketGetLine($rSocket);
             $aResponseLines[] = $sLine;
@@ -388,7 +447,34 @@ class Services_AMEE_API
                 $aJSON[] = $sLine;
             }
         }
+        // DEBUG: RESPONSE RECEIVED
+        if ($this->debug) {
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Response received';
+            syslog(LOG_NOTICE, $message);
+        }
+        // DEBUG: CLOSING SOCKET
+        if ($this->debug) {
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Closing socket';
+            syslog(LOG_NOTICE, $message);
+        }
         $this->_socketClose($rSocket);
+        // DEBUG: SOCKET CLOSED & TOTAL TIME
+        if ($this->debug) {
+            $aEnd = explode(' ', microtime());
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': Socket closed';
+            syslog(LOG_NOTICE, $message);
+            $time = ((float) $aEnd[0] + (float) $aEnd[1]) - ((float) $aStart[0] + (float) $aStart[1]);
+            $aMicrotime = explode(' ', microtime());
+            $message = date('Y-m-d H:i:s.' . sprintf('%06d', $aMicrotime[0] * 1000000), $aMicrotime[1]);
+            $message .= ': TOTAL REQUEST TIME: ' . sprintf("%.6f seconds", $time);;
+            syslog(LOG_NOTICE, $message);
+        }
         // Check that the request was authorised
         if (strpos($aResponseLines[0], '401 UNAUTH') !== false){
             // Authorisation failed

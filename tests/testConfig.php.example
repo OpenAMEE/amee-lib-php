@@ -56,4 +56,16 @@ if (!defined('AMEE_API_PORT_SSL')) {
     define('AMEE_API_PORT_SSL', '443');
 }
 
+/**
+ * Define if the library should produce debugging information about the AMEE API
+ * calls that are made.
+ *
+ * If this is set to true, debugging information will be logged via the PHP
+ * syslog() function with logging level LOG_NOTICE; the location of the
+ * syslog() file is defined by the error_log option in the php.ini file.
+ */
+if (!defined('AMEE_API_ENABLE_DEBUGGING')) {
+    define('AMEE_API_ENABLE_DEBUGGING', false);
+}
+
 ?>
