@@ -28,7 +28,7 @@ Version:   1.3.0
 
  - Please see the RELEASE.txt file for details of releases.
 
-Copyright: 2010 AMEE UK Limited
+Copyright: 2010-2011 AMEE UK Limited
 
 License:   MIT
 

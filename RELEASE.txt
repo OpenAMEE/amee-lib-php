@@ -15,6 +15,7 @@ v1.3.0
 - Updated the library to extract and use the timezone specified in the ISO 8601
     formatted date/time strings returned from the AMEE API when ensuring that
     all dates are correctly formatted, instead of the local timezone.
+- Updated all PHP files to include library version information in doc blocks.
 
 --------------------------------------------------------------------------------
 
