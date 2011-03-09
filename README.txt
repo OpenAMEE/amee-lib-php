@@ -24,11 +24,11 @@ carbon accounting systems, carbon calculators, and many other applications.
 About the library
 -----------------
 
-Version:   1.2.0
+Version:   1.3.0
 
  - Please see the RELEASE.txt file for details of releases.
 
-Copyright: 2010 AMEE UK Limited
+Copyright: 2010-2011 AMEE UK Limited
 
 License:   MIT
 
@@ -50,18 +50,18 @@ Requirements:
 
 Authentication:
 
-  This library suports the use of OpenSSL to encypher AMEE REST API username and
-  password details, if the PHP OpenSSL package is installed and emabled. If the
-  PHP OpenSSL package is not installed and enabled, then all username and
+  This library supports the use of OpenSSL to encypher AMEE REST API username
+  and password details, if the PHP OpenSSL package is installed and enabled. If
+  the PHP OpenSSL package is not installed and enabled, then all username and
   password details will be sent "in the clear".
 
 TODO:
 
-  At present there is no caching support of GET request data. This will be added
-  in the next version.
+  At present there is no caching support of GET request data. This may be added
+  in a future version.
 
   At present there is no support for advanced time-period based reporting on
-  AMEE API Profile Item data. This will be added in the next version.
+  AMEE API Profile Item data. This may be added in a future version.
 
 
 Installing the library
@@ -84,11 +84,14 @@ To use the AMEE REST API PEAR library:
     require_once 'Services/AMEE/ProfileItem.php';
 
 3. Create three definitions, for the AMEE REST API host name, your AMEE API
-    key, and your AMEE API password. For example:
+   key, and your AMEE API password. For example:
 
     define('AMEE_API_URL',              'stage.amee.com');
     define('AMEE_API_PROJECT_KEY',      'your_api_key');
     define('AMEE_API_PROJECT_PASSWORD', 'your_api_password');
+
+   More details on defining the above constants and other configuration options
+   available can be found in the examples/exampleConfig.php file.
 
 4. Create AMEE API Profiles and AMEE API Profile Items & use them as required.
 

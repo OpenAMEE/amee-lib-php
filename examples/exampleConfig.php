@@ -5,12 +5,13 @@
  *
  * PHP Version 5
  *
- * @category Web Services
- * @package Services_AMEE
- * @author James Smith <james@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    James Smith <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 
 /**
@@ -50,6 +51,18 @@ if (!defined('AMEE_API_PORT')) {
 }
 if (!defined('AMEE_API_PORT_SSL')) {
     define('AMEE_API_PORT_SSL', '443');
+}
+
+/**
+ * Define if the library should produce debugging information about the AMEE API
+ * calls that are made.
+ *
+ * If this is set to true, debugging information will be logged via the PHP
+ * syslog() function with logging level LOG_NOTICE; the location of the
+ * syslog() file is defined by the error_log option in the php.ini file.
+ */
+if (!defined('AMEE_API_ENABLE_DEBUGGING')) {
+    define('AMEE_API_ENABLE_DEBUGGING', false);
 }
 
 ?>

@@ -6,12 +6,13 @@
  *
  * PHP Version 5
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 
 require_once 'Services/AMEE/API.php';
@@ -20,12 +21,13 @@ require_once 'Services/AMEE/API.php';
  * The Services_AMEE_API_UnitTest class provides the PHPUnit unit test cases for
  * the Services_AMEE_API class.
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 class Services_AMEE_API_UnitTest extends PHPUnit_Framework_TestCase
 {

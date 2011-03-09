@@ -6,12 +6,13 @@
  *
  * PHP Version 5
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 
 require_once 'Services/AMEE/ProfileItem.php';
@@ -20,12 +21,13 @@ require_once 'Services/AMEE/ProfileItem.php';
  * The Services_AMEE_ProfileItem_UnitTest class provides the PHPUnit unit test
  * cases for the Services_AMEE_ProfileItem class.
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
 {
@@ -119,15 +121,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
             {
               "profileItem": {
                 "name": null,
-                "modified": "2010-04-13T10:19:18+01:00",
+                "modified": "2010-04-13T10:19:18+00:00",
                 "amount": {
                   "value": 0,
                   "unit": "kg/year"
                 },
-                "startDate": "2010-04-13T10:19:00+01:00",
+                "startDate": "2010-04-13T10:19:00+00:00",
                 "uid": "A606D4394BAD",
                 "endDate": "",
-                "created": "2010-04-13T10:19:18+01:00",
+                "created": "2010-04-13T10:19:18+00:00",
                 "itemValues": [
                   {
                     "path": "otherDetails",
@@ -921,16 +923,16 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
             {
               "profileItem":
                 {
-                  "modified": "2010-04-13T13:37:29+01:00",
+                  "modified": "2010-04-13T13:37:29+00:00",
                   "name": "someName",
                   "amount": {
                     "value": 50000,
                     "unit": "g/week"
                   },
-                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "startDate": "2010-04-13T13:37:00+00:00",
                   "uid": "000000000000",
                   "endDate": "",
-                  "created": "2010-04-13T13:37:19+01:00",
+                  "created": "2010-04-13T13:37:19+00:00",
                   "itemValues": [
                     {
                       "path": "someValue",
@@ -990,15 +992,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
         $aExpectedInfo = array(
             'uid'         => '000000000000',
             'name'        => 'someName',
-            'created'     => '2010-04-13T13:37:19+01:00',
-            'modified'    => '2010-04-13T13:37:29+01:00',
+            'created'     => '2010-04-13T13:37:19+00:00',
+            'modified'    => '2010-04-13T13:37:29+00:00',
             'profileUid'  => '1234567890AB',
             'path'        => '/home/energy/quantity',
             'dataItemUid' => 'BA0987654321',
             'amount'      => '50000',
             'unit'        => 'g',
             'perUnit'     => 'week',
-            'startDate'   => '2010-04-13T13:37:00+01:00',
+            'startDate'   => '2010-04-13T13:37:00+00:00',
             'endDate'     => ''
         );
         $aInfo = $oMockProfileItem->getInfo();
@@ -1194,16 +1196,16 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
             {
               "profileItem":
                 {
-                  "modified": "2010-04-13T13:37:29+01:00",
+                  "modified": "2010-04-13T13:37:29+00:00",
                   "name": "testName",
                   "amount": {
                     "value": 123123123123123.669973,
                     "unit": "kg/year"
                   },
-                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "startDate": "2010-04-13T13:37:00+00:00",
                   "uid": "888888888888",
-                  "endDate": "2010-04-13T13:39:00+01:00",
-                  "created": "2010-04-13T13:37:19+01:00",
+                  "endDate": "2010-04-13T13:39:00+00:00",
+                  "created": "2010-04-13T13:37:19+00:00",
                   "itemValues": [
                     {
                       "path": "someValue",
@@ -1248,16 +1250,16 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
         $aExpectedInfo = array(
             'uid'         => '888888888888',
             'name'        => 'testName',
-            'created'     => '2010-04-13T13:37:19+01:00',
-            'modified'    => '2010-04-13T13:37:29+01:00',
+            'created'     => '2010-04-13T13:37:19+00:00',
+            'modified'    => '2010-04-13T13:37:29+00:00',
             'profileUid'  => '555555555555',
             'path'        => '/home/energy/quantity',
             'dataItemUid' => '777777777777',
             'amount'      => '123123123123123.669973',
             'unit'        => 'kg',
             'perUnit'     => 'year',
-            'startDate'   => '2010-04-13T13:37:00+01:00',
-            'endDate'     => '2010-04-13T13:39:00+01:00'
+            'startDate'   => '2010-04-13T13:37:00+00:00',
+            'endDate'     => '2010-04-13T13:39:00+00:00'
         );
         $aInfo = $oMockProfileItem->getInfo();
         $this->assertEquals($aExpectedInfo, $aInfo);
@@ -1398,20 +1400,20 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
             {
               "profileItems":
                 [{
-                  "modified": "2010-04-13T13:37:19+01:00",
+                  "modified": "2010-04-13T13:37:19+00:00",
                   "name": null,
                   "amount": {
                     "value": 2127.669973,
                     "unit": "g/week"
                   },
-                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "startDate": "2010-04-13T13:37:00+00:00",
                   "uid": "7E941AC2DE82",
                   "dataItem": {
                     "Label": "gas",
                     "uid": "66056991EE23"
                   },
                   "endDate": "",
-                  "created": "2010-04-13T13:37:19+01:00",
+                  "created": "2010-04-13T13:37:19+00:00",
                   "itemValues": [
                     {
                       "path": "someValue",
@@ -1422,20 +1424,20 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
                   ]
                 },
                 {
-                  "modified": "2010-04-13T13:37:20+01:00",
+                  "modified": "2010-04-13T13:37:20+00:00",
                   "name": null,
                   "amount": {
                     "value": 5180.393848,
                     "unit": "g/week"
                   },
-                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "startDate": "2010-04-13T13:37:00+00:00",
                   "uid": "F11AF4561700",
                   "dataItem": {
                     "Label": "electricity",
                     "uid": "CDC2A0BA8DF3"
                   },
                   "endDate": "",
-                  "created": "2010-04-13T13:37:20+01:00",
+                  "created": "2010-04-13T13:37:20+00:00",
                   "itemValues": [
                     {
                       "path": "someValue",
@@ -1487,15 +1489,15 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
         $aExpectedInfo = array(
             'uid'         => '7E941AC2DE82',
             'name'        => '',
-            'created'     => '2010-04-13T13:37:19+01:00',
-            'modified'    => '2010-04-13T13:37:19+01:00',
+            'created'     => '2010-04-13T13:37:19+00:00',
+            'modified'    => '2010-04-13T13:37:19+00:00',
             'profileUid'  => '121212121212',
             'path'        => '/home/energy/quantity',
             'dataItemUid' => '66056991EE23',
             'amount'      => '2127.669973',
             'unit'        => 'g',
             'perUnit'     => 'week',
-            'startDate'   => '2010-04-13T13:37:00+01:00',
+            'startDate'   => '2010-04-13T13:37:00+00:00',
             'endDate'     => ''
         );
         $aInfo = $oMockProfileItem->getInfo();
@@ -1559,16 +1561,16 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
             {
               "profileItem":
                 {
-                  "modified": "2010-04-13T13:37:29+01:00",
+                  "modified": "2010-04-13T13:37:29+00:00",
                   "name": "",
                   "amount": {
                     "value": 20.37,
                     "unit": "kg/year"
                   },
-                  "startDate": "2010-04-13T13:37:00+01:00",
+                  "startDate": "2010-04-13T13:37:00+00:00",
                   "uid": "333333333333",
-                  "endDate": "2010-04-13T13:39:00+01:00",
-                  "created": "2010-04-13T13:37:19+01:00",
+                  "endDate": "2010-04-13T13:39:00+00:00",
+                  "created": "2010-04-13T13:37:19+00:00",
                   "itemValues": [
                     {
                       "path": "energyConsumption",
@@ -1667,16 +1669,16 @@ class Services_AMEE_ProfileItem_UnitTest extends PHPUnit_Framework_TestCase
         $aExpectedInfo = array(
             'uid'         => '333333333333',
             'name'        => '',
-            'created'     => '2010-04-13T13:37:19+01:00',
-            'modified'    => '2010-04-13T13:37:29+01:00',
+            'created'     => '2010-04-13T13:37:19+00:00',
+            'modified'    => '2010-04-13T13:37:29+00:00',
             'profileUid'  => '111111111111',
             'path'        => '/home/energy/quantity',
             'dataItemUid' => '222222222222',
             'amount'      => '20.37',
             'unit'        => 'kg',
             'perUnit'     => 'year',
-            'startDate'   => '2010-04-13T13:37:00+01:00',
-            'endDate'     => '2010-04-13T13:39:00+01:00'
+            'startDate'   => '2010-04-13T13:37:00+00:00',
+            'endDate'     => '2010-04-13T13:39:00+00:00'
         );
         $aInfo = $oMockProfileItem->getInfo();
         $this->assertEquals($aExpectedInfo, $aInfo);

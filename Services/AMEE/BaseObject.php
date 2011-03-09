@@ -6,12 +6,13 @@
  *
  * PHP Version 5
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 
 require_once 'Services/AMEE/API.php';
@@ -21,12 +22,13 @@ require_once 'Services/AMEE/Exception.php';
  * The Services_AMEE_BaseObject class is an abstract class that defines all of
  * the common class variables and methods of the AMEE REST API objects.
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 abstract class Services_AMEE_BaseObject
 {

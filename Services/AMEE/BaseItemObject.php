@@ -6,12 +6,13 @@
  *
  * PHP Version 5
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 
 require_once 'Services/AMEE/BaseObject.php';
@@ -21,12 +22,13 @@ require_once 'Services/AMEE/BaseObject.php';
  * of the common class variables and methods of the AMEE REST API objects that
  * represent single items (i.e. AMEE Profiles and AMEE Profile Items).
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
 {
@@ -86,6 +88,14 @@ abstract class Services_AMEE_BaseItemObject extends Services_AMEE_BaseObject
      */
     public function formatDate($sDate)
     {
+        if (preg_match("/([+-]\d\d):\d\d$/", $sDate, $aMatches)) {
+            // Store the current timezone
+            $sTZ = date_default_timezone_get();
+            date_default_timezone_set('Etc/GMT' . sprintf('%+d', $aMatches[1]));
+            $sDate = date('c', strtotime($sDate));
+            date_default_timezone_set($sTZ);
+            return $sDate;
+        }
         return date('c', strtotime($sDate));
     }
 

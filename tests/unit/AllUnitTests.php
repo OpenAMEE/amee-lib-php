@@ -6,12 +6,13 @@
  *
  * PHP Version 5
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 
 require_once 'tests/testConfig.php';
@@ -27,12 +28,13 @@ require_once 'tests/unit/AMEE/DataItemTest.php';
  * The Services_AMEE_AllUnitTests class provides a convenient way of running all
  * of the PHPUnit unit tests for the Services_AMEE package.
  *
- * @category Web Services
- * @package Services_AMEE
- * @author Andrew Hill <andrew.hill@amee.com>
- * @copyright 2010 AMEE UK Limited
- * @license http://www.opensource.org/licenses/mit-license.html MIT License
- * @link http://pear.php.net/package/Services_AMEE
+ * @category  Web Services
+ * @package   Services_AMEE
+ * @version   $Id$
+ * @author    Andrew Hill <help@amee.com>
+ * @copyright 2010-2011 AMEE UK Limited
+ * @license   http://www.opensource.org/licenses/mit-license.html MIT License
+ * @link      http://pear.php.net/package/Services_AMEE
  */
 class Services_AMEE_AllUnitTests extends PHPUnit_Framework_TestSuite
 {
