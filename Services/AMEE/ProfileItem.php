@@ -566,8 +566,8 @@ class Services_AMEE_ProfileItem extends Services_AMEE_BaseItemObject
             // Process the result data
             $this->aLastJSON = json_decode($this->sLastJSON, true);
             // Now that the AMEE API Profile Item is created, construct this
-            // object via the __constuctExistingByUID method
-            $this->_constructExistingByUID($this->aLastJSON['UID']);
+            // object via the __constructExistingByUID method
+            $this->_constructExistingByUID($this->aLastJSON['profileItem']['uid']);
         } catch (Exception $oException) {
             throw $oException;
         }
